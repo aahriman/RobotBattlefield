@@ -1,0 +1,5 @@
+C:\Users\vojtech\Desktop\skola\C#\RobotLibrary\RobotLibrary\bin\Debug\RobotLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotLibrary\RobotLibrary\bin\Debug\RobotLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotLibrary\RobotLibrary\obj\Debug\RobotLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotLibrary\RobotLibrary\obj\Debug\RobotLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotLibrary\RobotLibrary\obj\Debug\RobotLibrary.csprojResolveAssemblyReference.cache

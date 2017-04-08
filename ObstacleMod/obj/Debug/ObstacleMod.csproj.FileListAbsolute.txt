@@ -1,0 +1,9 @@
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\bin\Debug\ObstacleMod.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\bin\Debug\ObstacleMod.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\bin\Debug\BaseLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\bin\Debug\BaseLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\obj\Debug\ObstacleMod.csprojResolveAssemblyReference.cache
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\obj\Debug\ObstacleMod.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\obj\Debug\ObstacleMod.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\bin\Debug\Newtonsoft.Json.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObstacleMod\bin\Debug\Newtonsoft.Json.xml

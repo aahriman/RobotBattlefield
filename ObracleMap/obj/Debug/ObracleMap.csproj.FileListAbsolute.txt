@@ -1,0 +1,15 @@
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\ObracleMap.exe.config
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\ObracleMap.exe
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\ObracleMap.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\Newtonsoft.Json.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\ObstacleMod.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\BaseLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\ObstacleMod.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\Newtonsoft.Json.xml
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\bin\Debug\BaseLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\obj\Debug\ObracleMap.csprojResolveAssemblyReference.cache
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\obj\Debug\ObracleMap.Form1.resources
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\obj\Debug\ObracleMap.Properties.Resources.resources
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\obj\Debug\ObracleMap.csproj.GenerateResource.Cache
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\obj\Debug\ObracleMap.exe
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ObracleMap\obj\Debug\ObracleMap.pdb

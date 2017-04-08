@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{73808A0B-4126-4780-8FEC-69872F6C5BAC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BattlefieldLibrary</RootNamespace>
+    <AssemblyName>BattlefieldLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AServer.cs" />
+    <Compile Include="battlefield\Battlefield.cs" />
+    <Compile Include="battlefield\Battlefield.Visitors.cs" />
+    <Compile Include="battlefield\BattlefieldTurn.cs" />
+    <Compile Include="battlefield\Bullet.cs" />
+    <Compile Include="battlefield\Merchant.cs" />
+    <Compile Include="battlefield\Mine.cs" />
+    <Compile Include="battlefield\robot\BattlefieldRobot.cs" />
+    <Compile Include="battlefield\robot\ConcreteRobot.cs" />
+    <Compile Include="battlefield\robot\DefaultRobot.cs" />
+    <Compile Include="battlefield\robot\Miner.cs" />
+    <Compile Include="battlefield\robot\Repairman.cs" />
+    <Compile Include="battlefield\robot\Tank.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
+      <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
+      <Name>BaseLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObstacleMod\ObstacleMod.csproj">
+      <Project>{3f280b33-4be8-4814-a216-3478aeeff068}</Project>
+      <Name>ObstacleMod</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServerLibrary\ServerLibrary.csproj">
+      <Project>{34374a8c-3761-4c96-a81e-98a54c540099}</Project>
+      <Name>ServerLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewerLibrary\ViewerLibrary.csproj">
+      <Project>{e83d7cab-dbde-4e18-bcbc-59cf6c247c2c}</Project>
+      <Name>ViewerLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

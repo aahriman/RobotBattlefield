@@ -1,0 +1,7 @@
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\bin\Release\ClientLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\bin\Release\ClientLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\bin\Release\BaseLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\bin\Release\BaseLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\obj\Release\ClientLibrary.csprojResolveAssemblyReference.cache
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\obj\Release\ClientLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ClientLibrary\obj\Release\ClientLibrary.pdb

@@ -1,0 +1,5 @@
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\bin\Release\BaseLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\bin\Release\BaseLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\obj\Release\BaseLibrary.csprojResolveAssemblyReference.cache
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\obj\Release\BaseLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\obj\Release\BaseLibrary.pdb

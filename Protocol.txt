@@ -1,0 +1,23 @@
+Kodování UTF-8
+Konec příkazu \n\r
+
+Server                              Client
+// Handshake
+                                    HELLO NPRG038_ROBOT_AREA 1.0 1.1
+OLLEH NPRG038_ROBOT_AREA 1.1
+                                    ACK
+// END - HANDSHAKE
+
+//Prihlášení
+
+// Wait
+                                    WAIT()
+ACK                                    
+
+// shot
+                                    SHOT(100.0;33.0)
+SHOT_ANWER(0)                                    
+                  
+                  
+protocol 1.0 používá commandy jako plain text
+protocol 1.1 pužívá commandy v json                  

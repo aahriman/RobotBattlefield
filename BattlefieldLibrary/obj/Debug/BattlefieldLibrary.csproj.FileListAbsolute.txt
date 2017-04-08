@@ -1,0 +1,15 @@
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\obj\Debug\BattlefieldLibrary.csprojResolveAssemblyReference.cache
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\BattlefieldLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\BattlefieldLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\BaseLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\ObstacleMod.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\RobotViewerLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\ServerLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\Newtonsoft.Json.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\BaseLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\ObstacleMod.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\ServerLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\RobotViewerLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\bin\Debug\Newtonsoft.Json.xml
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\obj\Debug\BattlefieldLibrary.dll
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\BattlefieldLibrary\obj\Debug\BattlefieldLibrary.pdb
