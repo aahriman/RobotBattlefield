@@ -1,15 +1,55 @@
 ﻿using System;
 using System.Drawing;
-using BaseLibrary;
 using BaseLibrary.battlefield;
+using BaseLibrary.protocol;
 using BaseLibrary.utils;
 
-namespace ObstacleMod.obtacle {
+namespace ObtacleMod.obtacle {
+    [ModDescription()]
     public class Sand : IMoveInfluence {
+        public const string COMMAND_NAME = "SAND";
+        public static readonly IFactory<IObtacle, IObtacle> FACTORY = new ObtacleFactory();
+        private sealed class ObtacleFactory : AObtacleFactory {
+            internal ObtacleFactory() { }
+            public override Boolean IsDeserializable(String s) {
+                string[] rest;
+                if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {
+                    if (rest.Length == 2) {
+                        int x, y;
+                        if (int.TryParse(rest[0], out x) && int.TryParse(rest[1], out y)) {
+                            cache.Cached(s, new Sand(x, y));
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            public override bool IsTransferable(IObtacle c) {
+                var c2 = c as Sand;
+                if (c2 != null) {
+                    cache.Cached(c, new Sand(c2.X, c2.Y));
+                    return true;
+                }
+                return false;
+            }
+
+            public override bool IsSerializeable(IObtacle c) {
+                Sand c2 = c as Sand;
+                if (c2 != null) {
+                    cacheForSerialize.Cached(c, ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, c2.X, c2.Y));
+                    return true;
+                }
+                return false;
+            }
+        }
+
         private static readonly Image icon = new Bitmap(30, 30);
         private static readonly RectangleF iconRectangle = new RectangleF(0, 0, icon.Width, icon.Height);
 
         static Sand() {
+            ObtaclesInSight.OBTACLE_FACTORIES.RegisterCommand(FACTORY);
+
             Graphics graphics = Graphics.FromImage(icon);
 
             graphics.FillRectangle(new SolidBrush(Color.Yellow), iconRectangle);

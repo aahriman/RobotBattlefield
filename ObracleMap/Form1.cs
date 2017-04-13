@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Schema;
-using ObstacleMod;
-using ObstacleMod.obtacle;
+using ObtacleMod;
 
-namespace ObracleMap {
+namespace ObtacleMap {
     public partial class Form1 : Form {
         // TODO zoom na kurzor
         // TODO Preview
@@ -268,7 +259,9 @@ namespace ObracleMap {
             if (!"(loaded file)".Equals(loadedFileName.Text)) {
                 saveFileDialog.FileName = loadedFileName.Text;
             }
-            DialogResult dialogResult = saveFileDialog.ShowDialog(this);
+            saveFileDialog.OverwritePrompt = true;
+            saveFileDialog.Filter = "All files (*)|*";
+            DialogResult dialogResult = saveFileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK) {
                 ObtacleManager.SaveObtaclesToFile(obtacles.Values, saveFileDialog.FileName);
             }
@@ -282,11 +275,13 @@ namespace ObracleMap {
             
             DialogResult dialogResult = openFileDialog.ShowDialog(this);
             if (dialogResult == DialogResult.OK) {
+                obtacles.Clear();
                 loadedFileName.Text = openFileDialog.FileName;
                 if (dialogResult == DialogResult.OK) {
                     loadedFileName.Text = openFileDialog.FileName;
                     foreach (IObtacle obtacle in ObtacleManager.LoadObtaclesFromFile(openFileDialog.FileName)) {
-                        obtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+                        Point key = new Point(obtacle.X, obtacle.Y);
+                        obtacles.Add(key, obtacle);
                     }
                 }
             }

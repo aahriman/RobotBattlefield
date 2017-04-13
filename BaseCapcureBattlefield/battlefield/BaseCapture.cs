@@ -15,10 +15,7 @@ namespace BaseCapcureBattlefield.battlefield {
             positionInBattleTurn = BattlefieldTurn.RegisterMore();
 	    }
 
-		public BaseCapture(int maxRobots, int robotsInTeam, params object[] more)  : base(maxRobots, ServerConfig.MAX_LAP, robotsInTeam) {
-        }
-
-        public BaseCapture(int maxRobots, int robotsInTeam, string euqipmentFileName, params object[] more) : base(maxRobots, ServerConfig.MAX_LAP, robotsInTeam, euqipmentFileName) {
+		public BaseCapture(BattlefieldConfig battlefielConfig)  : base(battlefielConfig) {
         }
 
         protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
@@ -29,7 +26,7 @@ namespace BaseCapcureBattlefield.battlefield {
 	        return initAnswerCommand;
 	    }
 
-		protected override LapState newLapState() {
+		protected override LapState NewLapState() {
 			
 			if (turn > MAX_TURN) {
 				return LapState.LAP_OUT;

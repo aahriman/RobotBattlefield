@@ -285,7 +285,7 @@ namespace BattlefieldLibrary.battlefield {
                     if (classEquipment == null) {
                         command = new ErrorCommand("Unsupported RobotType (" + r.ROBOT_TYPE + ") support only" + RobotType.MINER + ", " + RobotType.TANK + ", " + RobotType.REPAIRMAN);
                     } else {
-                        command = battlefield.AddToInitAnswereCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.match, battlefield.MATCHES,
+                        command = battlefield.AddToInitAnswereCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.match, battlefield.MAX_LAP,
                             r.ID, motorIdForRobots, classEquipment.ID, r.Armor.ID));
                     }
                     sendCommandDontWait(command, r);

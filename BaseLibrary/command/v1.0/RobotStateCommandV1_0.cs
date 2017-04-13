@@ -18,21 +18,7 @@ namespace BaseLibrary.command.v1._0 {
 						ProtocolDouble[] paramsPDoubles;
 						int[] paramInts;
 						int[] arrayIdsOfLifeRobots;
-                        /*InnerSerializerV1_0[] more = new InnerSerializerV1_0[subCommandFactories.Count];
-
-					    if (rest.Length == 10) {
-					        String[] moreStrings;
-					        if (ProtocolV1_0Utils.Deserialize(rest[9], out moreStrings, ProtocolV1_0Utils.DEFAULT.NEXT)) {
-					            foreach (var moreString in moreStrings) {
-					                foreach (var subCommandFactory in subCommandFactories) {
-					                    if (subCommandFactory.Deserialize(moreString, more)) {
-					                        break;
-					                    }
-					                }
-					            }   
-					        }
-					    }*/
-					    Object more = new Object[0];
+                        
 					    if (Parser.TryParse(new int[] { 0, 1, 3 }, rest, out paramsPDoubles) &&
 							Parser.TryParse(new int[] { 2, 4, 5, 6 }, rest, out paramInts) &&
 							ProtocolV1_0Utils.Deserialize(rest[7], out arrayIdsOfLifeRobots, ProtocolV1_0Utils.DEFAULT.NEXT)
@@ -45,9 +31,11 @@ namespace BaseLibrary.command.v1._0 {
 						                                                                            paramInts[1], paramInts[2],
 						                                                                            paramInts[3],
 						                                                                            arrayIdsOfLifeRobots, endLapCommand);
-						    
-
-						    cache.Cached(s, robotStateCommand);
+					        String[] moreString;
+					        if (ProtocolV1_0Utils.Deserialize(rest[9], out moreString, ProtocolV1_0Utils.DEFAULT.NEXT)) {
+					            robotStateCommand.DeserializeMore(moreString, robotStateCommand.MORE);
+					        }
+					        cache.Cached(s, robotStateCommand);
 							return true;
 						}
 					}
@@ -58,7 +46,12 @@ namespace BaseLibrary.command.v1._0 {
 			public override bool IsTransferable(ACommand c) {
 				if (c is RobotStateCommand) {
 					var c1 = (RobotStateCommand)c;
-					cache.Cached(c, new RobotStateCommandV1_0(c1.X, c1.Y, c1.HIT_POINTS, c1.POWER, c1.TURN, c1.MAX_TURN, c1.COUNT_OF_LIFE_ROBOTS, c1.ARRAY_IDS_OF_LIFE_ROBOTS, c1.END_LAP_COMMAND));
+				    RobotStateCommandV1_0 c2 = new RobotStateCommandV1_0(c1.X, c1.Y, c1.HIT_POINTS, c1.POWER, c1.TURN, c1.MAX_TURN,
+				                                                         c1.COUNT_OF_LIFE_ROBOTS, c1.ARRAY_IDS_OF_LIFE_ROBOTS,
+				                                                         c1.END_LAP_COMMAND);
+				    c2.MORE = c1.MORE;
+
+                    cache.Cached(c, c2);
 					return true;
 				}
 				return false;
@@ -73,7 +66,7 @@ namespace BaseLibrary.command.v1._0 {
 		    if (END_LAP_COMMAND != null) {
                 endLapCommand = (EndLapCommandV1_0) EndLapCommandV1_0.FACTORY.Transfer(this.END_LAP_COMMAND);
 		    }
-			return ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, X, Y, HIT_POINTS, POWER, TURN, MAX_TURN, COUNT_OF_LIFE_ROBOTS, ARRAY_IDS_OF_LIFE_ROBOTS, endLapCommand, MORE);
+            return ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, X, Y, HIT_POINTS, POWER, TURN, MAX_TURN, COUNT_OF_LIFE_ROBOTS, ARRAY_IDS_OF_LIFE_ROBOTS, endLapCommand, SerializeMore());
 		}
 	}
 }

@@ -1,33 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BaseLibrary;
 using BaseLibrary.battlefield;
+using BaseLibrary.protocol;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
 using Point = BaseLibrary.utils.euclidianSpaceStruct.Point;
 using PointF = System.Drawing.PointF;
 
-namespace ObstacleMod.obtacle {
+namespace ObtacleMod.obtacle {
+    [ModDescription()]
     public class Wall : IMoveInfluence, IShotInfluence {
-        private static readonly Image icon = new Bitmap(11, 11);
-        private static readonly RectangleF iconRectangle = new RectangleF(0, 0, icon.Width, icon.Height);
-
-        static Wall() {
-            Graphics graphics = Graphics.FromImage(icon);
-            graphics.FillRectangle(new SolidBrush(Color.Red), 0, 0, icon.Width, icon.Height);
-            Pen black = new Pen(Color.Black, 1);
-           
-            int x = 0;
-
-            for (int y = 0; y < icon.Height; y += 3) {
-                graphics.DrawLine(black, 0, y, icon.Width, y);
-                for (x = x % icon.Width; x < icon.Width; x += 4) {
-                    graphics.DrawLine(black, x, y + 0, x, y + 3);
+        public const string COMMAND_NAME = "WALL";
+        private static readonly AObtacleFactory FACTORY = new ObtacleFactory();
+        private class ObtacleFactory : AObtacleFactory {
+            internal ObtacleFactory() {}
+            public override bool IsDeserializable(string s) {
+                string[] rest;
+                if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {
+                    int x, y;
+                    if (rest.Length == 2 && int.TryParse(rest[0], out x) && int.TryParse(rest[1], out y)) {
+                        cache.Cached(s, new Wall(x,y));
+                        return true;
+                    }
                 }
+                return false;
             }
+
+            public override bool IsTransferable(IObtacle c) {
+                Wall c2 = c as Wall;
+                if (c2 != null) {
+                    cache.Cached(c, c2);
+                    return true;
+                }
+                return false;
+            }
+
+            public override bool IsSerializeable(IObtacle c) {
+                Wall c2 = c as Wall;
+                if (c2 != null) {
+                    String serialized = ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, c2.Y, c2.X);
+                    cacheForSerialize.Cached(c, serialized);
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private static readonly Cache<PointF, Image> CACHE = new Cache<PointF, Image>(true);
+        static Wall() {
+            ObtaclesInSight.OBTACLE_FACTORIES.RegisterCommand(FACTORY);
         }
 
         public string TypeName => this.GetType().ToString();
@@ -62,7 +84,34 @@ namespace ObstacleMod.obtacle {
 
         public void Draw(Graphics graphics, float xScale, float yScale) {
             PointF leftUpCorner = new PointF(X * xScale, Y * yScale);
-            graphics.DrawImage(icon, new RectangleF(leftUpCorner.X, leftUpCorner.Y, xScale, yScale), iconRectangle, GraphicsUnit.Pixel);
+            PointF scale = new PointF(xScale, yScale);
+            Image drawingIcon;
+            if (!CACHE.GetCached(scale, out drawingIcon)) {
+                drawingIcon = new Bitmap((int)xScale,  (int)yScale);
+                Image icon = drawIcon();
+                Graphics.FromImage(drawingIcon)
+                        .DrawImage(icon, new RectangleF(0, 0, xScale, yScale),
+                                   new RectangleF(0, 0, icon.Width, icon.Height), GraphicsUnit.Pixel);
+                CACHE.Cached(scale, icon);
+            }
+            graphics.DrawImage(drawingIcon, leftUpCorner);
+        }
+
+        private Image drawIcon() {
+            Image icon = new Bitmap(11, 11);
+            Graphics graphics = Graphics.FromImage(icon);
+            graphics.FillRectangle(new SolidBrush(Color.Red), 0, 0, icon.Width, icon.Height);
+            Pen black = new Pen(Color.Black, 1);
+
+            int x = 0;
+
+            for (int y = 0; y < icon.Height; y += 3) {
+                graphics.DrawLine(black, 0, y, icon.Width, y);
+                for (x = x % icon.Width; x < icon.Width; x += 4) {
+                    graphics.DrawLine(black, x, y + 0, x, y + 3);
+                }
+            }
+            return icon;
         }
     }
 }

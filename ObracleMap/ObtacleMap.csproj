@@ -7,8 +7,8 @@
     <ProjectGuid>{F02E8B50-31E4-4A98-83A9-11E6B22D6544}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ObracleMap</RootNamespace>
-    <AssemblyName>ObracleMap</AssemblyName>
+    <RootNamespace>ObtacleMap</RootNamespace>
+    <AssemblyName>ObtacleMap</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -65,6 +65,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -81,9 +82,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ObstacleMod\ObstacleMod.csproj">
+    <ProjectReference Include="..\ObstacleMod\ObtacleMod.csproj">
       <Project>{3f280b33-4be8-4814-a216-3478aeeff068}</Project>
-      <Name>ObstacleMod</Name>
+      <Name>ObtacleMod</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,7 +10,7 @@ using BaseLibrary.command.equipment;
 using BaseLibrary.equip;
 using BaseLibrary.utils;
 using BattlefieldLibrary.battlefield.robot;
-using ObstacleMod;
+using ObtacleMod;
 using ServerLibrary.config;
 using ViewerLibrary.serializers;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
@@ -19,6 +19,10 @@ using Point = BaseLibrary.utils.euclidianSpaceStruct.Point;
 
 namespace BattlefieldLibrary.battlefield {
 	public abstract partial class Battlefield {
+
+        static Battlefield() {
+            ModUtils.LoadMods();
+        }
         public const int ARENA_MAX_SIZE = 1000;
 
 
@@ -40,7 +44,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected List<BattlefieldRobot> robots = new List<BattlefieldRobot>();
 		protected List<BattlefieldRobot> pendingRobots = new List<BattlefieldRobot>();
-        protected ObtacleManager obtacleManager = new ObtacleManager(new IObtacle[0]);
+        protected ObtacleManager obtacleManager;
 
         private int idForRobot = 0;
 		private int activeRobots = 0;
@@ -65,7 +69,7 @@ namespace BattlefieldLibrary.battlefield {
 	    public readonly int MAX_ROBOTS;
 	    public readonly int ROBOTS_IN_TEAM;
 	    public readonly int MAX_TURN;
-	    public readonly int MATCHES;
+	    public readonly int MAX_LAP;
 
 
         protected BattlefieldTurn battlefieldTurn;
@@ -81,23 +85,23 @@ namespace BattlefieldLibrary.battlefield {
         MinerFightCommandVisitor minerFightCommandVisitor;
 	    RepairmanFightCommandVisitor repairmanFightCommandVisitor;
 
-	    protected Battlefield(int maxRobots, int maxTurn, int robotsInTeam, String equipmentConfigFile) {
-            this.ROBOTS_IN_TEAM = robotsInTeam;
-            this.MAX_ROBOTS = maxRobots;
-            this.MATCHES = 3;
-            MAX_TURN = maxTurn;
-            ServerConfig.SetEquipmentFromFile(equipmentConfigFile);
+	    protected Battlefield(BattlefieldConfig battlefielConfig) {
+            this.ROBOTS_IN_TEAM = battlefielConfig.ROBOTS_IN_TEAM;
+            this.MAX_ROBOTS = battlefielConfig.MAX_ROBOTS;
+            this.MAX_LAP = battlefielConfig.MAX_LAP;
+            MAX_TURN = battlefielConfig.MAX_TURN;
+	        if (battlefielConfig.EQUIPMENT_CONFIG_FILE != null) {
+	            ServerConfig.SetEquipmentFromFile(battlefielConfig.EQUIPMENT_CONFIG_FILE);
+	        } else {
+	            ServerConfig.SetDefaultEquipment();
+	        }
+	        if (battlefielConfig.OBTACLE_CONFIG_FILE != null) {
+	            obtacleManager = new ObtacleManager(ObtacleManager.LoadObtaclesFromFile(battlefielConfig.OBTACLE_CONFIG_FILE));
+	        } else {
+                obtacleManager = new ObtacleManager(new IObtacle[0]);
+            }
 	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS);
 	    }
-
-        protected Battlefield(int maxRobots, int maxTurn, int robotsInTeam) {
-            this.ROBOTS_IN_TEAM = robotsInTeam;
-            this.MAX_ROBOTS = maxRobots;
-            this.MATCHES = 3;
-            MAX_TURN = maxTurn;
-            ServerConfig.SetDefaultEquipment();
-            battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS);
-        }
 
         private void battlefieldSetting(Motor[] motors, Gun[] guns, Armor[] armors, RepairTool[] repairTools, MineGun[] mineGuns) {
             this.Motors = motors;
@@ -407,7 +411,7 @@ namespace BattlefieldLibrary.battlefield {
 
 
         protected async void running() {
-			while (match <= MATCHES) {
+			while (match <= MAX_LAP) {
 				await Task.Yield();
 				await Task.WhenAny(Task.Delay(TIME_FOR_WAIT), allCommandRecieve.Task);
 				lock (receivedCommands) {
@@ -445,6 +449,7 @@ namespace BattlefieldLibrary.battlefield {
                             endLapCommand = new EndLapCommand(LapState, r.Gold, r.Score);
                         }
 					    RobotStateCommand command = AddToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
+					    AddObtacleInSight(command, r);
 						r.SuperNetworkStream.SendCommandAsyncDontWait(command);
 						r.LastRequestAt = NOW;
 					}
@@ -473,7 +478,7 @@ namespace BattlefieldLibrary.battlefield {
                     receivedCommands.Clear();
                 }
 			}
-            if (match > MATCHES) {
+            if (match > MAX_LAP) {
                 writer.Flush();
                 writer.Close();
                 _end = true;
@@ -488,7 +493,7 @@ namespace BattlefieldLibrary.battlefield {
             foreach (BattlefieldRobot r in robots) {
                 r.HitPoints = Math.Max(0, r.HitPoints);
             }
-            return newLapState();
+            return NewLapState();
         }
 
 
@@ -499,11 +504,30 @@ namespace BattlefieldLibrary.battlefield {
             r.SuperNetworkStream.Close();
         }
 
+
+	    protected void AddObtacleInSight(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
+	        Point[] points = generateSignPoints(r);
+            ObtaclesInSight obtaclesInSight = new ObtaclesInSight(obtacleManager.GetObtaclesInPoints(points));
+            obtaclesInSight.AddToRobotStateCommand(robotStateCommand);
+	    }
+
+	    private static Point[] generateSignPoints(BattlefieldRobot r) {
+	        Point[] sight = new Point[11*11];
+	        int index = 0;
+	        for (int x = -5; x <= 5; x++) {
+	            for (int y = -5; y <= 5; y++) {
+	                sight[index++] = new Point((int) r.X+x, (int) r.Y+y);
+	            }
+	        }
+	        return sight;
+	    }
+
         protected abstract RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r);
 
         protected abstract InitAnswerCommand AddToInitAnswereCommand(InitAnswerCommand initAnswerCommand);
 
-        protected abstract LapState newLapState();
+
+        protected abstract LapState NewLapState();
 
     }
 }

@@ -17,17 +17,19 @@ namespace FlagCapcureBattlefield.battlefield {
             positionInBattleTurn = BattlefieldTurn.RegisterMore();
         }
 
-        private readonly Flag[] flags;
-
-	    public FlagCapture(int maxRobots, int robotsInTeam, Flag[] flags) : base(maxRobots, ServerConfig.MAX_LAP, robotsInTeam) {
-            this.flags = flags;
-            check();
+        private static Flag[] fromMoreToFlags(object[] more) {
+            return (
+                from m in more
+                where (m is Flag)
+                select m as Flag).ToArray();
         }
 
-	    public FlagCapture(int maxRobots, int robotsInTeam, String equipmentConfigFile, Flag[] flags) : base(maxRobots, ServerConfig.MAX_LAP, robotsInTeam, equipmentConfigFile) {
-	        this.flags = flags;
-	        check();
-	    }
+        private readonly Flag[] flags;
+
+	    public FlagCapture(BattlefieldConfig battlefieldConfig) : base(battlefieldConfig) {
+            this.flags = fromMoreToFlags(battlefieldConfig.MORE);
+            check();
+        }
 
 	    protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        return robotStateCommand;
@@ -37,7 +39,7 @@ namespace FlagCapcureBattlefield.battlefield {
 	        return initAnswerCommand;
 	    }
 
-		protected override LapState newLapState() {
+		protected override LapState NewLapState() {
 			
 			if (turn > MAX_TURN) {
 				return LapState.LAP_OUT;

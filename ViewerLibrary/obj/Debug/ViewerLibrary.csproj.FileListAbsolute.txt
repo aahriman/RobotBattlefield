@@ -4,3 +4,4 @@ C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\bin\Debug\Newtonsoft.
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\bin\Debug\Newtonsoft.Json.xml
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\obj\Debug\RobotViewerLibrary.dll
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\obj\Debug\RobotViewerLibrary.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\obj\Debug\ViewerLibrary.csprojResolveAssemblyReference.cache

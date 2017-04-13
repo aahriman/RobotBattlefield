@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AServer.cs" />
+    <Compile Include="battlefield\BattlefieldConfig.cs" />
     <Compile Include="battlefield\Battlefield.cs" />
     <Compile Include="battlefield\Battlefield.Visitors.cs" />
     <Compile Include="battlefield\BattlefieldTurn.cs" />

@@ -4,7 +4,7 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.command.v1._0 {
 	internal class EndMatchCommandV1_0 : EndMatchCommand, ACommand.Sendable {
-	    public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY;
+	    public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 

@@ -8,3 +8,4 @@ C:\Users\vojtech\Desktop\skola\C#\RobotArena\Spot\bin\Debug\BaseLibrary.pdb
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\Spot\bin\Debug\ClientLibrary.pdb
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\Spot\obj\Debug\Spot.exe
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\Spot\obj\Debug\Spot.pdb
+C:\Users\vojtech\Desktop\skola\C#\RobotBattlefield\Spot\bin\Debug\Spot.exe.config

@@ -6,7 +6,7 @@ using BaseLibrary.visitors;
 namespace BaseLibrary.command {
     public class RobotStateCommand : ACommand{
 
-        private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
+        protected static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
         public static int RegisterSubCommandFactory(ISubCommandFactory subCommandFactory) {
             int position = SUB_COMMAND_FACTORIES.Count;
@@ -35,6 +35,31 @@ namespace BaseLibrary.command {
             COUNT_OF_LIFE_ROBOTS = countOfLefeRobots;
             ARRAY_IDS_OF_LIFE_ROBOTS = arrayIdsOfLifeRobots;
             END_LAP_COMMAND = endLapCommand;
+            MORE = new object[SUB_COMMAND_FACTORIES.Count];
+        }
+
+
+        protected String[] SerializeMore() {
+            String[] serializedMore = new string[MORE.Length];
+            for (int i = 0; i < MORE.Length; i++) {
+                foreach (var factory in SUB_COMMAND_FACTORIES) {
+                    if (factory.Serialize(MORE[i], out serializedMore[i])) {
+                        break;
+                    }
+                    
+                }
+            }
+            return serializedMore;
+        }
+
+        protected void DeserializeMore(String[] serializedMore, Object[] more) {
+            foreach (var moreString in serializedMore) {
+                foreach (var subCommandFactory in SUB_COMMAND_FACTORIES) {
+                    if (subCommandFactory.Deserialize(moreString, more)) {
+                        break;
+                    }
+                }
+            }
         }
 
         public sealed override void accept(ICommandVisitor accepter) {

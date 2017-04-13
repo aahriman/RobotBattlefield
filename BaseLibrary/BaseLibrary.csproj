@@ -48,6 +48,7 @@
     <Compile Include="command\AckCommand.cs" />
     <Compile Include="command\ACommand.cs" />
     <Compile Include="command\ACommandFactory.cs" />
+    <Compile Include="command\ModDescription.cs" />
     <Compile Include="protocol\Factories.cs" />
     <Compile Include="command\DriveAnswerCommand.cs" />
     <Compile Include="command\DriveCommand.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="utils\EuclideanSpaceUtils.cs" />
     <Compile Include="utils\euclidianSpaceStruct\Point.cs" />
     <Compile Include="utils\euclidianSpaceStruct\Segment.cs" />
+    <Compile Include="utils\ModUtils.cs" />
     <Compile Include="utils\Parser.cs" />
     <Compile Include="utils\ProtocolV1_0Utils.cs" />
     <Compile Include="utils\RobotUtils.cs" />

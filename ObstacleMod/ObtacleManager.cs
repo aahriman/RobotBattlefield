@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.v1._0;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
-using BaseLibrary.utils.protocolV1_0Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ObstacleMod {
+namespace ObtacleMod {
 
     public class ObtacleManager {
         public static readonly int ROBOT_STATE_COMMAND_REGISTRED_POSITION;
@@ -128,6 +124,23 @@ namespace ObstacleMod {
 
         public void AddScanObtacle(IScanInfluence obtacle) {
             this.scanObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+        }
+
+        public IObtacle[] GetObtaclesInPoints(Point[] points) {
+            List<IObtacle> obtacles = new List<IObtacle>();
+            IMoveInfluence moveInfluenceObtacle;
+            IScanInfluence scanInfluenceObtacle;
+            IShotInfluence shotInfluenceObtacle;
+            foreach (var point in points) {
+                if (movementObtacles.TryGetValue(point, out moveInfluenceObtacle)) {
+                    obtacles.Add(moveInfluenceObtacle);
+                } else if (scanObtacles.TryGetValue(point, out scanInfluenceObtacle)) {
+                    obtacles.Add(scanInfluenceObtacle);
+                } else if (shotObtacles.TryGetValue(point, out shotInfluenceObtacle)) {
+                    obtacles.Add(shotInfluenceObtacle);
+                }
+            }
+            return obtacles.ToArray();
         }
 
         public Point StartRobotPosition(int maxX, int maxY) {

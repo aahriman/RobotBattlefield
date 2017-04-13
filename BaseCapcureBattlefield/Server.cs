@@ -21,12 +21,8 @@ namespace BaseCapcureBattlefield {
             return new GameTypeCommand(battlefield.ROBOTS_IN_TEAM, GameType.CAPTURE_BASE);
         }
 
-        protected override Battlefield NewBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, params object[] more) {
-            return new BaseCapture(ROBOT_TO_ONE_ARENA, ROBOTS_IN_TEAM, more);
-        }
-
-        protected override Battlefield NewBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, string EQUIPMENT_FILE, params object[] more) {
-            return new BaseCapture(ROBOT_TO_ONE_ARENA, ROBOTS_IN_TEAM, EQUIPMENT_FILE, more);
+        protected override Battlefield NewBattlefield(BattlefieldConfig battlefielConfig) {
+            return new BaseCapture(battlefielConfig);
         }
     }
 }

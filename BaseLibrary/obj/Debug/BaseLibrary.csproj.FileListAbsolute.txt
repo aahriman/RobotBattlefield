@@ -7,4 +7,3 @@ C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\bin\Debug\BaseLibrary.d
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\bin\Debug\BaseLibrary.pdb
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\obj\Debug\BaseLibrary.dll
 C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\obj\Debug\BaseLibrary.pdb
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\BaseLibrary\obj\Debug\BaseLibrary.csprojResolveAssemblyReference.cache
