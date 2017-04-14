@@ -1,0 +1,27 @@
+CZ
+
+Navázání spojení
+Na zaèátku je nutné navázat spojení se serverem. To se provede pøes metodu \code{connect()} (v pøípadì, že server bìøí na standardní adrese = ::1, a standartním portu = 2000). Nebo \code{connect(port)} (standardní adresa, ale jiný port), nebo \code{connect(ip, port)} (vzdálená adresa a port).
+
+\example{
+Chci se pøipojit ke kamarádovy, který založit standardní arénu a kamarád má ip adresu 198.127.0.10 , pak použiji metodu \code{connect("198.127.0.10", 2000)}.
+}
+
+Z metody \code{connect} se vrátí \code{GameTypeCommand}, který obsahuje druh hry (jeden z \code{DEADMATCH, CAPTURE_BASE, CAPTURE_FLAG}). A poèet robotù, které mohu pøipojit (o psaní teamù níže).
+
+
+Jak ovládat robota:
+
+Jednoduchý pøíklad, jak ovládat robota je v ukázce Rabbit.cs (ten se pouze pomalu hýbì). Pøípadnì Spot.cs (ten se hýbe i støílí a scenuje).
+
+
+Støelba:
+Jízda:
+Scen:
+
+Psaní teamù
+
+Poøadí vyhodnocování akcí
+
+{* TODO (pro scan, ukázat obrázek, jak se to vyhodnotilo, a v jaké situaci jsou) *}
+Popis jednotlivých pøíkazù
