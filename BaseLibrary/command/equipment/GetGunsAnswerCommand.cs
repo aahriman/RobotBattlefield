@@ -3,7 +3,7 @@ using BaseLibrary.equip;
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
-    public class GetGunsAnswerCommand : ACommand {
+    public class GetGunsAnswerCommand : AEquipmentCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 

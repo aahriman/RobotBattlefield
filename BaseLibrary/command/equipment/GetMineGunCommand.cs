@@ -2,7 +2,7 @@
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
-    public class GetMineGunCommand : ACommand {
+    public class GetMineGunCommand : AEquipmentCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 

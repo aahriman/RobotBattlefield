@@ -2,7 +2,7 @@
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
-    public class GetRepairToolCommand : ACommand{
+    public class GetRepairToolCommand : AEquipmentCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
