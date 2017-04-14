@@ -33,8 +33,8 @@ namespace BattlefieldLibrary.battlefield {
 		private const int TIME_FOR_WAIT = 100; //ms. How long wait for receive command in one lap
 		private static readonly TimeSpan MAX_WAITING_TIME = new TimeSpan(0, 0, 0, 0, 800); //How long wait for receive command before disconnect
 
-		protected int match = 0;
-	    protected LapState LapState;
+		protected int lap = 0;
+	    //protected LapState LapState;
 
 		public Motor[] Motors { get; private set; }
 		public Gun[] Guns { get; private set; }
@@ -158,7 +158,7 @@ namespace BattlefieldLibrary.battlefield {
 			try {
 				ACommand command = await r.SuperNetworkStream.RecieveCommandAsync();
 				
-				if (command is GetArmorsCommand || command is GetMotorsCommand || command is GetGunsCommand || command is GetMineGunCommand || command is GetRepairToolCommand) {
+				if (command is AEquipmentCommand) {
 					command.accept(GetActualArenaCommandVisitor(r), r);
 				    listen(r);
 				}  else {
@@ -255,7 +255,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected void newBattle() {
 			turn = 0;
-		    match++;
+		    lap++;
 			foreach (BattlefieldRobot r in robots) {
 				r.Power = 0;
 				r.WantedPower = 0;
@@ -320,72 +320,6 @@ namespace BattlefieldLibrary.battlefield {
 			return srandardizeDegree(AngleUtils.Angle(x1, y1, x2, y2));
 		}
 
-		protected void moving() {
-			foreach (BattlefieldRobot r in robots) {
-				if (r.HitPoints > 0) {
-					if (r.Power > r.WantedPower) {
-						r.Power = Math.Max(r.Power - r.Motor.SPEED_DOWN, r.WantedPower);
-					} else {
-						r.Power = Math.Min(r.Motor.SPEED_UP_TO, r.WantedPower);
-						r.Power = Math.Min(r.Power + r.Motor.SPEED_UP, r.WantedPower);
-					}
-				}
-                
-				obtacleManager.MoveChange(r, turn, r.X, r.Y, r.X + RobotUtils.getSpeedX(r), r.Y + RobotUtils.getSpeedY(r));
-				if (r.X < 0 || r.X >= 1000 || r.Y < 0 || r.Y >= 1000) {
-					r.HitPoints -= (int) Math.Max(1, 5 * r.Power/100.0);
-					r.Power = 0;
-					r.X = Math.Max(r.X, 0);
-					r.X = Math.Min(r.X, 999);
-					r.Y = Math.Max(r.Y, 0);
-					r.Y = Math.Min(r.Y, 999);
-				}
-			}
-		}
-
-		protected void shotting() {
-			List<Bullet> bulletList;
-			if (heapBullet.TryGetValue(turn, out bulletList)) {
-				foreach (Bullet bullet in bulletList) {
-					bullet.TANK.BulletsNow--;
-					foreach (BattlefieldRobot r in robots) {
-						if (r.HitPoints > 0) {
-							double distance = Math.Sqrt(Math.Pow(r.X - bullet.TO_X, 2) + Math.Pow(r.Y - bullet.TO_Y, 2));
-							foreach (Zone zone in bullet.TANK.Gun.ZONES) {
-								if (zone.DISTANCE > distance) {
-									r.HitPoints -= zone.EFFECT;
-									if (bullet.TANK != r) {
-										bullet.TANK.Score += zone.EFFECT;
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-	    protected void detonateMines() {
-            foreach (Mine mine in detonatedMines) {
-                mine.MINER.MinesNow--;
-                foreach (BattlefieldRobot r in robots) {
-                    if (r.HitPoints > 0) {
-                        double distance = Math.Sqrt(Math.Pow(r.X - mine.X, 2) + Math.Pow(r.Y - mine.Y, 2));
-                        foreach (Zone zone in mine.MINER.MineGun.ZONES) {
-                            if (zone.DISTANCE > distance) {
-                                r.HitPoints -= zone.EFFECT;
-                                if (mine.MINER != r) {
-                                    mine.MINER.Score += zone.EFFECT;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         protected virtual void handleEndTurn() {
 	        lock (writer) {
 	            foreach (BattlefieldRobot r in robots) {
@@ -409,93 +343,193 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
+	    protected List<BattlefieldRobot> processCommands() {
+            battlefieldTurn = new BattlefieldTurn(turn);
 
-        protected async void running() {
-			while (match <= MAX_LAP) {
-				await Task.Yield();
-				await Task.WhenAny(Task.Delay(TIME_FOR_WAIT), allCommandRecieve.Task);
-				lock (receivedCommands) {
+            List<BattlefieldRobot> convertedRobots = new List<BattlefieldRobot>();
 
-                    turn++;
-                    LapState = newLap();
-                    battlefieldTurn = new BattlefieldTurn(turn);
-
-                    IEnumerable<BattlefieldRobot> robotsWithCommand = (IEnumerable<BattlefieldRobot>) receivedCommands.Keys;
-					foreach (KeyValuePair<BattlefieldRobot, ACommand> pair in receivedCommands) {
-						pair.Value.accept(GetActualArenaCommandVisitor(pair.Key), pair.Key);           
-                    }
-
-                    switch (_battlefieldState) {
-                        case BattlefieldState.GET_COMMAND:
-                            _battlefieldState = BattlefieldState.FIGHT;
-                            robotsWithCommand = this.robots;
+            foreach (KeyValuePair<BattlefieldRobot, ACommand> pair in receivedCommands) {
+                BattlefieldRobot robot = pair.Key;
+                ACommand command = pair.Value;
+                command.accept(GetActualArenaCommandVisitor(robot), robot);
+                if (command is InitCommand) {
+                    switch (pair.Key.ROBOT_TYPE) {
+                        case RobotType.MINER:
+                            convertedRobots.Add(new Miner(robot));
                             break;
-                        case BattlefieldState.MERCHANT:
-                            _battlefieldState = BattlefieldState.FIGHT;
+                        case RobotType.REPAIRMAN:
+                            convertedRobots.Add(new Repairman(robot));
+                            break;
+                        case RobotType.TANK:
+                            convertedRobots.Add(new Tank(robot));
                             break;
                     }
-
-                    var aliveRobots = getAliveRobots();
-					int[] aliveRobotsIds = new int[aliveRobots.Count];
-					for (int i = 0; i < aliveRobotsIds.Length; i++) {
-						aliveRobotsIds[i] = aliveRobots[i].ID;
-					}
-
-					DateTime NOW = new DateTime();
-					foreach (BattlefieldRobot r in robotsWithCommand) {
-					    EndLapCommand endLapCommand = null;
-
-                        if (LapState != LapState.NONE) {
-                            endLapCommand = new EndLapCommand(LapState, r.Gold, r.Score);
-                        }
-					    RobotStateCommand command = AddToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
-					    AddObtacleInSight(command, r);
-						r.SuperNetworkStream.SendCommandAsyncDontWait(command);
-						r.LastRequestAt = NOW;
-					}
-
-					foreach (BattlefieldRobot r in robots) {
-						if (r.HitPoints > 0) {
-							if (r.LastRequestAt.Add(MAX_WAITING_TIME).CompareTo(NOW) < 0) {
-								disconnect(r);
-							}
-						}
-					}
-
-                    handleEndTurn();
-
-                    allCommandRecieve = new TaskCompletionSource<Boolean>();
-                    if (LapState != LapState.NONE) {
-                        newBattle();
-                        _battlefieldState = BattlefieldState.MERCHANT;
-                    }
-
-                    foreach (BattlefieldRobot r in robotsWithCommand) {
-						listen(r);
-					}
-
-                    
-                    receivedCommands.Clear();
+                } else {
+                    convertedRobots.Add(robot);
                 }
-			}
-            if (match > MAX_LAP) {
-                writer.Flush();
-                writer.Close();
-                _end = true;
             }
-		}
+	        return convertedRobots;
+	    }
 
-        protected LapState newLap() {
-            turn++;
-            moving();
-            shotting();
-            detonateMines();
-            foreach (BattlefieldRobot r in robots) {
-                r.HitPoints = Math.Max(0, r.HitPoints);
+
+        protected void changeBattlefieldState() {
+            switch (_battlefieldState) {
+                case BattlefieldState.GET_COMMAND:
+                    _battlefieldState = BattlefieldState.FIGHT;
+                    break;
+                case BattlefieldState.MERCHANT:
+                    _battlefieldState = BattlefieldState.FIGHT;
+                    break;
             }
-            return NewLapState();
         }
 
+
+        protected abstract void afterProcessCommand();
+
+        protected void moving() {
+            foreach (BattlefieldRobot r in robots) {
+                if (r.HitPoints > 0) {
+                    if (r.Power > r.WantedPower) {
+                        r.Power = Math.Max(r.Power - r.Motor.SPEED_DOWN, r.WantedPower);
+                    } else {
+                        r.Power = Math.Min(r.Motor.SPEED_UP_TO, r.WantedPower);
+                        r.Power = Math.Min(r.Power + r.Motor.SPEED_UP, r.WantedPower);
+                    }
+                }
+
+                obtacleManager.MoveChange(r, turn, r.X, r.Y, r.X + RobotUtils.getSpeedX(r), r.Y + RobotUtils.getSpeedY(r));
+                if (r.X < 0 || r.X >= 1000 || r.Y < 0 || r.Y >= 1000) {
+                    r.HitPoints -= (int)Math.Max(1, 5 * r.Power / 100.0);
+                    r.Power = 0;
+                    r.X = Math.Max(r.X, 0);
+                    r.X = Math.Min(r.X, 999);
+                    r.Y = Math.Max(r.Y, 0);
+                    r.Y = Math.Min(r.Y, 999);
+                }
+            }
+        }
+
+        protected void shotting() {
+            List<Bullet> bulletList;
+            if (heapBullet.TryGetValue(turn, out bulletList)) {
+                foreach (Bullet bullet in bulletList) {
+                    bullet.TANK.BulletsNow--;
+                    foreach (BattlefieldRobot r in robots) {
+                        if (r.HitPoints > 0) {
+                            double distance = Math.Sqrt(Math.Pow(r.X - bullet.TO_X, 2) + Math.Pow(r.Y - bullet.TO_Y, 2));
+                            foreach (Zone zone in bullet.TANK.Gun.ZONES) {
+                                if (zone.DISTANCE > distance) {
+                                    r.HitPoints -= zone.EFFECT;
+                                    if (bullet.TANK != r) {
+                                        bullet.TANK.Score += zone.EFFECT;
+                                    }
+                                    r.HitPoints = Math.Max(0, r.HitPoints);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        protected void detonatingMines() {
+            foreach (Mine mine in detonatedMines) {
+                mine.MINER.MinesNow--;
+                foreach (BattlefieldRobot r in robots) {
+                    if (r.HitPoints > 0) {
+                        double distance = Math.Sqrt(Math.Pow(r.X - mine.X, 2) + Math.Pow(r.Y - mine.Y, 2));
+                        foreach (Zone zone in mine.MINER.MineGun.ZONES) {
+                            if (zone.DISTANCE > distance) {
+                                r.HitPoints -= zone.EFFECT;
+                                if (mine.MINER != r) {
+                                    mine.MINER.Score += zone.EFFECT;
+                                }
+                                r.HitPoints = Math.Max(0, r.HitPoints);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        protected abstract void afterMovingAndDamaging();
+
+	    protected DateTime sendRobotStateCommand(IEnumerable<BattlefieldRobot> robotsWithCommand, LapState lapState) {
+            List<BattlefieldRobot> aliveRobots = getAliveRobots();
+            int[] aliveRobotsIds = new int[aliveRobots.Count];
+            for (int i = 0; i < aliveRobotsIds.Length; i++) {
+                aliveRobotsIds[i] = aliveRobots[i].ID;
+            }
+            DateTime NOW = new DateTime();
+            foreach (BattlefieldRobot r in robotsWithCommand) {
+                EndLapCommand endLapCommand = null;
+
+                if (lapState != LapState.NONE) {
+                    endLapCommand = new EndLapCommand(lapState, r.Gold, r.Score);
+                }
+                RobotStateCommand command = AddToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
+                AddObtacleInSight(command, r);
+                r.SuperNetworkStream.SendCommandAsyncDontWait(command);
+                r.LastRequestAt = NOW;
+            }
+	        return NOW;
+	    }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="NOW">Datetime witch is set in sendRobotStateCommand</param>
+	    protected void disconnectTimeoutedAliveRobots(DateTime NOW) {
+            List<BattlefieldRobot> aliveRobots = getAliveRobots();
+            foreach (BattlefieldRobot r in aliveRobots) {
+	            if (r.LastRequestAt.Add(MAX_WAITING_TIME).CompareTo(NOW) < 0) {
+
+	                disconnect(r);
+	            }
+	        }
+	    }
+
+	    protected void singleTurnCycle() {
+	        lock (receivedCommands) {
+	            List<BattlefieldRobot> robotsWithCommand = processCommands();
+                afterProcessCommand();
+	            changeBattlefieldState();
+	            moving();
+	            shotting();
+	            detonatingMines();
+	            afterMovingAndDamaging();
+	            LapState lapState = NewLapState();
+	            DateTime now = sendRobotStateCommand(robotsWithCommand, lapState);
+	            disconnectTimeoutedAliveRobots(now);
+	            handleEndTurn();
+
+                allCommandRecieve = new TaskCompletionSource<Boolean>();
+                if (lapState != LapState.NONE) {
+                    newBattle();
+                    _battlefieldState = BattlefieldState.MERCHANT;
+                }
+
+                foreach (BattlefieldRobot r in robotsWithCommand) {
+                    listen(r);
+                }
+
+                receivedCommands.Clear();
+            }
+	    }
+
+        protected async void running() {
+			while (lap <= MAX_LAP) {
+				await Task.Yield();
+				await Task.WhenAny(Task.Delay(TIME_FOR_WAIT), allCommandRecieve.Task);
+				
+                singleTurnCycle();
+			}
+            writer.Flush();
+            writer.Close();
+            _end = true;
+		}
 
         protected async void disconnect(BattlefieldRobot r) {
             robots.Remove(r);

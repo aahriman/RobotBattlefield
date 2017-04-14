@@ -56,7 +56,7 @@
       <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ObstacleMod\ObtacleMod.csproj">
+    <ProjectReference Include="..\ObtacleMod\ObtacleMod.csproj">
       <Project>{3f280b33-4be8-4814-a216-3478aeeff068}</Project>
       <Name>ObtacleMod</Name>
     </ProjectReference>
