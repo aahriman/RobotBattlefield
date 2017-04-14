@@ -1,6 +1,6 @@
 ﻿using BaseLibrary.protocol;
 
-namespace ObstacleMod {
+namespace ObtacleMod {
     public abstract class AObtacleFactory : AFactory<IObtacle, IObtacle> {
         protected Factories<IObtacle, IObtacle> comandsFactory = new Factories<IObtacle, IObtacle>();
     }
