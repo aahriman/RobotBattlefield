@@ -1,7 +1,0 @@
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\bin\Release\RobotViewerLibrary.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\bin\Release\RobotViewerLibrary.pdb
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\bin\Release\Newtonsoft.Json.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\bin\Release\Newtonsoft.Json.xml
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\obj\Release\ViewerLibrary.csprojResolveAssemblyReference.cache
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\obj\Release\RobotViewerLibrary.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ViewerLibrary\obj\Release\RobotViewerLibrary.pdb
