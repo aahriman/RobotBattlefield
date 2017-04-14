@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerLibrary", "ServerLibr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewerLibrary", "ViewerLibrary\ViewerLibrary.csproj", "{E83D7CAB-DBDE-4E18-BCBC-59CF6C247C2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObtacleMod", "ObstacleMod\ObtacleMod.csproj", "{3F280B33-4BE8-4814-A216-3478AEEFF068}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObtacleMod", "ObtacleMod\ObtacleMod.csproj", "{3F280B33-4BE8-4814-A216-3478AEEFF068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObtacleMap", "ObracleMap\ObtacleMap.csproj", "{F02E8B50-31E4-4A98-83A9-11E6B22D6544}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObtacleMap", "ObtacleMap\ObtacleMap.csproj", "{F02E8B50-31E4-4A98-83A9-11E6B22D6544}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadmatchBattlefield", "DeadmatchBattlefield\DeadmatchBattlefield.csproj", "{D11F080D-8675-4859-9B79-F20FDEC69ADA}"
 EndProject
