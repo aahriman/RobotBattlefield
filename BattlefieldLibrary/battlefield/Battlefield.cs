@@ -43,11 +43,16 @@ namespace BattlefieldLibrary.battlefield {
         public RepairTool[] RepairTools { get; private set; }
 
         protected List<BattlefieldRobot> robots = new List<BattlefieldRobot>();
-		protected List<BattlefieldRobot> pendingRobots = new List<BattlefieldRobot>();
+	    protected Dictionary<int, BattlefieldRobot> robotsById = new Dictionary<int, BattlefieldRobot>();
+        protected Dictionary<string, int> robotTeamIdByTeamName = new Dictionary<string, int>();
+        protected Dictionary<int, List<BattlefieldRobot>> robotsByTeamId = new Dictionary<int, List<BattlefieldRobot>>();
+        protected List<BattlefieldRobot> pendingRobots = new List<BattlefieldRobot>();
         protected ObtacleManager obtacleManager;
 
-        private int idForRobot = 0;
+        private int idForRobot = 1;
 		private int activeRobots = 0;
+
+	    private readonly bool RESPAWN_ALLOWED = false;
 
 
 		protected bool _run = false;
@@ -70,7 +75,7 @@ namespace BattlefieldLibrary.battlefield {
 	    public readonly int ROBOTS_IN_TEAM;
 	    public readonly int MAX_TURN;
 	    public readonly int MAX_LAP;
-
+	    public readonly int RESPAWN_TIMEOUT = 0;
 
         protected BattlefieldTurn battlefieldTurn;
         private ASerializer serializer = new JSONSerializer();
@@ -85,21 +90,25 @@ namespace BattlefieldLibrary.battlefield {
         MinerFightCommandVisitor minerFightCommandVisitor;
 	    RepairmanFightCommandVisitor repairmanFightCommandVisitor;
 
-	    protected Battlefield(BattlefieldConfig battlefielConfig) {
+        private readonly Dictionary<int, List<BattlefieldRobot>> respawnRobotAtTurn = new Dictionary<int, List<BattlefieldRobot>>();
+
+        protected Battlefield(BattlefieldConfig battlefielConfig) {
             this.ROBOTS_IN_TEAM = battlefielConfig.ROBOTS_IN_TEAM;
             this.MAX_ROBOTS = battlefielConfig.MAX_ROBOTS;
             this.MAX_LAP = battlefielConfig.MAX_LAP;
             MAX_TURN = battlefielConfig.MAX_TURN;
-	        if (battlefielConfig.EQUIPMENT_CONFIG_FILE != null) {
+            RESPAWN_TIMEOUT = battlefielConfig.RESPAWN_TIMEOUT;
+            RESPAWN_ALLOWED = battlefielConfig.RESPAWN_ALLOWED;
+
+
+            if (battlefielConfig.EQUIPMENT_CONFIG_FILE != null) {
 	            ServerConfig.SetEquipmentFromFile(battlefielConfig.EQUIPMENT_CONFIG_FILE);
 	        } else {
 	            ServerConfig.SetDefaultEquipment();
 	        }
-	        if (battlefielConfig.OBTACLE_CONFIG_FILE != null) {
-	            obtacleManager = new ObtacleManager(ObtacleManager.LoadObtaclesFromFile(battlefielConfig.OBTACLE_CONFIG_FILE));
-	        } else {
-                obtacleManager = new ObtacleManager(new IObtacle[0]);
-            }
+            IEnumerable<IObtacle> obtacles = (battlefielConfig.OBTACLE_CONFIG_FILE != null) ? (IEnumerable<IObtacle>) ObtacleManager.LoadObtaclesFromFile(battlefielConfig.OBTACLE_CONFIG_FILE) : new IObtacle[0];
+	        obtacleManager = new ObtacleManager(obtacles);
+	       
 	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS);
 	    }
 
@@ -153,7 +162,10 @@ namespace BattlefieldLibrary.battlefield {
 			setRun(true);
 		}
 
-		protected async void listen(BattlefieldRobot r) {
+        protected readonly HashSet<BattlefieldRobot> listenedRobots = new HashSet<BattlefieldRobot>();
+        protected readonly HashSet<BattlefieldRobot> robotsWaitingForReborn = new HashSet<BattlefieldRobot>();
+
+        protected async void listen(BattlefieldRobot r) {
 			await Task.Yield();
 			try {
 				ACommand command = await r.SuperNetworkStream.RecieveCommandAsync();
@@ -170,15 +182,18 @@ namespace BattlefieldLibrary.battlefield {
 
 			            lock (robots) {
 			                robots.Add(r);
-			                if (robots.Count == MAX_ROBOTS) {
+                            robotsById.Add(r.ID, r);
+
+                            if (robots.Count == MAX_ROBOTS) {
 			                    setRun(true);
 			                }
 			            }
 			        }
                     lock (receivedCommands) {
                         receivedCommands.Add(r, command);
+                        listenedRobots.Remove(r);
                         lock (robots) {
-                            if (_run && receivedCommands.Count == robots.Count) {
+                            if (_run && 0 == listenedRobots.Count) {
                                 allCommandRecieve.SetResult(true);
                             }
                         }
@@ -204,7 +219,8 @@ namespace BattlefieldLibrary.battlefield {
 		        if (!RUN && (MAX_ROBOTS <= 0 || activeRobots + pendingRobots.Count < MAX_ROBOTS)) {
 		            BattlefieldRobot r = new DefaultRobot(idForRobot++, n);
 		            pendingRobots.Add(r);
-		            listen(r);
+		            listenedRobots.Add(r);
+                    listen(r);
 		            ret = true;
 		        }
 		    }
@@ -343,10 +359,8 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
-	    protected List<BattlefieldRobot> processCommands() {
+        private void processCommands() {
             battlefieldTurn = new BattlefieldTurn(turn);
-
-            List<BattlefieldRobot> convertedRobots = new List<BattlefieldRobot>();
 
             foreach (KeyValuePair<BattlefieldRobot, ACommand> pair in receivedCommands) {
                 BattlefieldRobot robot = pair.Key;
@@ -355,24 +369,30 @@ namespace BattlefieldLibrary.battlefield {
                 if (command is InitCommand) {
                     switch (pair.Key.ROBOT_TYPE) {
                         case RobotType.MINER:
-                            convertedRobots.Add(new Miner(robot));
+                            robot = new Miner(robot);
+
                             break;
                         case RobotType.REPAIRMAN:
-                            convertedRobots.Add(new Repairman(robot));
+                            robot = new Repairman(robot);
                             break;
                         case RobotType.TANK:
-                            convertedRobots.Add(new Tank(robot));
+                            robot = new Tank(robot);
                             break;
                     }
-                } else {
-                    convertedRobots.Add(robot);
                 }
+
+                /*if (command is WaitUntilReborn) {
+                    robotsWaitingForReborn.Add(robot);
+                } else*/
+                {
+                    listenedRobots.Add(robot);
+                }
+
             }
-	        return convertedRobots;
-	    }
+        }
 
 
-        protected void changeBattlefieldState() {
+        private void changeBattlefieldState() {
             switch (_battlefieldState) {
                 case BattlefieldState.GET_COMMAND:
                     _battlefieldState = BattlefieldState.FIGHT;
@@ -386,7 +406,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected abstract void afterProcessCommand();
 
-        protected void moving() {
+        private void moving() {
             foreach (BattlefieldRobot r in robots) {
                 if (r.HitPoints > 0) {
                     if (r.Power > r.WantedPower) {
@@ -416,17 +436,13 @@ namespace BattlefieldLibrary.battlefield {
                     bullet.TANK.BulletsNow--;
                     foreach (BattlefieldRobot r in robots) {
                         if (r.HitPoints > 0) {
-                            double distance = Math.Sqrt(Math.Pow(r.X - bullet.TO_X, 2) + Math.Pow(r.Y - bullet.TO_Y, 2));
-                            foreach (Zone zone in bullet.TANK.Gun.ZONES) {
-                                if (zone.DISTANCE > distance) {
-                                    r.HitPoints -= zone.EFFECT;
-                                    if (bullet.TANK != r) {
-                                        bullet.TANK.Score += zone.EFFECT;
-                                    }
-                                    r.HitPoints = Math.Max(0, r.HitPoints);
-                                    break;
-                                }
+                            double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), bullet.GetToPosition());
+                            Zone zone = Zone.GetZoneByDistance(bullet.TANK.Gun.ZONES, distance);
+                            r.HitPoints -= zone.EFFECT;
+                            if (bullet.TANK != r) {
+                                bullet.TANK.Score += zone.EFFECT;
                             }
+                            r.HitPoints = Math.Max(0, r.HitPoints);
                         }
                     }
                 }
@@ -438,17 +454,13 @@ namespace BattlefieldLibrary.battlefield {
                 mine.MINER.MinesNow--;
                 foreach (BattlefieldRobot r in robots) {
                     if (r.HitPoints > 0) {
-                        double distance = Math.Sqrt(Math.Pow(r.X - mine.X, 2) + Math.Pow(r.Y - mine.Y, 2));
-                        foreach (Zone zone in mine.MINER.MineGun.ZONES) {
-                            if (zone.DISTANCE > distance) {
-                                r.HitPoints -= zone.EFFECT;
-                                if (mine.MINER != r) {
-                                    mine.MINER.Score += zone.EFFECT;
-                                }
-                                r.HitPoints = Math.Max(0, r.HitPoints);
-                                break;
-                            }
+                        double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), mine.GetPosition());
+                        Zone zone = Zone.GetZoneByDistance(mine.MINER.MineGun.ZONES, distance);
+                        r.HitPoints -= zone.EFFECT;
+                        if (mine.MINER != r) {
+                            mine.MINER.Score += zone.EFFECT;
                         }
+                        r.HitPoints = Math.Max(0, r.HitPoints);
                     }
                 }
             }
@@ -456,14 +468,45 @@ namespace BattlefieldLibrary.battlefield {
 
         protected abstract void afterMovingAndDamaging();
 
-	    protected DateTime sendRobotStateCommand(IEnumerable<BattlefieldRobot> robotsWithCommand, LapState lapState) {
+        private void respawn() {
+            List<BattlefieldRobot> respawnedRobots;
+            if (respawnRobotAtTurn.TryGetValue(turn, out respawnedRobots)) {
+                foreach (var respawnedRobot in respawnedRobots) {
+                    respawnedRobot.HitPoints = respawnedRobot.Armor.MAX_HP;
+                    Point position = obtacleManager.StartRobotPosition(ARENA_MAX_SIZE, ARENA_MAX_SIZE);
+                    respawnedRobot.X = position.X;
+                    respawnedRobot.Y = position.Y;
+                }
+            }
+        }
+
+        private void healAllRobots() {
+            foreach (var robot in robots) {
+                robot.HitPoints = robot.Armor.MAX_HP;
+            }
+        }
+
+	    private DateTime sendRobotStateCommand(LapState lapState) {
             List<BattlefieldRobot> aliveRobots = getAliveRobots();
             int[] aliveRobotsIds = new int[aliveRobots.Count];
             for (int i = 0; i < aliveRobotsIds.Length; i++) {
                 aliveRobotsIds[i] = aliveRobots[i].ID;
             }
             DateTime NOW = new DateTime();
-            foreach (BattlefieldRobot r in robotsWithCommand) {
+
+            foreach (var waitingRobot in robotsWaitingForReborn) {
+                if (waitingRobot.HitPoints > 0) {
+                    listenedRobots.Add(waitingRobot);
+                    robotsWaitingForReborn.Remove(waitingRobot);
+                }
+            }
+
+            if (lapState != LapState.NONE) {
+                foreach (var waitingRobot in robotsWaitingForReborn) {
+                    listenedRobots.Add(waitingRobot);
+                }
+            }
+            foreach (BattlefieldRobot r in listenedRobots) {
                 EndLapCommand endLapCommand = null;
 
                 if (lapState != LapState.NONE) {
@@ -485,7 +528,6 @@ namespace BattlefieldLibrary.battlefield {
             List<BattlefieldRobot> aliveRobots = getAliveRobots();
             foreach (BattlefieldRobot r in aliveRobots) {
 	            if (r.LastRequestAt.Add(MAX_WAITING_TIME).CompareTo(NOW) < 0) {
-
 	                disconnect(r);
 	            }
 	        }
@@ -493,15 +535,21 @@ namespace BattlefieldLibrary.battlefield {
 
 	    protected void singleTurnCycle() {
 	        lock (receivedCommands) {
-	            List<BattlefieldRobot> robotsWithCommand = processCommands();
+	            turn++;
+                processCommands();
                 afterProcessCommand();
 	            changeBattlefieldState();
 	            moving();
 	            shotting();
 	            detonatingMines();
 	            afterMovingAndDamaging();
+	            respawn();
 	            LapState lapState = NewLapState();
-	            DateTime now = sendRobotStateCommand(robotsWithCommand, lapState);
+	            if (lapState != LapState.NONE && RESPAWN_ALLOWED) {
+	                healAllRobots();
+	            }
+                
+	            DateTime now = sendRobotStateCommand(lapState);
 	            disconnectTimeoutedAliveRobots(now);
 	            handleEndTurn();
 
@@ -511,7 +559,7 @@ namespace BattlefieldLibrary.battlefield {
                     _battlefieldState = BattlefieldState.MERCHANT;
                 }
 
-                foreach (BattlefieldRobot r in robotsWithCommand) {
+	            foreach (BattlefieldRobot r in listenedRobots) {
                     listen(r);
                 }
 

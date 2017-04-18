@@ -48,8 +48,8 @@ namespace BaseLibrary.command {
         }
 
         public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter,
-            params Input[] inputs) {
-            return accepter.visit(this, inputs);
+            Input input) {
+            return accepter.visit(this, input);
         }
     }
 

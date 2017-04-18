@@ -32,5 +32,13 @@ namespace DeadmatchBattlefield.battlefield {
 			}
 			return LapState.NONE;
 		}
+
+	    protected override void afterProcessCommand() {
+	        // do nothing
+	    }
+
+	    protected override void afterMovingAndDamaging() {
+	        // do nothing
+	    }
 	}
 }

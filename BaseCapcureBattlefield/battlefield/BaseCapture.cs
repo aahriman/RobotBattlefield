@@ -1,13 +1,17 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Text;
+using BaseLibrary;
 using BaseLibrary.battlefield;
 using BaseLibrary.command;
 using BaseLibrary.equip;
 using BaseLibrary.protocol;
 using BaseLibrary.utils;
+using BaseLibrary.utils.euclidianSpaceStruct;
 using BattlefieldLibrary.battlefield;
 using ServerLibrary.config;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
@@ -16,7 +20,9 @@ using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 namespace BaseCapcureBattlefield.battlefield {
     [ModDescription()]
 	public class BaseCapture : Battlefield {
-	    private static readonly int POSITION_IN_BATTLE_TURN;
+        private const int BASE_SIZE = 25;
+
+        private static readonly int POSITION_IN_BATTLE_TURN;
         private static readonly int POSITION_IN_ROBOT_STATE_COMMAND;
 
         private static readonly ISubCommandFactory SUB_COMMAND_FACTORY = new SubCommandFactory();
@@ -34,14 +40,17 @@ namespace BaseCapcureBattlefield.battlefield {
                             if (ProtocolV1_0Utils.GetParams(baseString, COMMAND_BASE_NAME,
                                                             ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out baseParam)) {
                                 if (baseParam.Length == 4) {
-                                    int x, y, teamId, progress;
-                                    if (int.TryParse(baseParam[0], out x) &&
-                                        int.TryParse(baseParam[0], out y) &&
-                                        int.TryParse(baseParam[0], out teamId) &&
-                                        int.TryParse(baseParam[0], out progress)) {
-                                        Base @base = new Base(x, y);
-                                        @base.TeamId = teamId;
+                                    ProtocolDouble x, y;
+                                    int maxProgress, teamId, progress;
+                                    if (ProtocolDouble.TryParse(baseParam[0], out x) &&
+                                        ProtocolDouble.TryParse(baseParam[1], out y) &&
+                                        int.TryParse(baseParam[2], out maxProgress) &&
+                                        int.TryParse(baseParam[3], out progress) &&
+                                        int.TryParse(baseParam[4], out teamId)) {
+
+                                        Base @base = new Base(x, y, maxProgress);
                                         @base.Progress = progress;
+                                        @base.TeamId = teamId;
 
                                         bases.Add(@base);
                                     }
@@ -62,7 +71,7 @@ namespace BaseCapcureBattlefield.battlefield {
                         sb.Append("[");
                     }
                     for (int i = 0; i < o.Length; i++) {
-                        sb.Append(ProtocolV1_0Utils.ConvertToDeeper(ProtocolV1_0Utils.SerializeParams(COMMAND_BASE_NAME, o[i].X, o[i].Y, o[i].TeamId, o[i].Progress),
+                        sb.Append(ProtocolV1_0Utils.ConvertToDeeper(ProtocolV1_0Utils.SerializeParams(COMMAND_BASE_NAME, o[i].X, o[i].Y, o[i].MAX_PROGRESS, o[i].Progress, o[i].TeamId),
                                                           ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT));
                         if (i + 1 < o.Length) {
                             sb.Append(ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.SEPARATOR);
@@ -78,21 +87,21 @@ namespace BaseCapcureBattlefield.battlefield {
                 return false;
             }
         }
+
         static BaseCapture() {
             POSITION_IN_BATTLE_TURN = BattlefieldTurn.RegisterMore();
             POSITION_IN_ROBOT_STATE_COMMAND = RobotStateCommand.RegisterSubCommandFactory(SUB_COMMAND_FACTORY);
         }
 
-	    private Base[] bases;
-		public BaseCapture(BattlefieldConfig battlefielConfig)  : base(battlefielConfig) {
-            bases = convertFromMore(battlefielConfig.MORE);
-		}
+	    private readonly Base[] bases;
+        private readonly Dictionary<Base, List<BattlefieldRobot>> aliveRobotsAtBaseByBase = new Dictionary<Base, List<BattlefieldRobot>>();
 
-	    private Base[] convertFromMore(Object[] more) {
-	        return (from m in more
-	                where m is Base
-	                select m as Base).ToArray();
-	    }
+        public BaseCapture(BaseCaptureBattlefieldConfig battlefielConfig)  : base(battlefielConfig) {
+            bases = battlefielConfig.BASES;
+            foreach (var @base in bases) {
+                aliveRobotsAtBaseByBase.Add(@base, new List<BattlefieldRobot>());
+            }
+        }
 
         protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        robotStateCommand.MORE[POSITION_IN_ROBOT_STATE_COMMAND] = bases;
@@ -105,20 +114,76 @@ namespace BaseCapcureBattlefield.battlefield {
 	    }
 
 	    protected override void afterProcessCommand() {
-	        // do nothing
 	    }
 
 	    protected override void afterMovingAndDamaging() {
-	        // vyhodnotit zabírání baze
+	        capturingBases();
+            battlefieldTurn.AddMore(bases, POSITION_IN_BATTLE_TURN);
+	        repairRobotsInTheirBase();
 	    }
 
+        private void capturingBases() {
+            foreach (var @base in bases) {
+                aliveRobotsAtBaseByBase[@base].Clear();
+                Dictionary<int, int> progressByTeamId = new Dictionary<int, int>();
+                progressByTeamId[@base.TeamId] = @base.Progress;
+                foreach (var robot in getAliveRobots()) {
+                    if (EuclideanSpaceUtils.Distance(new Point(@base.X, @base.Y), new Point(robot.X, robot.Y)) < BASE_SIZE) {
+                        aliveRobotsAtBaseByBase[@base].Add(robot);
+                        robot.Score++;
+                        int progressForTeam;
+                        if (!progressByTeamId.TryGetValue(robot.TEAM_ID, out progressForTeam)) {
+                            progressForTeam = 0;
+                        }
+                        progressForTeam++;
+                        progressByTeamId[robot.TEAM_ID] = progressForTeam;
+                    }
+                }
+
+                int maxTeamProgress = 0;
+                int forTeamId = 0;
+                foreach (var teamProgress in progressByTeamId) {
+                    if (maxTeamProgress < teamProgress.Value) {
+                        maxTeamProgress = teamProgress.Value;
+                        forTeamId = teamProgress.Key;
+                    }
+                }
+
+                int sumOtherProgress = 0;
+                foreach (var teamProgress in progressByTeamId) {
+                    if (teamProgress.Key != forTeamId) {
+                        sumOtherProgress += teamProgress.Value;
+                    }
+                }
+
+                @base.Progress = maxTeamProgress - sumOtherProgress;
+                @base.TeamId = forTeamId;
+                @base.Progress = Math.Max(@base.Progress, 0);
+
+            }
+        }
+
+        private void repairRobotsInTheirBase() {
+            foreach (KeyValuePair<Base, List<BattlefieldRobot>> keyValuePair in aliveRobotsAtBaseByBase) {
+                Base @base = keyValuePair.Key;
+                List<BattlefieldRobot> robotsInBase = keyValuePair.Value;
+                foreach (var robot in robotsInBase) {
+                    if (robot.TEAM_ID == @base.TeamId) {
+                        robot.HitPoints += 5 * (@base.Progress / 100);
+                    }   
+                }
+            }
+        }
+
         protected override LapState NewLapState() {
-            // je jen jeden team|team zabral všechny baze
-            if (turn > MAX_TURN) {
-                return LapState.LAP_OUT;
+            int teamId = bases.First().TeamId;
+            if ((from @base in bases
+                 where @base.TeamId == teamId
+                 select @base).Count() == bases.Length) {
+                return LapState.WIN;
             }
 
-            return LapState.NONE;
+            return turn > MAX_TURN ? LapState.LAP_OUT : LapState.NONE;
         }
     }
 }

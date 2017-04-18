@@ -1,5 +1,6 @@
 ﻿using System;
 using BaseLibrary.equip;
+using BaseLibrary.utils.euclidianSpaceStruct;
 
 namespace BaseLibrary.battlefield {
     public abstract class Robot {
@@ -28,5 +29,9 @@ namespace BaseLibrary.battlefield {
 
         public abstract Motor Motor { get; set; }
         public abstract Armor Armor { get; set; }
+
+        public Point GetPosition() {
+            return new Point(X, Y);
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace FlagCapcureBattlefield {
         }
 
         protected override Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig) {
-            return new FlagCapture(battlefieldConfig);
+            return new FlagCapture(FlagCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
         }
     }
 }

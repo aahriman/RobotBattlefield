@@ -30,13 +30,13 @@ namespace BaseLibrary.command.miner {
         }
 
         /// <summary>
-        /// This is not supported. But if accepter is <code>IMinerCommandVisitor&lt;Output Intput&gt;</code> then it call <code>&lt;Output&gt; accept&lt;Output&gt;(IMinerCommandVisitor&lt;Output, Input&gt; accepter, params Input[] inputs)</code> otherwise throw exception <code>NotImplementedException</code>
+        /// This is not supported. But if accepter is <code>IMinerCommandVisitor&lt;Output Intput&gt;</code> then it call <code>&lt;Output&gt; accept&lt;Output&gt;(IMinerCommandVisitor&lt;Output, Input&gt; accepter, Input input)</code> otherwise throw exception <code>NotImplementedException</code>
         /// </summary>
         /// <exception cref="NotImplementedException">if accepter is not IMinerCommandVisitor&lt;Output Intput&gt;</exception>
         /// <param name="accepter"></param>
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
+        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
             if (accepter is IMinerCommandVisitor<Output, Input>) {
-                return this.accept((IMinerCommandVisitor<Output, Input>)accepter, inputs);
+                return this.accept((IMinerCommandVisitor<Output, Input>)accepter, input);
             } else {
                 throw new NotImplementedException();
             }
@@ -47,6 +47,6 @@ namespace BaseLibrary.command.miner {
         public abstract Output accept<Output>(IMinerCommandVisitor<Output> accepter);
 
 
-        public abstract Output accept<Output, Input>(IMinerCommandVisitor<Output, Input> accepter, params Input[] inputs);
+        public abstract Output accept<Output, Input>(IMinerCommandVisitor<Output, Input> accepter, Input input);
     }
 }

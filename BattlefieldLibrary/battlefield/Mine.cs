@@ -1,4 +1,5 @@
-﻿using BattlefieldLibrary.battlefield.robot;
+﻿using BaseLibrary.utils.euclidianSpaceStruct;
+using BattlefieldLibrary.battlefield.robot;
 
 namespace BattlefieldLibrary.battlefield {
     public class Mine {
@@ -12,6 +13,10 @@ namespace BattlefieldLibrary.battlefield {
             X = x;
             Y = y;
             MINER = miner;
+        }
+
+        public Point GetPosition() {
+            return new Point(X, Y);
         }
     }
 }

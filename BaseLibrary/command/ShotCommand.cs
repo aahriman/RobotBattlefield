@@ -19,8 +19,8 @@ namespace BaseLibrary.command {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(AVisitorCommand<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this, inputs);
+        public sealed override Output accept<Output, Input>(AVisitorCommand<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 }

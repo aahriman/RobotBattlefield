@@ -28,8 +28,8 @@ namespace BaseLibrary.command {
             return accepter.visit(this);
         }
 
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this);
+        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 

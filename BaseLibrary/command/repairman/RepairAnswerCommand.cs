@@ -26,8 +26,8 @@ namespace BaseLibrary.command.repairman {
             return accepter.visit(this);
         }
 
-        public override Output accept<Output, Input>(IRepairmanCommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this, inputs);
+        public override Output accept<Output, Input>(IRepairmanCommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 }

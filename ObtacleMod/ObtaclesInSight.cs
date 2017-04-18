@@ -69,7 +69,6 @@ namespace ObtacleMod {
 
         public ObtaclesInSight(IObtacle[] obtacles) {
             OBTACLES = obtacles;
-            // TODO použití
         }
 
         public void AddToRobotStateCommand(RobotStateCommand robotStateCommand) {

@@ -15,7 +15,7 @@ namespace BaseLibrary.visitors {
 
     public interface ITankCommandVisitor<out Output, in Input> {
 
-        Output visit(ShotCommand visitor, params Input[] inputs);
-        Output visit(ShotAnswerCommand visitor, params Input[] inputs);
+        Output visit(ShotCommand visitor, Input input);
+        Output visit(ShotAnswerCommand visitor, Input input);
     }
 }

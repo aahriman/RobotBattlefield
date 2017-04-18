@@ -48,6 +48,7 @@
     <Compile Include="command\AckCommand.cs" />
     <Compile Include="command\ACommand.cs" />
     <Compile Include="command\ACommandFactory.cs" />
+    <Compile Include="command\equipment\AEquipmentCommand.cs" />
     <Compile Include="command\ModDescription.cs" />
     <Compile Include="protocol\Factories.cs" />
     <Compile Include="command\DriveAnswerCommand.cs" />

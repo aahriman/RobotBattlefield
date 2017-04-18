@@ -13,15 +13,11 @@ namespace FlagCapcureBattlefield {
         public static void Main(String[] args) {
             Console.WriteLine("Arena start.");
             Server server = new Server(GameProperties.DEFAULT_PORT);
-            Battlefield arena;
-            Object[] flags = {new Flag(500, 100, 1), new Flag(500, 900, 2)};
-            if (args.Length >= 3) {
-                arena = server.GetBattlefield(2, 1, args[2], flags);
-            } else {
-                arena = server.GetBattlefield(2, 1, flags);
-            }
-
-
+            FlagPlace[] flags = {new FlagPlace(500, 100, 1), new FlagPlace(500, 900, 2)};
+            FlagCaptureBattlefieldConfig flagCaptureBattlefieldConfig = new FlagCaptureBattlefieldConfig(2, 5000, 3, 1,
+                                                                                                         0, true, null,
+                                                                                                         null, flags);
+            Battlefield arena = server.GetBattlefield(flagCaptureBattlefieldConfig);
 
             while (!arena.End()) {
                 Task.Yield();

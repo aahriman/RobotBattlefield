@@ -20,8 +20,8 @@ namespace BaseLibrary.command.equipment {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this, inputs);
+        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 }

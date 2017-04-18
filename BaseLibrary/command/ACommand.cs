@@ -37,7 +37,7 @@ namespace BaseLibrary.command {
 
         public abstract Output accept<Output>(ICommandVisitor<Output> accepter);
 
-        public abstract Output accept<Output,Input>(ICommandVisitor<Output,Input> accepter, params Input[] inputs);
+        public abstract Output accept<Output,Input>(ICommandVisitor<Output,Input> accepter, Input input);
 
 	    public override string ToString() {
 		    ACommand.Sendable sendable = this as ACommand.Sendable;

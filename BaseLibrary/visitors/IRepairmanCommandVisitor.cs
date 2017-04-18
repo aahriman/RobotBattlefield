@@ -12,7 +12,7 @@ namespace BaseLibrary.visitors {
     }
     
     public interface IRepairmanCommandVisitor<out Output, in Input> {
-        Output visit(RepairCommand visitor, params Input[] inputs);
-        Output visit(RepairAnswerCommand visitor, params Input[] inputs);
+        Output visit(RepairCommand visitor, Input input);
+        Output visit(RepairAnswerCommand visitor, Input input);
     }
 }

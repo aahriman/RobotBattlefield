@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BaseLibrary.command.equipment {
-    public abstract class AEquipCommand : ACommand {
+    public abstract class AEquipmentCommand : ACommand {
     }
 }
