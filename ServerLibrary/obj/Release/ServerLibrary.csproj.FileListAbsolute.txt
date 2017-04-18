@@ -1,9 +1,0 @@
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\bin\Release\ServerLibrary.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\bin\Release\ServerLibrary.pdb
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\bin\Release\BaseLibrary.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\bin\Release\Newtonsoft.Json.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\bin\Release\BaseLibrary.pdb
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\bin\Release\Newtonsoft.Json.xml
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\obj\Release\ServerLibrary.csprojResolveAssemblyReference.cache
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\obj\Release\ServerLibrary.dll
-C:\Users\vojtech\Desktop\skola\C#\RobotArena\ServerLibrary\obj\Release\ServerLibrary.pdb
