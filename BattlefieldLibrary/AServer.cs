@@ -79,19 +79,12 @@ namespace BattlefieldLibrary {
             n.Close();
         }
 
-        public Battlefield GetBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, params object[] more) {
-            Battlefield = NewBattlefield(ROBOT_TO_ONE_ARENA, ROBOTS_IN_TEAM, more);
+        public Battlefield GetBattlefield(BattlefieldConfig battlefielConfig) {
+            Battlefield = NewBattlefield(battlefielConfig);
             return Battlefield;
         }
 
-        public Battlefield GetBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, string EQUIPMENT_FILE, params object[] more) {
-            Battlefield = NewBattlefield(ROBOT_TO_ONE_ARENA, ROBOTS_IN_TEAM, EQUIPMENT_FILE);
-            return Battlefield;
-        }
-
-        protected abstract Battlefield NewBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, params object[] more);
-
-        protected abstract Battlefield NewBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, string EQUIPMENT_FILE, params object[] more);
+        protected abstract Battlefield NewBattlefield(BattlefieldConfig battlefielConfig);
 
         public abstract GameTypeCommand GetGameTypeCommand(Battlefield Battlefield);
     }

@@ -2,6 +2,10 @@
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
+
+    /// <summary>
+    /// Wait one turn or to until HitPoint > 0 or to the end of turn
+    /// </summary>
     public class WaitCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
@@ -22,8 +26,8 @@ namespace BaseLibrary.command.common {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input [] inputs) {
-            return accepter.visit(this, inputs);
+        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 }

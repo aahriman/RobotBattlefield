@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AServer.cs" />
+    <Compile Include="battlefield\BattlefieldConfig.cs" />
     <Compile Include="battlefield\Battlefield.cs" />
     <Compile Include="battlefield\Battlefield.Visitors.cs" />
     <Compile Include="battlefield\BattlefieldTurn.cs" />
@@ -55,9 +56,9 @@
       <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ObstacleMod\ObstacleMod.csproj">
+    <ProjectReference Include="..\ObtacleMod\ObtacleMod.csproj">
       <Project>{3f280b33-4be8-4814-a216-3478aeeff068}</Project>
-      <Name>ObstacleMod</Name>
+      <Name>ObtacleMod</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServerLibrary\ServerLibrary.csproj">
       <Project>{34374a8c-3761-4c96-a81e-98a54c540099}</Project>

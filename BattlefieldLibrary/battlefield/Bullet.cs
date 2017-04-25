@@ -1,4 +1,5 @@
-﻿using BattlefieldLibrary.battlefield.robot;
+﻿using BaseLibrary.utils.euclidianSpaceStruct;
+using BattlefieldLibrary.battlefield.robot;
 
 namespace BattlefieldLibrary.battlefield {
 	internal class Bullet {
@@ -20,5 +21,13 @@ namespace BattlefieldLibrary.battlefield {
 			FROM_Y = tank.Y;
 			TANK = tank;
 		}
-	}
+
+	    public Point GetToPosition() {
+	        return new Point(TO_X, TO_Y);
+	    }
+
+        public Point GetFromPosition() {
+            return new Point(FROM_X, FROM_Y);
+        }
+    }
 }

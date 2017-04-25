@@ -30,8 +30,8 @@ namespace BaseLibrary.command.miner {
             return accepter.visit(this);
         }
 
-        public override Output accept<Output, Input>(IMinerCommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this, inputs);
+        public override Output accept<Output, Input>(IMinerCommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 }

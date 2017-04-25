@@ -22,9 +22,6 @@ namespace BattlefieldLibrary.battlefield {
 
         internal BattlefieldTurn(int turn) {
             this.turn = turn;
-            for (int i = 0; i < more.Length; i++) {
-                more[i] = new List<Object>();
-            }
         }
 
         public void AddBullet(ViewerLibrary.Bullet bullet) {
@@ -40,7 +37,7 @@ namespace BattlefieldLibrary.battlefield {
         }
 
         public void AddMore(Object @object, int position) {
-            ((List<Object>) more[position]).Add(@object);
+            more[position] = @object;
         }
 
         public void AddFlag(Flag flag) {

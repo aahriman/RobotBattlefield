@@ -15,26 +15,28 @@ namespace BaseLibrary.utils {
 		}
 
 		public class Deep {
-            public static readonly Deep _8 = new Deep('*', null, _7);
-            public static readonly Deep _7 = new Deep('$', _8, _6);
-            public static readonly Deep _6 = new Deep('@', _7, _5);
-            public static readonly Deep _5 = new Deep('#', _6, _4);
-			public static readonly Deep _4 = new Deep('!', _5, _3);
-			public static readonly Deep _3 = new Deep('\\', _4, _2);
-			public static readonly Deep _2 = new Deep('/', _3, _1);
-			public static readonly Deep _1 = new Deep('|', _2, _0);
-			public static readonly Deep _0 = new Deep(';', _1, null);
+            public static readonly Deep _8 = new Deep('*', null);
+            public static readonly Deep _7 = new Deep('$', _8);
+            public static readonly Deep _6 = new Deep('@', _7);
+            public static readonly Deep _5 = new Deep('#', _6);
+			public static readonly Deep _4 = new Deep('!', _5);
+			public static readonly Deep _3 = new Deep('\\', _4);
+			public static readonly Deep _2 = new Deep('/', _3);
+			public static readonly Deep _1 = new Deep('|', _2);
+			public static readonly Deep _0 = new Deep(';', _1);
 
-		    public readonly Deep PREV;
+		    public Deep PREV { get; private set; }
 		    public readonly Deep NEXT;
 		    public readonly char SEPARATOR;
 		    public readonly string SEPARATOR_STRING;
 
-			private Deep(char separator, Deep next, Deep prev) {
+			private Deep(char separator, Deep next) {
 				SEPARATOR = separator;
 				SEPARATOR_STRING = "" + separator;
 				NEXT = next;
-			    PREV = prev;
+			    if (next != null) {
+			        next.PREV = this;
+			    }
 			}
 
 		}
@@ -43,7 +45,7 @@ namespace BaseLibrary.utils {
 	public static class ProtocolV1_0Utils {
 
 		public static Deep DEFAULT = Deep._0;
-        public static Deep LAST = Deep._7;
+        public static Deep LAST = Deep._8;
 
 		public const string DICTIONARY_KEY_VALUE_SEPARATOR = "=>";
 
@@ -71,7 +73,10 @@ namespace BaseLibrary.utils {
 	        return sb.ToString();
 	    }
 
-	    public static String ConvertToShallowly(String serializedString) {
+	    public static String ConvertToShallowly(String serializedString, int howManyTimes) {
+	        if (howManyTimes <= 0) {
+	            throw new ArgumentException(nameof(howManyTimes) + "have to be positive.");
+	        }
             StringBuilder sb = new StringBuilder();
             char[] serializedCharacter = serializedString.ToCharArray();
 
@@ -79,7 +84,11 @@ namespace BaseLibrary.utils {
                 Deep replacedDeep = LAST;
                 while (replacedDeep != DEFAULT) {
                     if (serializedCharacter[i] == replacedDeep.SEPARATOR) {
-                        sb.Append(replacedDeep.PREV.SEPARATOR);
+                        Deep addedDeep = replacedDeep;
+                        for (int j = 0; j < howManyTimes && addedDeep != DEFAULT; j++) {
+                            addedDeep = addedDeep.PREV;
+                        }
+                        sb.Append(addedDeep.SEPARATOR);
                         goto nextCharacter;
                     }
                     replacedDeep = replacedDeep.PREV;

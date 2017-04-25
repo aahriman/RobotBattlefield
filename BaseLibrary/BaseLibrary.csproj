@@ -50,6 +50,8 @@
     <Compile Include="command\ACommand.cs" />
     <Compile Include="command\ACommandFactory.cs" />
     <Compile Include="command\handshake\AHandShakeCommand.cs" />
+    <Compile Include="command\equipment\AEquipmentCommand.cs" />
+    <Compile Include="command\ModDescription.cs" />
     <Compile Include="protocol\Factories.cs" />
     <Compile Include="command\common\DriveAnswerCommand.cs" />
     <Compile Include="command\common\DriveCommand.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="utils\EuclideanSpaceUtils.cs" />
     <Compile Include="utils\euclidianSpaceStruct\Point.cs" />
     <Compile Include="utils\euclidianSpaceStruct\Segment.cs" />
+    <Compile Include="utils\ModUtils.cs" />
     <Compile Include="utils\Parser.cs" />
     <Compile Include="utils\ProtocolV1_0Utils.cs" />
     <Compile Include="utils\RobotUtils.cs" />

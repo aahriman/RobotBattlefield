@@ -1,6 +1,6 @@
 ﻿using BaseLibrary.battlefield;
 
-namespace ObstacleMod {
+namespace ObtacleMod {
     public interface IMoveInfluence : IObtacle{
         /// <summary>
         /// </summary>

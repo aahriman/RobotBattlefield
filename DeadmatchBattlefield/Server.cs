@@ -24,12 +24,8 @@ namespace DeadmatchBattlefield {
             return new GameTypeCommand(battlefield.ROBOTS_IN_TEAM, GameType.DEADMATCH);
         }
 
-        protected override Battlefield NewBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, params object[] more) {
-            return new Deadmatch(ROBOT_TO_ONE_ARENA, ROBOTS_IN_TEAM);
-        }
-
-        protected override Battlefield NewBattlefield(int ROBOT_TO_ONE_ARENA, int ROBOTS_IN_TEAM, string EQUIPMENT_FILE, params object[] more) {
-            return new Deadmatch(ROBOT_TO_ONE_ARENA, ROBOTS_IN_TEAM, EQUIPMENT_FILE);
+        protected override Battlefield NewBattlefield(BattlefieldConfig battlefielConfig) {
+            return new Deadmatch(battlefielConfig);
         }
     }
 }

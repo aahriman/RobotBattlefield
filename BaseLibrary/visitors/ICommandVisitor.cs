@@ -87,42 +87,42 @@ namespace BaseLibrary.visitors {
 
     public interface ICommandVisitor<out Output, in Input> {
 
-        Output visit(GetArmorsCommand visitor, params Input[] inputs);
-        Output visit(GetArmorsAnswerCommand visitor, params Input[] inputs);
+        Output visit(GetArmorsCommand visitor, Input input);
+        Output visit(GetArmorsAnswerCommand visitor, Input input);
 
-        Output visit(GetMotorsCommand visitor, params Input[] inputs);
-        Output visit(GetMotorsAnswerCommand visitor, params Input[] inputs);
+        Output visit(GetMotorsCommand visitor, Input input);
+        Output visit(GetMotorsAnswerCommand visitor, Input input);
 
-        Output visit(InitCommand visitor, params Input[] inputs);
-        Output visit(InitAnswerCommand visitor, params Input[] inputs);
+        Output visit(InitCommand visitor, Input input);
+        Output visit(InitAnswerCommand visitor, Input input);
 
-        Output visit(DriveCommand visitor, params Input[] inputs);
-        Output visit(DriveAnswerCommand visitor, params Input[] inputs);
+        Output visit(DriveCommand visitor, Input input);
+        Output visit(DriveAnswerCommand visitor, Input input);
 
-        Output visit(RobotStateCommand visitor, params Input[] inputs);
+        Output visit(RobotStateCommand visitor, Input input);
 
-        Output visit(ScanCommand visitor, params Input[] inputs);
-        Output visit(ScanAnswerCommand visitor, params Input[] inputs);
+        Output visit(ScanCommand visitor, Input input);
+        Output visit(ScanAnswerCommand visitor, Input input);
 
-        Output visit(WaitCommand visitor, params Input[] inputs);
+        Output visit(WaitCommand visitor, Input input);
 
-        Output visit(EndLapCommand visitor, params Input[] inputs);
+        Output visit(EndLapCommand visitor, Input input);
 
-        Output visit(MerchantCommand visitor, params Input[] inputs);
-        Output visit(MerchantAnswerCommand visitor, params Input[] inputs);
+        Output visit(MerchantCommand visitor, Input input);
+        Output visit(MerchantAnswerCommand visitor, Input input);
 
-        Output visit(EndMatchCommand visitor, params Input[] inputs);
+        Output visit(EndMatchCommand visitor, Input input);
 
-        Output visit(GameTypeCommand visitor, params Input[] inputs);
+        Output visit(GameTypeCommand visitor, Input input);
 
-        Output visit(GetGunsCommand element, params Input[] inputs);
-        Output visit(GetGunsAnswerCommand element, params Input[] inputs);
+        Output visit(GetGunsCommand element, Input input);
+        Output visit(GetGunsAnswerCommand element, Input input);
 
-        Output visit(GetRepairToolCommand element, params Input[] inputs);
-        Output visit(GetRepairToolAnswerCommand element, params Input[] inputs);
+        Output visit(GetRepairToolCommand element, Input input);
+        Output visit(GetRepairToolAnswerCommand element, Input input);
 
-        Output visit(GetMineGunCommand element, params Input[] inputs);
-        Output visit(GetMineGunAnswerCommand element, params Input[] inputs);
+        Output visit(GetMineGunCommand element, Input input);
+        Output visit(GetMineGunAnswerCommand element, Input input);
     }
 
     public class NullType { }

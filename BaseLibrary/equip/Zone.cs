@@ -1,5 +1,17 @@
 ﻿namespace BaseLibrary.equip {
     public class Zone {
+
+        public static Zone GetZoneByDistance(Zone[] zones, double distance) {
+            foreach (Zone zone in zones) {
+                if (zone.DISTANCE > distance) {
+                    return zone;
+                }
+            }
+            return NULL_ZONE;
+        }
+
+        public static readonly Zone NULL_ZONE = new Zone(int.MaxValue, 0);
+
         public int DISTANCE { get; private set; }
         public int EFFECT { get; private set; }
 

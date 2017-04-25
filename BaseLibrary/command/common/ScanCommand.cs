@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
     public class ScanCommand : ACommonCommand {
+        private static readonly ProtocolDouble MAX_SCAN_PRECISION = (ProtocolDouble)10.0;
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -17,7 +19,7 @@ namespace BaseLibrary.command.common {
 
         public ScanCommand(ProtocolDouble precision, ProtocolDouble angle) : base() {
             ANGLE = angle;
-            PRECISION = precision;
+            PRECISION = precision < MAX_SCAN_PRECISION ? precision : MAX_SCAN_PRECISION;
         }
 
         public sealed override void accept(ICommandVisitor accepter) {
@@ -28,8 +30,8 @@ namespace BaseLibrary.command.common {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this, inputs);
+        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
     }
 }

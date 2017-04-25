@@ -6,20 +6,11 @@ using System.Threading.Tasks;
 
 namespace FlagCapcureBattlefield.battlefield {
     public class Flag {
-        public readonly string TYPE_NAME;
-        public readonly int TEAM_ID;
+        public int RobotId;
+        public readonly int FROM_FLAGPLACE_ID;
 
-
-        public double X { get; internal set; }
-        public double Y { get; internal set; }
-
-         
-
-        public Flag(double X, double Y, int TEAM_ID) {
-            TYPE_NAME = GetType().ToString();
-            this.X = X;
-            this.Y = Y;
-            this.TEAM_ID = TEAM_ID;
+        public Flag(int FROM_FLAGPLACE_ID) {
+            this.FROM_FLAGPLACE_ID = FROM_FLAGPLACE_ID;
         }
     }
 }

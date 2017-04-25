@@ -18,10 +18,10 @@ namespace BaseLibrary.visitors {
     }
 
     public interface IMinerCommandVisitor<out Output, in Input> {
-        Output visit(PutMineCommand visitor, params Input[] inputs);
-        Output visit(PutMineAnswerCommand visitor, params Input[] inputs);
+        Output visit(PutMineCommand visitor, Input input);
+        Output visit(PutMineAnswerCommand visitor, Input input);
 
-        Output visit(DetonateMineCommand visitor, params Input[] inputs);
-        Output visit(DetonateMineAnswerCommand visitor, params Input[] inputs);
+        Output visit(DetonateMineCommand visitor, Input input);
+        Output visit(DetonateMineAnswerCommand visitor, Input input);
     }
 }

@@ -13,22 +13,31 @@ namespace BaseLibrary.protocol {
             commandFactorys.Remove(factory);
         }
 
-        public TResult Deserialize(String commandString) {
+        public TResult Deserialize(String transferString) {
             foreach (IFactory<TResult, TTransfer> commandFactory in commandFactorys) {
-                if (commandFactory.IsDeserializable(commandString)) {
-                    return commandFactory.Deserialize(commandString);
+                if (commandFactory.IsDeserializable(transferString)) {
+                    return commandFactory.Deserialize(transferString);
                 }
             }
             return default(TResult);
         }
 
-        public TResult Transfer(TTransfer command) {
+        public TResult Transfer(TTransfer transfer) {
             foreach (IFactory<TResult, TTransfer> commandFactory in commandFactorys) {
-                if (commandFactory.IsTransferable(command)) {
-                    return commandFactory.Transfer(command);
+                if (commandFactory.IsTransferable(transfer)) {
+                    return commandFactory.Transfer(transfer);
                 }
             }
             return default(TResult);
+        }
+
+        public string Serialize(TTransfer transfer) {
+            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactorys) {
+                if (commandFactory.IsSerializeable(transfer)) {
+                    return commandFactory.Serialize(transfer);
+                }
+            }
+            return default(string);
         }
     }
 }

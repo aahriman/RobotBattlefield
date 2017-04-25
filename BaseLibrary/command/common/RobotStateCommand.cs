@@ -4,7 +4,7 @@ using BaseLibrary.visitors;
 namespace BaseLibrary.command.common {
     public class RobotStateCommand : ACommonCommand{
 
-        private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
+        protected static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
         public static int RegisterSubCommandFactory(ISubCommandFactory subCommandFactory) {
             int position = SUB_COMMAND_FACTORIES.Count;
@@ -33,6 +33,31 @@ namespace BaseLibrary.command.common {
             COUNT_OF_LIFE_ROBOTS = countOfLefeRobots;
             ARRAY_IDS_OF_LIFE_ROBOTS = arrayIdsOfLifeRobots;
             END_LAP_COMMAND = endLapCommand;
+            MORE = new object[SUB_COMMAND_FACTORIES.Count];
+        }
+
+
+        protected String[] SerializeMore() {
+            String[] serializedMore = new string[MORE.Length];
+            for (int i = 0; i < MORE.Length; i++) {
+                foreach (var factory in SUB_COMMAND_FACTORIES) {
+                    if (factory.Serialize(MORE[i], out serializedMore[i])) {
+                        break;
+                    }
+                    
+                }
+            }
+            return serializedMore;
+        }
+
+        protected void DeserializeMore(String[] serializedMore, Object[] more) {
+            foreach (var moreString in serializedMore) {
+                foreach (var subCommandFactory in SUB_COMMAND_FACTORIES) {
+                    if (subCommandFactory.Deserialize(moreString, more)) {
+                        break;
+                    }
+                }
+            }
         }
 
         public sealed override void accept(ICommandVisitor accepter) {
@@ -43,8 +68,8 @@ namespace BaseLibrary.command.common {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this, inputs);
+        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
+            return accepter.visit(this, input);
         }
 
     }

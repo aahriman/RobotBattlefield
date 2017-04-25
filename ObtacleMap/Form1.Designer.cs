@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace ObracleMap {
+﻿namespace ObtacleMap {
     partial class Form1 {
         /// <summary>
         /// Required designer variable.

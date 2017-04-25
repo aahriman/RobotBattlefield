@@ -54,7 +54,7 @@ namespace BaseLibrary.command.handshake {
             throw new NotImplementedException();
         }
 
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
+        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
             throw new NotImplementedException();
         }
     }

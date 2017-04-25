@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using BaseLibrary.utils.euclidianSpaceStruct;
 
-namespace ObstacleMod {
+namespace ObtacleMod {
     public interface IObtacle {
         string TypeName { get; }
 

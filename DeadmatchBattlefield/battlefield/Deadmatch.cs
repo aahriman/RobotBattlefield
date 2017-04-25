@@ -13,10 +13,7 @@ using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
 namespace DeadmatchBattlefield.battlefield {
 	public class Deadmatch : Battlefield {
-		public Deadmatch(int maxRobots, int robotsInTeam)  : base(maxRobots, ServerConfig.MAX_LAP, robotsInTeam) {
-        }
-
-        public Deadmatch(int maxRobots, int robotsInTeam, string equipmentFileName) : base(maxRobots, ServerConfig.MAX_LAP, robotsInTeam, equipmentFileName) {
+		public Deadmatch(BattlefieldConfig battlefieldConfig)  : base(battlefieldConfig) {
         }
 
         protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
@@ -27,7 +24,7 @@ namespace DeadmatchBattlefield.battlefield {
 	        return initAnswerCommand;
 	    }
 
-		protected override LapState newLapState() {
+		protected override LapState NewLapState() {
 			if (turn > MAX_TURN) {
 				return LapState.LAP_OUT;
 			}
@@ -37,5 +34,13 @@ namespace DeadmatchBattlefield.battlefield {
 			}
 			return LapState.NONE;
 		}
+
+	    protected override void afterProcessCommand() {
+	        // do nothing
+	    }
+
+	    protected override void afterMovingAndDamaging() {
+	        // do nothing
+	    }
 	}
 }

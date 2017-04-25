@@ -7,9 +7,14 @@ using BaseLibrary.command.common;
 using BaseLibrary.command.equipment;
 using BaseLibrary.command.handshake;
 using BaseLibrary.equip;
+using BaseLibrary.utils;
 
 namespace ClientLibrary.robot {
     public abstract class ClientRobot : AClient {
+        static ClientRobot() {
+            ModUtils.LoadMods();
+        }
+
         private static readonly Object EQUIP_LOCK = new Object();
         public static readonly Dictionary<int, Motor> MOTORS_BY_ID = new Dictionary<int, Motor>();
         public static readonly Dictionary<int, Armor> ARMORS_BY_ID = new Dictionary<int, Armor>();
