@@ -2,6 +2,8 @@
 using BaseLibrary;
 using BaseLibrary.battlefield;
 using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 
 namespace BattlefieldLibrary.battlefield.robot {
     public abstract class BattlefieldRobot : Robot{

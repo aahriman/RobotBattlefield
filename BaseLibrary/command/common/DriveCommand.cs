@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class WaitCommand : ACommand {
+namespace BaseLibrary.command.common {
+    public class DriveCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -12,7 +12,16 @@ namespace BaseLibrary.command {
             return position;
         }
 
-        public WaitCommand() : base() { }
+        public static DriveCommand GetInstance(ProtocolDouble speed, ProtocolDouble angle) {
+            return new DriveCommand(speed, angle);
+        }
+        public ProtocolDouble POWER { get; private set; }
+        public ProtocolDouble ANGLE { get; private set; }
+
+        public DriveCommand(ProtocolDouble speed, ProtocolDouble angle) {
+            POWER = speed;
+            ANGLE = angle;
+        }
 
         public sealed override void accept(ICommandVisitor accepter) {
             accepter.visit(this);
@@ -22,7 +31,7 @@ namespace BaseLibrary.command {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input [] inputs) {
+        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
             return accepter.visit(this, inputs);
         }
     }

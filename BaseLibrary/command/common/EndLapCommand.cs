@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using BaseLibrary.battlefield;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class DriveAnswerCommand : ACommand {
+namespace BaseLibrary.command.common {
+    public class EndLapCommand : ACommonCommand {
+
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
         public static int RegisterSubCommandFactory(ISubCommandFactory subCommandFactory) {
@@ -11,16 +13,16 @@ namespace BaseLibrary.command {
             return position;
         }
 
+        public LapState STATE { get; private set; }
+        public int GOLD { get; private set; }
+        public int SCORE { get; private set; }
 
-        public static DriveAnswerCommand GetInstance(bool succes) {
-            return new DriveAnswerCommand(succes);
+        public EndLapCommand(LapState state, int gold, int score) {
+            STATE = state;
+            GOLD = gold;
+            SCORE = score;
         }
 
-        public bool SUCCES { get; private set; }
-
-        public DriveAnswerCommand(bool succes) {
-            SUCCES = succes;
-        }
 
         public sealed override void accept(ICommandVisitor accepter) {
             accepter.visit(this);

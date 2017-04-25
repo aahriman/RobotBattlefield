@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class ErrorCommand : ACommand, ACommand.Sendable {
+namespace BaseLibrary.command.handshake {
+    public class ErrorCommand : AHandShakeCommand, ACommand.Sendable {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 

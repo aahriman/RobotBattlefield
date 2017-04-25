@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
+namespace BaseLibrary.command.handshake {
 
-    public sealed class AckCommand : ACommand, ACommand.Sendable {
+    public sealed class AckCommand : AHandShakeCommand, ACommand.Sendable {
 
         private static readonly List<ISubCommandFactory> subCommandFactories = new List<ISubCommandFactory>();
 

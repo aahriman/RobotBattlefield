@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseLibrary.command.common;
 using BaseLibrary.protocol;
 
 namespace BaseLibrary.command.v1._0 {

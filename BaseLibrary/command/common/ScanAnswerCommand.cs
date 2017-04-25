@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class ScanAnswerCommand : ACommand{
+namespace BaseLibrary.command.common {
+    public class ScanAnswerCommand : ACommonCommand{
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 

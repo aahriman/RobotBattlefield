@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class GameTypeCommand : ACommand {
+namespace BaseLibrary.command.common {
+    public class EndMatchCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -12,12 +12,10 @@ namespace BaseLibrary.command {
             return position;
         }
 
-        public int ROBOTS_IN_ONE_TEAM { get; private set; }
-        public GameType GAME_TYPE { get; private set; }
+        public string FILE_URL { get; private set; }
 
-        public GameTypeCommand(int ROBOTS_IN_ONE_TEAM, GameType GAME_TYPE) {
-            this.ROBOTS_IN_ONE_TEAM = ROBOTS_IN_ONE_TEAM;
-            this.GAME_TYPE = GAME_TYPE;
+        public EndMatchCommand(string fileUrl) {
+            FILE_URL = fileUrl;
         }
 
         public override void accept(ICommandVisitor accepter) {
@@ -29,13 +27,7 @@ namespace BaseLibrary.command {
         }
 
         public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, params Input[] inputs) {
-            return accepter.visit(this);
+            return accepter.visit(this, inputs);
         }
-    }
-
-    public enum GameType {
-        DEADMATCH,
-        CAPTURE_FLAG,
-        CAPTURE_BASE
     }
 }

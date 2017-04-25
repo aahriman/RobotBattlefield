@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using BaseLibrary.command.common;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class InitCommand : ACommand {
+namespace BaseLibrary.command.handshake {
+    public class InitCommand : AHandShakeCommand {
         public static int NAME_MAX_LENGTH = 10;
         public static int TEAM_NAME_MAX_LENGTH = 40;
 

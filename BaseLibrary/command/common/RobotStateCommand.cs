@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using BaseLibrary.utils.protocolV1_0Utils;
+﻿using System.Collections.Generic;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class RobotStateCommand : ACommand{
+namespace BaseLibrary.command.common {
+    public class RobotStateCommand : ACommonCommand{
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 

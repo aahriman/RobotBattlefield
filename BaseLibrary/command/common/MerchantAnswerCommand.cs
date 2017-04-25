@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class DriveCommand : ACommand {
+namespace BaseLibrary.command.common {
+    public class MerchantAnswerCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -12,15 +12,14 @@ namespace BaseLibrary.command {
             return position;
         }
 
-        public static DriveCommand GetInstance(ProtocolDouble speed, ProtocolDouble angle) {
-            return new DriveCommand(speed, angle);
-        }
-        public ProtocolDouble POWER { get; private set; }
-        public ProtocolDouble ANGLE { get; private set; }
+        public int MOTOR_ID_BOUGHT { get; private set; }
+        public int CLASS_EQUIPMENT_ID_BOUGHT { get; private set; }
+        public int ARMOR_ID_BOUGHT { get; private set; }
 
-        public DriveCommand(ProtocolDouble speed, ProtocolDouble angle) {
-            POWER = speed;
-            ANGLE = angle;
+        public MerchantAnswerCommand(int motorIdBought, int armorIdBought, int classEquipmentIdBought){
+            MOTOR_ID_BOUGHT = motorIdBought;
+            ARMOR_ID_BOUGHT = armorIdBought;
+            CLASS_EQUIPMENT_ID_BOUGHT = classEquipmentIdBought;
         }
 
         public sealed override void accept(ICommandVisitor accepter) {

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.battlefield;
 using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
 using HandShakeProtocol = ClientLibrary.protocol.HandShakeProtocol;

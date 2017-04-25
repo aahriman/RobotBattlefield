@@ -14,6 +14,9 @@ namespace BaseLibrary.command.repairman {
 
         public int MAX_DISTANCE { get; private set; }
 
+        public RepairCommand() : this(10000) {
+        }
+
         public RepairCommand(int maxDistance) {
             this.MAX_DISTANCE = maxDistance;
         }

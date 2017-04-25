@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 using BaseLibrary.equip;
 
 namespace BattlefieldLibrary.battlefield.robot {

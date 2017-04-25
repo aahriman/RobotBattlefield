@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Text;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class HelloCommand : ACommand, ACommand.Sendable {
+namespace BaseLibrary.command.handshake {
+    public class HelloCommand : AHandShakeCommand, ACommand.Sendable {
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new HelloCommandFactory();
         private sealed class HelloCommandFactory : ACommandFactory {
             internal HelloCommandFactory() : base() { }
@@ -31,12 +32,11 @@ namespace BaseLibrary.command {
         }
 
         public string Serialize() {
-            var text = "HELLO " + GameProperties.APP_NAME;
+            var text = new StringBuilder("HELLO " + GameProperties.APP_NAME);
             foreach (var s in SUPPORTED_PROTOCOLS) {
-                text += " " + s;
-                text.TrimEnd();
+                text.Append(" " + s.TrimEnd());
             }
-            return text;
+            return text.ToString();
         }
 
         public String[] SUPPORTED_PROTOCOLS { get; private set; }

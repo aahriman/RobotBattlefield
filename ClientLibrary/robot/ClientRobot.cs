@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
+using BaseLibrary.command.common;
 using BaseLibrary.command.equipment;
+using BaseLibrary.command.handshake;
 using BaseLibrary.equip;
 
 namespace ClientLibrary.robot {

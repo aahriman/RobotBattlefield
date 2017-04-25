@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class MerchantAnswerCommand : ACommand {
+namespace BaseLibrary.command.common {
+    public class MerchantCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -12,14 +12,16 @@ namespace BaseLibrary.command {
             return position;
         }
 
-        public int MOTOR_ID_BOUGHT { get; private set; }
-        public int CLASS_EQUIPMENT_ID_BOUGHT { get; private set; }
-        public int ARMOR_ID_BOUGHT { get; private set; }
+        public int MOTOR_ID {get; private set;}
+        public int CLASS_EQUIPMENT_ID { get; private set; }
+        public int ARMOR_ID { get; private set; }
+        public int REPAIR_HP { get; private set; }
 
-        public MerchantAnswerCommand(int motorIdBought, int armorIdBought, int classEquipmentIdBought){
-            MOTOR_ID_BOUGHT = motorIdBought;
-            ARMOR_ID_BOUGHT = armorIdBought;
-            CLASS_EQUIPMENT_ID_BOUGHT = classEquipmentIdBought;
+        public MerchantCommand(int motorId, int armorId, int classEquipmentId, int repairHp) {
+            MOTOR_ID = motorId;
+            CLASS_EQUIPMENT_ID = classEquipmentId;
+            ARMOR_ID = armorId;
+            REPAIR_HP = repairHp;
         }
 
         public sealed override void accept(ICommandVisitor accepter) {

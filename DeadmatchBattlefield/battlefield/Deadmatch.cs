@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using BaseLibrary.battlefield;
 using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 using BaseLibrary.equip;
 using BattlefieldLibrary.battlefield;
 using ServerLibrary.config;

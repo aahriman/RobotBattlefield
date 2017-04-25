@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BaseLibrary.command.common;
 using BaseLibrary.protocol;
 using BaseLibrary.utils;
 using BaseLibrary.utils.protocolV1_0Utils;

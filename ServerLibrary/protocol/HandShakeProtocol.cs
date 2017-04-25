@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
 using ServerLibrary.config;

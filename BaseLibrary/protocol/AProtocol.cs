@@ -1,4 +1,6 @@
 ﻿using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 
 namespace BaseLibrary.protocol {
     public abstract class AProtocol {

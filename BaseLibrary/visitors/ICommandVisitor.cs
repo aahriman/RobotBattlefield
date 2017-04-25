@@ -1,5 +1,7 @@
 ﻿using BaseLibrary.command;
+using BaseLibrary.command.common;
 using BaseLibrary.command.equipment;
+using BaseLibrary.command.handshake;
 
 namespace BaseLibrary.visitors {
     public interface ICommandVisitor {

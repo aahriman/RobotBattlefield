@@ -1,4 +1,6 @@
 ﻿using BaseLibrary.command;
+using BaseLibrary.command.common;
+using BaseLibrary.command.handshake;
 using BaseLibrary.equip;
 
 namespace ClientLibrary.robot {

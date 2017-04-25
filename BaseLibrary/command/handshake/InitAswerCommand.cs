@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using BaseLibrary.command.common;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class InitAnswerCommand : ACommand{
+namespace BaseLibrary.command.handshake {
+    public class InitAnswerCommand : AHandShakeCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 

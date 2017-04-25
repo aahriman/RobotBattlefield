@@ -4,8 +4,8 @@ using BaseLibrary.config;
 using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
-namespace BaseLibrary.command {
-    public class OllehCommand : ACommand, ACommand.Sendable {
+namespace BaseLibrary.command.handshake {
+    public class OllehCommand : AHandShakeCommand, ACommand.Sendable {
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new OllehCommandFactory();
         private sealed class OllehCommandFactory : ACommandFactory {
             internal OllehCommandFactory() : base() { }
