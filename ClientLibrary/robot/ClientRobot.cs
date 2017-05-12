@@ -117,7 +117,7 @@ namespace ClientLibrary.robot {
 
         public void ProcessInit(InitAnswerCommand init) {
             this.ID = init.ROBOT_ID;
-            this.Motor = MOTORS_BY_ID[init.MOTOR_ID_FOR_ROBOTS[ID]];
+            //this.Motor = MOTORS_BY_ID[init.MOTOR_ID_FOR_ROBOTS[ID]];
             this.Armor = ARMORS_BY_ID[init.ARMOR_ID];
             setClassEquip(init.CLASS_EQUIPMENT_ID);
         }
