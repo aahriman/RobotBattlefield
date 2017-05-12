@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BaseCapcureBattlefield.battlefield;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
 using ServerLibrary.config;
@@ -16,9 +17,9 @@ namespace BaseCapcureBattlefield {
             Server server = new Server(GameProperties.DEFAULT_PORT);
             Battlefield arena;
             if (args.Length >= 3) {
-                arena = server.GetBattlefield(2, 1, args[2]);
+                arena = server.GetBattlefield(new BaseCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, true, args[2], null, new Base[] {new Base(500, 500, 0)}));
             } else {
-                arena = server.GetBattlefield(2, 1);
+                arena = server.GetBattlefield(new BaseCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, true, null, null, new Base[] { new Base(500, 500, 0) }));
             }
             
             

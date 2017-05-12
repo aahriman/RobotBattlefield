@@ -24,7 +24,7 @@ namespace BaseCapcureBattlefield {
         }
 
         protected override Battlefield NewBattlefield(BattlefieldConfig battlefielConfig) {
-            return new BaseCapture(battlefielConfig);
+            return new BaseCapture(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefielConfig));
         }
     }
 }

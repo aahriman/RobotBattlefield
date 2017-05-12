@@ -11,7 +11,7 @@ namespace BaseLibrary {
         public static bool TryParse(String s, out ProtocolDouble result) {
             int v;
             bool succes = int.TryParse(s, out v);
-            result = new ProtocolDouble(v);
+            result = v;
             return succes;
         }
 
@@ -21,6 +21,10 @@ namespace BaseLibrary {
 
         public static implicit operator double(ProtocolDouble pd) {
             return pd.value / MULTIPLE;
+        }
+
+        public static implicit operator ProtocolDouble(int i) {
+            return new ProtocolDouble(i / MULTIPLE);
         }
 
         public int value { get; private set; }
@@ -33,8 +37,8 @@ namespace BaseLibrary {
             value = d.value;
         }
 
-        private ProtocolDouble(int v) {
-            value = v;
+        public ProtocolDouble(int v) {
+            value = (int) (v * MULTIPLE);
         }
 
         public string Serialize() {

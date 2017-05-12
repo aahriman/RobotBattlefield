@@ -21,7 +21,7 @@ namespace ServerLibrary.config {
         public static RepairTool[] REPAIR_TOOLS { get; private set; }
         public static MineGun[] MINE_GUNS { get; private set; }
 
-        public static readonly int MAX_LAP = 500;
+        public static readonly int MAX_TURN = 500;
 
         static ServerConfig() {
             int index = 0;
