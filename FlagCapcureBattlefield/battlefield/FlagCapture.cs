@@ -155,8 +155,8 @@ namespace FlagCapcureBattlefield.battlefield {
                                 double distance = EuclideanSpaceUtils.Distance(robot.GetPosition(),
                                                                            robotFlagPlace.GetPosition());
                                 if (distance < FLAG_PLACE_SIZE) {
-                                    foreach (var robotInTeam in robotsByTeamId) {
-                                        robotInTeam.SCORE += 10;
+                                    foreach (var robotInTeam in robotsByTeamId[robot.TEAM_ID]) {
+                                        robotInTeam.Score += 10;
                                     }
                                     break;
                                 }

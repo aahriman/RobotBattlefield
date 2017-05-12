@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
 using FlagCapcureBattlefield.battlefield;
+using ServerLibrary.config;
 
 namespace FlagCapcureBattlefield {
     public class Run {
@@ -14,9 +15,13 @@ namespace FlagCapcureBattlefield {
             Console.WriteLine("Arena start.");
             Server server = new Server(GameProperties.DEFAULT_PORT);
             FlagPlace[] flags = {new FlagPlace(500, 100, 1), new FlagPlace(500, 900, 2)};
-            FlagCaptureBattlefieldConfig flagCaptureBattlefieldConfig = new FlagCaptureBattlefieldConfig(2, 5000, 3, 1,
-                                                                                                         0, true, null,
-                                                                                                         null, flags);
+            FlagCaptureBattlefieldConfig flagCaptureBattlefieldConfig;
+            if (args.Length >= 3) {
+                flagCaptureBattlefieldConfig = new FlagCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 0, true, args[2], null, flags);
+            } else {
+                flagCaptureBattlefieldConfig = new FlagCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 0, true, null, null, flags);
+            }
+            
             Battlefield arena = server.GetBattlefield(flagCaptureBattlefieldConfig);
 
             while (!arena.End()) {
