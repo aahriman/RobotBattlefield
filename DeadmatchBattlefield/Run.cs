@@ -13,10 +13,14 @@ namespace DeadmatchBattlefield {
         public static void Main(String[] args) {
             Console.WriteLine("Arena start.");
             Server server = new Server(GameProperties.DEFAULT_PORT);
-            
-            BattlefieldConfig battlefieldConfig = new BattlefieldConfig(2, 5000, 1, 1, null, @"C:\Users\vojtech\Desktop\test", new Object[0]{});
-            Battlefield arena = server.GetBattlefield(battlefieldConfig);
-            
+
+            Battlefield arena;
+            if (args.Length >= 3) {
+                arena = server.GetBattlefield(new BattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, true, args[2], null, new object[0]));
+            } else {
+                arena = server.GetBattlefield(new BattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, true, null, null, new object[0]));
+            }
+
             while (!arena.End()) {
                 Task.Yield();
             }
