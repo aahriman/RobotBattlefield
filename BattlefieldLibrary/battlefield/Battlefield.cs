@@ -414,7 +414,7 @@ namespace BattlefieldLibrary.battlefield {
                     if (r.Power > r.WantedPower) {
                         r.Power = Math.Max(r.Power - r.Motor.SPEED_DOWN, r.WantedPower);
                     } else {
-                        r.Power = Math.Min(r.Motor.SPEED_UP_TO, r.WantedPower);
+                        r.Power = Math.Max(r.Power, Math.Min(r.Motor.SPEED_UP_TO, r.WantedPower));
                         r.Power = Math.Min(r.Power + r.Motor.SPEED_UP, r.WantedPower);
                     }
                 }
