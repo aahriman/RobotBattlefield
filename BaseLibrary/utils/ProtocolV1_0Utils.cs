@@ -239,7 +239,7 @@ namespace BaseLibrary.utils {
 						int.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -259,7 +259,7 @@ namespace BaseLibrary.utils {
 						double.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -280,7 +280,7 @@ namespace BaseLibrary.utils {
 						int.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -300,7 +300,7 @@ namespace BaseLibrary.utils {
 						double.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -318,7 +318,7 @@ namespace BaseLibrary.utils {
 					if (int.TryParse(keyValue.Key, out key)) {
 						dict.Add(key, keyValue.Value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -336,7 +336,7 @@ namespace BaseLibrary.utils {
 					if (double.TryParse(keyValue.Key, out key)) {
 						dict.Add(key, keyValue.Value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -354,7 +354,7 @@ namespace BaseLibrary.utils {
 					if (int.TryParse(keyValue.Value, out value)) {
 						dict.Add(keyValue.Key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -372,7 +372,7 @@ namespace BaseLibrary.utils {
 					if (double.TryParse(keyValue.Value, out value)) {
 						dict.Add(keyValue.Key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GenericTypeArguments[0].Name, dict.GetType().GenericTypeArguments[1].Name));
+						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -399,7 +399,9 @@ namespace BaseLibrary.utils {
 			IEnumerable enumerable = o as IEnumerable;
             String asString = o as String;
             InnerSerializerV1_0 innerSerializable = o as InnerSerializerV1_0;
-			if (innerSerializable != null) {
+		    if (o is Boolean) {
+		        return ((Boolean) o) ? "1" : "0";
+		    } else if (innerSerializable != null) {
 				return innerSerializable.Serialize(d.NEXT);
 			} else if (dictionary != null) {
 				return Serialize(dictionary, d.NEXT);

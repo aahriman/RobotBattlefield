@@ -1,4 +1,6 @@
-﻿using BaseLibrary.command.v1._0;
+﻿using BaseLibrary.command.miner;
+using BaseLibrary.command.repairman;
+using BaseLibrary.command.v1._0;
 using BaseLibrary.command.v1._0.equipment;
 using BaseLibrary.command.v1._0.tank;
 
@@ -13,9 +15,6 @@ namespace BaseLibrary.protocol {
 			comandsFactory.RegisterCommand(InitAnswerCommandV1_0.FACTORY);
 
             comandsFactory.RegisterCommand(WaitCommandV1_0.FACTORY);
-
-            comandsFactory.RegisterCommand(ShotCommandV1_0.FACTORY);
-            comandsFactory.RegisterCommand(ShotAnswerCommandV1_0.FACTORY);
 
             comandsFactory.RegisterCommand(DriveCommandV1_0.FACTORY);
             comandsFactory.RegisterCommand(DriveAnswerCommandV1_0.FACTORY);
@@ -46,6 +45,23 @@ namespace BaseLibrary.protocol {
 
 			comandsFactory.RegisterCommand(MerchantAnswerCommandV1_0.FACTORY);
 			comandsFactory.RegisterCommand(MerchantCommandV1_0.FACTORY);
+
+
+            // TANK COMMANDS
+
+            comandsFactory.RegisterCommand(ShotCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(ShotAnswerCommandV1_0.FACTORY);
+
+            // MINER COMMANDS
+            comandsFactory.RegisterCommand(PutMineCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(PutMineAnswerCommandV1_0.FACTORY);
+
+            comandsFactory.RegisterCommand(DetonateMineCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(DetonateMineAnswerCommandV1_0.FACTORY);
+
+            // REPAIRMAN COMMANDS
+            comandsFactory.RegisterCommand(RepairCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(RepairAnswerCommandV1_0.FACTORY);
         }
     }
 }

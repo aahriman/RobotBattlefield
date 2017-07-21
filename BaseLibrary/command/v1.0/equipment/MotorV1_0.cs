@@ -1,5 +1,6 @@
 ﻿using System;
 using BaseLibrary.equip;
+using BaseLibrary.protocol;
 using BaseLibrary.utils;
 using BaseLibrary.utils.protocolV1_0Utils;
 

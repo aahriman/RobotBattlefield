@@ -18,15 +18,15 @@ namespace BaseLibrary.command.repairman {
             SUCCESS = succes;
         }
 
-        public override void accept(IRepairmanCommandVisitor accepter) {
+        public override void accept(IRepairmanVisitor accepter) {
             accepter.visit(this);
         }
 
-        public override Output accept<Output>(IRepairmanCommandVisitor<Output> accepter) {
+        public override Output accept<Output>(IRepairmanVisitor<Output> accepter) {
             return accepter.visit(this);
         }
 
-        public override Output accept<Output, Input>(IRepairmanCommandVisitor<Output, Input> accepter, Input input) {
+        public override Output accept<Output, Input>(IRepairmanVisitor<Output, Input> accepter, Input input) {
             return accepter.visit(this, input);
         }
     }

@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="config\ServerConfig.cs" />
+    <Compile Include="AServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="protocol\HandShakeProtocol.cs" />
   </ItemGroup>
@@ -53,6 +53,10 @@
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
       <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
       <Name>BaseLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BattlefieldLibrary\BattlefieldLibrary.csproj">
+      <Project>{73808a0b-4126-4780-8fec-69872f6c5bac}</Project>
+      <Name>BattlefieldLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -17,7 +17,8 @@ namespace BaseLibrary.command.v1._0 {
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest) && rest.Length == 3) {
                     RobotType robotType;
                     if (Enum.TryParse(rest[2], true, out robotType)) {
-                        cache.Cached(s, new InitCommandV1_0(rest[0], rest[1], robotType));
+                        InitCommandV1_0 init = new InitCommandV1_0(rest[0], rest[1], robotType);
+                        cache.Cached(s, init);
                         return true;
                     }
                 }

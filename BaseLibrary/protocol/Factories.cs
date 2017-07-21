@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace BaseLibrary.protocol {
     public class Factories<TResult, TTransfer> {
-        private readonly List<IFactory<TResult, TTransfer>> commandFactorys = new List<IFactory<TResult, TTransfer>>();
+        private readonly List<IFactory<TResult, TTransfer>> commandFactories = new List<IFactory<TResult, TTransfer>>();
 
         public void RegisterCommand(IFactory<TResult, TTransfer> factory) {
-            commandFactorys.Add(factory);
+            commandFactories.Add(factory);
         }
 
         public void UnregisterCommand(IFactory<TResult, TTransfer> factory) {
-            commandFactorys.Remove(factory);
+            commandFactories.Remove(factory);
         }
 
         public TResult Deserialize(String transferString) {
-            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactorys) {
+            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactories) {
                 if (commandFactory.IsDeserializable(transferString)) {
                     return commandFactory.Deserialize(transferString);
                 }
@@ -23,7 +23,7 @@ namespace BaseLibrary.protocol {
         }
 
         public TResult Transfer(TTransfer transfer) {
-            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactorys) {
+            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactories) {
                 if (commandFactory.IsTransferable(transfer)) {
                     return commandFactory.Transfer(transfer);
                 }
@@ -32,8 +32,8 @@ namespace BaseLibrary.protocol {
         }
 
         public string Serialize(TTransfer transfer) {
-            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactorys) {
-                if (commandFactory.IsSerializeable(transfer)) {
+            foreach (IFactory<TResult, TTransfer> commandFactory in commandFactories) {
+                if (commandFactory.IsSerializable(transfer)) {
                     return commandFactory.Serialize(transfer);
                 }
             }

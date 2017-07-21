@@ -19,15 +19,15 @@ namespace BaseLibrary.command.tank {
             SUCCESS = success;
         }
 
-        public sealed override void accept(ITankCommandVisitor accepter) {
+        public sealed override void accept(ITankVisitor accepter) {
             accepter.visit(this);
         }
 
-        public sealed override Output accept<Output>(ITankCommandVisitor<Output> accepter) {
+        public sealed override Output accept<Output>(ITankVisitor<Output> accepter) {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ITankCommandVisitor<Output, Input> accepter, Input input) {
+        public sealed override Output accept<Output, Input>(ITankVisitor<Output, Input> accepter, Input input) {
             return accepter.visit(this, input);
         }
     }

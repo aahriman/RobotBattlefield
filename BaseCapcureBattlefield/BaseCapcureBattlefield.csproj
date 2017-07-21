@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BaseCapcureBattlefield</RootNamespace>
     <AssemblyName>BaseCapcureBattlefield</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,8 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="battlefield\Base.cs" />
-    <Compile Include="battlefield\BaseCapture.cs" />
+    <Compile Include="battlefield\BaseCaptureBattlefield.cs" />
     <Compile Include="battlefield\BaseCaptureBattlefieldConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Run.cs" />
@@ -54,6 +54,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BaseCaptureBattlefieldLibrary\BaseCaptureLibrary.csproj">
+      <Project>{da246d22-28d1-4703-83f8-18fe342664ac}</Project>
+      <Name>BaseCaptureLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
       <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
       <Name>BaseLibrary</Name>

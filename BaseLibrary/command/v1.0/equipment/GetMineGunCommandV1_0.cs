@@ -5,7 +5,7 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.command.v1._0.equipment {
     class GetMineGunCommandV1_0 : GetMineGunCommand, ACommand.Sendable {
-        public const String NAME = "MINE_GUN";
+        public const String NAME = "MINE_GUNS";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }

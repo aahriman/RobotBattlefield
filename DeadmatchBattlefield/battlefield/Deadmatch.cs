@@ -7,7 +7,6 @@ using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
 using BaseLibrary.equip;
 using BattlefieldLibrary.battlefield;
-using ServerLibrary.config;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
 

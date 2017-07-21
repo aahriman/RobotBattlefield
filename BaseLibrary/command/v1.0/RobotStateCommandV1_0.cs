@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BaseLibrary.command.common;
 using BaseLibrary.protocol;
 using BaseLibrary.utils;
-using BaseLibrary.utils.protocolV1_0Utils;
 
 namespace BaseLibrary.command.v1._0 {
 	public class RobotStateCommandV1_0 : RobotStateCommand, ACommand.Sendable {
@@ -34,7 +33,7 @@ namespace BaseLibrary.command.v1._0 {
 						                                                                            arrayIdsOfLifeRobots, endLapCommand);
 					        String[] moreString;
 					        if (ProtocolV1_0Utils.Deserialize(rest[9], out moreString, ProtocolV1_0Utils.DEFAULT.NEXT)) {
-					            robotStateCommand.DeserializeMore(moreString, robotStateCommand.MORE);
+					            robotStateCommand.DeserializeMore(moreString, robotStateCommand.MORE, SUB_COMMAND_FACTORIES);
 					        }
 					        cache.Cached(s, robotStateCommand);
 							return true;
@@ -59,7 +58,7 @@ namespace BaseLibrary.command.v1._0 {
 			}
 		}
 
-		public RobotStateCommandV1_0(ProtocolDouble x, ProtocolDouble y, int hitPoints, ProtocolDouble power, int turn, int maxTurn, int countOfLifeRobots, int[] arrayIdsOfLifeRobots, EndLapCommand endLapCommand) :
+		public RobotStateCommandV1_0(double x, double y, int hitPoints, double power, int turn, int maxTurn, int countOfLifeRobots, int[] arrayIdsOfLifeRobots, EndLapCommand endLapCommand) :
 			base(x, y, hitPoints, power, turn, maxTurn, countOfLifeRobots, arrayIdsOfLifeRobots, endLapCommand) { }
 
         public string Serialize() {
@@ -67,7 +66,7 @@ namespace BaseLibrary.command.v1._0 {
 		    if (END_LAP_COMMAND != null) {
                 endLapCommand = (EndLapCommandV1_0) EndLapCommandV1_0.FACTORY.Transfer(this.END_LAP_COMMAND);
 		    }
-            return ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, X, Y, HIT_POINTS, POWER, TURN, MAX_TURN, COUNT_OF_LIFE_ROBOTS, ARRAY_IDS_OF_LIFE_ROBOTS, endLapCommand, SerializeMore());
+            return ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, (ProtocolDouble)X, (ProtocolDouble)Y, HIT_POINTS, (ProtocolDouble)POWER, TURN, MAX_TURN, COUNT_OF_LIFE_ROBOTS, ARRAY_IDS_OF_LIFE_ROBOTS, endLapCommand, SerializeMore(SUB_COMMAND_FACTORIES));
 		}
 	}
 }

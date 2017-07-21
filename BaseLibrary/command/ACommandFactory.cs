@@ -7,7 +7,7 @@ using BaseLibrary.protocol;
 
 namespace BaseLibrary.command {
     public abstract class ACommandFactory : AFactory<ACommand.Sendable, ACommand> {
-        public override bool IsSerializeable(ACommand c) {
+        public override bool IsSerializable(ACommand c) {
             if (IsTransferable(c)) {
                 cacheForSerialize.Cached(c, Transfer(c).Serialize());
                 return true;

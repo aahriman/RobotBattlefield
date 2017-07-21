@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
 using BaseLibrary.command.common;
@@ -8,8 +9,19 @@ using BaseLibrary.command.tank;
 using BaseLibrary.equip;
 
 namespace ClientLibrary.robot {
-    class Miner : ClientRobot {
+    public class Miner : ClientRobot {
+
+        public struct Mine {
+            public double X;
+            public double Y;
+            public int ID;
+        }
+
         public MineGun MINE_GUN { get; private set; }
+
+        public int PutedMines { get; private set; }
+
+        public readonly List<Mine> PutedMinesList = new List<Mine>();
 
         public Miner() : base() {}
 
@@ -26,8 +38,21 @@ namespace ClientLibrary.robot {
             await sendCommandAsync(new PutMineCommand());
             var commnad = sns.RecieveCommand();
             var answerCommand = (PutMineAnswerCommand) commnad;
+
+            if (answerCommand.SUCCESS) {
+                PutedMinesList.Add(new Mine() {
+                    ID = answerCommand.MINE_ID,
+                    X = X,
+                    Y = Y
+                });
+            }
+
             if (processStateAfterEveryCommand) {
                 ProcessState(await StateAsync());
+            }
+
+            if (answerCommand.SUCCESS) {
+                PutedMines++;
             }
             return answerCommand;
         }
@@ -43,6 +68,17 @@ namespace ClientLibrary.robot {
             var answerCommand = (DetonateMineAnswerCommand) commnad;
             if (processStateAfterEveryCommand) {
                 ProcessState(await StateAsync());
+            }
+
+            if (answerCommand.SUCCESS) {
+                PutedMines--;
+
+                foreach (var mine in PutedMinesList) {
+                    if (mine.ID == mineId) {
+                        PutedMinesList.Remove(mine);
+                        break;
+                    }
+                }
             }
             return answerCommand;
         }

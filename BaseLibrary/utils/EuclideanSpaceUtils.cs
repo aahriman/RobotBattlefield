@@ -14,6 +14,10 @@ namespace BaseLibrary.utils {
             return Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2));
         }
 
+        public static double Distance(double x1, double y1, double x2, double y2) {
+            return Distance(new Point(x1, y1), new Point(x2, y2));
+        }
+
         public static bool FindIntersenction(Segment segment1, Segment segment2, out double x, out double y) {
             double dX1 = segment1.To.X - segment1.From.X;
             double dY1 = segment1.To.Y - segment1.From.Y;

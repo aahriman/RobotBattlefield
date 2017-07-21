@@ -31,10 +31,10 @@ namespace BaseLibrary.command.v1._0 {
             }
         }
 
-        public DriveCommandV1_0(ProtocolDouble power, ProtocolDouble angle) : base(power, angle) { }
+        public DriveCommandV1_0(double power, double angle) : base(power, angle) { }
 
         public string Serialize() {
-	        return ProtocolV1_0Utils.SerializeParams(NAME, POWER, ANGLE);
+	        return ProtocolV1_0Utils.SerializeParams(NAME, (ProtocolDouble) POWER, (ProtocolDouble) ANGLE);
         }
 
     }

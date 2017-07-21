@@ -5,6 +5,7 @@ using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
 using BaseLibrary.command.tank;
 using BaseLibrary.equip;
+using BaseLibrary.protocol;
 
 namespace ClientLibrary.robot {
     public class Tank : ClientRobot {
@@ -18,13 +19,23 @@ namespace ClientLibrary.robot {
             return RobotType.TANK;
         }
 
-        public ShotAnswerCommand Shot(double range, double angle) {
-            ShotAnswerCommand answer = taskWait(ShotAsync(range, angle));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="range">how far this robot wants to shot</param>
+        public ShotAnswerCommand Shot(double angle, double range) {
+            ShotAnswerCommand answer = taskWait(ShotAsync(angle, range));
             return answer;
         }
 
-        public async Task<ShotAnswerCommand> ShotAsync(double range, double angle) {
-            await sendCommandAsync(new ShotCommand((ProtocolDouble)range, (ProtocolDouble)angle));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="range">how far this robot wants to shot</param>
+        public async Task<ShotAnswerCommand> ShotAsync(double angle, double range) {
+            await sendCommandAsync(new ShotCommand(range, angle));
             var commnad = sns.RecieveCommand();
             var answerCommand = (ShotAnswerCommand) commnad;
             if (processStateAfterEveryCommand) {

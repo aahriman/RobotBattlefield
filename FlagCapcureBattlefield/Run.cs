@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
+using BattlefieldLibrary.config;
 using FlagCapcureBattlefield.battlefield;
-using ServerLibrary.config;
+using FlagCaptureLibrary.battlefield;
 
 namespace FlagCapcureBattlefield {
     public class Run {
@@ -13,20 +14,22 @@ namespace FlagCapcureBattlefield {
         /// <param name="args">[0] => port, [1] => number of robots, [2] => file to equipment</param>
         public static void Main(String[] args) {
             Console.WriteLine("Arena start.");
-            Server server = new Server(GameProperties.DEFAULT_PORT);
-            FlagPlace[] flags = {new FlagPlace(500, 100, 1), new FlagPlace(500, 900, 2)};
-            FlagCaptureBattlefieldConfig flagCaptureBattlefieldConfig;
-            if (args.Length >= 3) {
-                flagCaptureBattlefieldConfig = new FlagCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 0, true, args[2], null, flags);
-            } else {
-                flagCaptureBattlefieldConfig = new FlagCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 0, true, null, null, flags);
-            }
-            
-            Battlefield arena = server.GetBattlefield(flagCaptureBattlefieldConfig);
 
-            while (!arena.End()) {
-                Task.Yield();
+            int port;
+            if (args.Length < 1 || !int.TryParse(args[0], out port)) {
+                port = GameProperties.DEFAULT_PORT;
             }
+            Server server = new Server(port);
+            BattlefieldConfig battlefieldConfig;
+            if (args.Length >= 2) {
+                battlefieldConfig = BattlefieldConfig.DeserializeFromFile<FlagCaptureBattlefieldConfig>(args[1]);
+            } else {
+                battlefieldConfig = new FlagCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, true, "arena_match" + port + ".txt", null, null, new [] { new FlagPlace(500, 200, 1), new FlagPlace(500, 800, 2)});
+            }
+            Battlefield arena = server.GetBattlefield(battlefieldConfig);
+            
+            arena.RunEvent.WaitOne();
+            arena.RunThread.Join();
         }
     }
 }

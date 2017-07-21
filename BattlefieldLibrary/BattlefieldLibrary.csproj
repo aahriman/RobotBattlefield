@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BattlefieldLibrary</RootNamespace>
     <AssemblyName>BattlefieldLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,12 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AServer.cs" />
     <Compile Include="battlefield\BattlefieldConfig.cs" />
     <Compile Include="battlefield\Battlefield.cs" />
     <Compile Include="battlefield\Battlefield.Visitors.cs" />
@@ -49,6 +53,7 @@
     <Compile Include="battlefield\robot\Miner.cs" />
     <Compile Include="battlefield\robot\Repairman.cs" />
     <Compile Include="battlefield\robot\Tank.cs" />
+    <Compile Include="config\ServerConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -56,18 +61,17 @@
       <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ObtacleMod\ObtacleMod.csproj">
+    <ProjectReference Include="..\ObtacleMod\ObstacleMod.csproj">
       <Project>{3f280b33-4be8-4814-a216-3478aeeff068}</Project>
-      <Name>ObtacleMod</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ServerLibrary\ServerLibrary.csproj">
-      <Project>{34374a8c-3761-4c96-a81e-98a54c540099}</Project>
-      <Name>ServerLibrary</Name>
+      <Name>ObstacleMod</Name>
     </ProjectReference>
     <ProjectReference Include="..\ViewerLibrary\ViewerLibrary.csproj">
       <Project>{e83d7cab-dbde-4e18-bcbc-59cf6c247c2c}</Project>
       <Name>ViewerLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

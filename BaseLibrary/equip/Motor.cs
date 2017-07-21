@@ -42,5 +42,9 @@
                 return hashCode;
             }
         }
-    }
+
+	    public override string ToString() {
+	        return $"{nameof(MAX_SPEED)}: {MAX_SPEED}, {nameof(ROTATE_IN)}: {ROTATE_IN}, {nameof(SPEED_UP)}: {SPEED_UP}, {nameof(SPEED_DOWN)}: {SPEED_DOWN}, {nameof(SPEED_UP_TO)}: {SPEED_UP_TO}, {nameof(COST)}: {COST}, {nameof(ID)}: {ID}";
+	    }
+	}
 }

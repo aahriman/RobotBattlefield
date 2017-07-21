@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace ViewerLibrary {
     public class Turn {
         public int TURN { get; private set; }
         public Bullet[] BULLETS { get; private set; }
+        public Mine[] MINES { get; private set; }
+        public Repair[] REPAIRS { get; private set; }
         public Robot[] ROBOTS { get; private set; }
         public Scan[] SCANS { get; private set; }
 
         public Object[][] MORE { get; private set; }
 
-        public Turn(int TURN, Bullet[] BULLETS, Robot[] ROBOTS, Scan[] SCANS, Object[][] MORE) {
+        public Turn(int TURN, Bullet[] BULLETS, Mine[] MINES, Repair[] REPAIRS, Robot[] ROBOTS, Scan[] SCANS, Object[][] MORE) {
             this.BULLETS = BULLETS ?? new Bullet[0];
+            this.MINES = MINES ?? new Mine[0];
+            this.REPAIRS = REPAIRS ?? new Repair[0];
             this.ROBOTS = ROBOTS ?? new Robot[0];
             this.SCANS = SCANS ?? new Scan[0];
             this.TURN = TURN;
@@ -29,6 +34,29 @@ namespace ViewerLibrary {
             this.X = X;
             this.Y = Y;
             this.EXPLODED = EXPLODED;
+        }
+    }
+
+    public class Mine {
+        public double X { get; private set; }
+        public double Y { get; private set; }
+
+        public bool EXPLODED { get; private set; }
+
+        public Mine(double X, double Y, bool EXPLODED) {
+            this.X = X;
+            this.Y = Y;
+            this.EXPLODED = EXPLODED;
+        }
+    }
+
+    public class Repair {
+        public double X { get; private set; }
+        public double Y { get; private set; }
+
+        public Repair(double X, double Y) {
+            this.X = X;
+            this.Y = Y;
         }
     }
 
@@ -72,38 +100,6 @@ namespace ViewerLibrary {
             this.ANGLE = ANGLE;
             this.PRECISION = PRECISION;
             this.DISTANCE = DISTANCE;
-            this.X = X;
-            this.Y = Y;
-        }
-
-        public PointF GetPosition() {
-            return new PointF((float)X, (float)Y);
-        }
-    }
-
-    public class Base {
-        public double X { get; private set; }
-        public double Y { get; private set; }
-        public int PROGRESS { get; private set; }
-        public int TEAM_ID { get; private set; }
-
-        public Base(double X, double Y, int PROGRESS, int TEAM_ID) {
-            this.X = X;
-            this.Y = Y;
-            this.PROGRESS = PROGRESS;
-            this.TEAM_ID = TEAM_ID;
-        }
-
-        public PointF GetPosition() {
-            return new PointF((float)X, (float)Y);
-        }
-    }
-
-    public class Flag {
-        public double X { get; private set; }
-        public double Y { get; private set; }
-
-        public Flag(double X, double Y) {
             this.X = X;
             this.Y = Y;
         }

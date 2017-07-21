@@ -9,8 +9,8 @@ namespace BaseLibrary.command.miner {
         /// <exception cref="NotImplementedException">if accepter is not IMinerCommandVisitor</exception>
         /// <param name="accepter"></param>
         public sealed override void accept(ICommandVisitor accepter) {
-            if (accepter is IMinerCommandVisitor) {
-                this.accept((IMinerCommandVisitor)accepter);
+            if (accepter is IMinerVisitor) {
+                this.accept((IMinerVisitor)accepter);
             } else {
                 throw new NotImplementedException();
             }
@@ -22,8 +22,8 @@ namespace BaseLibrary.command.miner {
         // <exception cref="NotImplementedException">if accepter is not IMinerCommandVisitor&lt;Output&gt;</exception>
         /// <param name="accepter"></param>
         public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            if (accepter is IMinerCommandVisitor<Output>) {
-                return this.accept((IMinerCommandVisitor<Output>)accepter);
+            if (accepter is IMinerVisitor<Output>) {
+                return this.accept((IMinerVisitor<Output>)accepter);
             } else {
                 throw new NotImplementedException();
             }
@@ -35,18 +35,18 @@ namespace BaseLibrary.command.miner {
         /// <exception cref="NotImplementedException">if accepter is not IMinerCommandVisitor&lt;Output Intput&gt;</exception>
         /// <param name="accepter"></param>
         public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            if (accepter is IMinerCommandVisitor<Output, Input>) {
-                return this.accept((IMinerCommandVisitor<Output, Input>)accepter, input);
+            if (accepter is IMinerVisitor<Output, Input>) {
+                return this.accept((IMinerVisitor<Output, Input>)accepter, input);
             } else {
                 throw new NotImplementedException();
             }
         }
 
-        public abstract void accept(IMinerCommandVisitor accepter);
+        public abstract void accept(IMinerVisitor accepter);
 
-        public abstract Output accept<Output>(IMinerCommandVisitor<Output> accepter);
+        public abstract Output accept<Output>(IMinerVisitor<Output> accepter);
 
 
-        public abstract Output accept<Output, Input>(IMinerCommandVisitor<Output, Input> accepter, Input input);
+        public abstract Output accept<Output, Input>(IMinerVisitor<Output, Input> accepter, Input input);
     }
 }

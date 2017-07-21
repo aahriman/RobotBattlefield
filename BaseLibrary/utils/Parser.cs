@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BaseLibrary.protocol;
 
 namespace BaseLibrary.utils {
 	public static class Parser {

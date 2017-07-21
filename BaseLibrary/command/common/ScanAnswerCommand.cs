@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {

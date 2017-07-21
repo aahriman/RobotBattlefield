@@ -2,14 +2,14 @@
 using BattlefieldLibrary.battlefield.robot;
 
 namespace BattlefieldLibrary.battlefield {
-	internal class Bullet {
-		public int TO_LAP { get; private set; }
-		public int FROM_LAP { get; private set; }
-		public double TO_X { get; private set; }
-		public double TO_Y { get; private set; }
-		public double FROM_X { get; private set; }
-		public double FROM_Y { get; private set; }
-		public Tank TANK { get; private set; }
+	internal struct Bullet {
+	    public readonly int TO_LAP;
+	    public readonly int FROM_LAP;
+	    public readonly double TO_X;
+	    public readonly double TO_Y;
+	    public readonly double FROM_X;
+	    public readonly double FROM_Y;
+	    public readonly Tank TANK;
 
 
 		public Bullet(int fromLap, int toLap, double toX, double toY, Tank tank) {

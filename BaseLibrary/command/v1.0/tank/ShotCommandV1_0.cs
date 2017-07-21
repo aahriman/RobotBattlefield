@@ -33,12 +33,12 @@ namespace BaseLibrary.command.v1._0.tank {
         }
  
 
-        public ShotCommandV1_0(ProtocolDouble range, ProtocolDouble angle)
+        public ShotCommandV1_0(double range, double angle)
             : base(range, angle) {
         }
 
         public string Serialize() {
-	        return ProtocolV1_0Utils.SerializeParams(NAME, RANGE, ANGLE);
+	        return ProtocolV1_0Utils.SerializeParams(NAME, (ProtocolDouble)RANGE, (ProtocolDouble)ANGLE);
         }
     }
 }

@@ -35,5 +35,9 @@
                 return (DISTANCE * 397) ^ EFFECT;
             }
         }
+
+        public override string ToString() {
+            return $"{nameof(DISTANCE)}: {DISTANCE}, {nameof(EFFECT)}: {EFFECT}";
+        }
     }
 }

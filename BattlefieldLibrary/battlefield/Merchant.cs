@@ -58,6 +58,18 @@ namespace BattlefieldLibrary.battlefield {
         public MerchantAnswerCommand Buy(BattlefieldRobot r, int motorId, int armorId, int classEquipmentID, int hp) {
             repairHp(r, r.Armor.MAX_HP/10);
 
+
+            {
+                Armor wantedBuy;
+                if (armorsById.TryGetValue(classEquipmentID, out wantedBuy) && !wantedBuy.Equals(r.Armor)) {
+                    if (r.Gold >= wantedBuy.COST) {
+                        r.Gold -= wantedBuy.COST;
+                        r.Armor = wantedBuy;
+                        repairHp(r, r.Armor.MAX_HP);
+                    }
+                }
+            }
+
             if (hp - r.HitPoints > 0) {
                 int possibleToRapairHP = Math.Min(hp - r.HitPoints, r.Gold*4);
                 r.Gold -= (possibleToRapairHP+3)/4;
@@ -73,17 +85,6 @@ namespace BattlefieldLibrary.battlefield {
 			        }
 		        }
 	        }
-
-            {
-                Armor wantedBuy;
-                if (armorsById.TryGetValue(classEquipmentID, out wantedBuy) && !wantedBuy.Equals(r.Armor)) {
-                    if (r.Gold >= wantedBuy.COST) {
-                        r.Gold -= wantedBuy.COST;
-                        r.Armor = wantedBuy;
-                        repairHp(r, r.Armor.MAX_HP);
-                    }
-                }
-            }
 
             ClassEquipment classEquipment = buyClassEquipment(r, classEquipmentID);
 

@@ -10,7 +10,7 @@ namespace BaseLibrary.protocol {
         Boolean IsTransferable(TTransfered c);
 
         String Serialize(TTransfered c);
-        Boolean IsSerializeable(TTransfered c);
+        Boolean IsSerializable(TTransfered c);
     }
 
     public abstract class AFactory<TReturn, TTransfered> : IFactory<TReturn, TTransfered> {
@@ -40,7 +40,7 @@ namespace BaseLibrary.protocol {
         }
 
         public String Serialize(TTransfered c) {
-            if (cacheForSerialize.IsCached(c) || IsSerializeable(c)) {
+            if (cacheForSerialize.IsCached(c) || IsSerializable(c)) {
                 return cacheForSerialize.GetCached();
             } else {
                 if (c == null) {
@@ -54,6 +54,6 @@ namespace BaseLibrary.protocol {
 
         public abstract Boolean IsTransferable(TTransfered c);
 
-        public abstract Boolean IsSerializeable(TTransfered c);
+        public abstract Boolean IsSerializable(TTransfered c);
     }
 }

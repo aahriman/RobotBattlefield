@@ -9,8 +9,8 @@ namespace BaseLibrary.command.repairman {
         /// <exception cref="NotImplementedException">if accepter is not IRepairmanCommandVisitor</exception>
         /// <param name="accepter"></param>
         public sealed override void accept(ICommandVisitor accepter) {
-            if (accepter is IRepairmanCommandVisitor) {
-                this.accept((IRepairmanCommandVisitor)accepter);
+            if (accepter is IRepairmanVisitor) {
+                this.accept((IRepairmanVisitor)accepter);
             } else {
                 throw new NotImplementedException();
             }
@@ -22,8 +22,8 @@ namespace BaseLibrary.command.repairman {
         // <exception cref="NotImplementedException">if accepter is not IRepairmanCommandVisitor&lt;Output&gt;</exception>
         /// <param name="accepter"></param>
         public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            if (accepter is IRepairmanCommandVisitor<Output>) {
-                return this.accept((IRepairmanCommandVisitor<Output>)accepter);
+            if (accepter is IRepairmanVisitor<Output>) {
+                return this.accept((IRepairmanVisitor<Output>)accepter);
             } else {
                 throw new NotImplementedException();
             }
@@ -35,18 +35,18 @@ namespace BaseLibrary.command.repairman {
         /// <exception cref="NotImplementedException">if accepter is not IRepairmanCommandVisitor&lt;Output Intput&gt;</exception>
         /// <param name="accepter"></param>
         public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            if (accepter is IRepairmanCommandVisitor<Output, Input>) {
-                return this.accept((IRepairmanCommandVisitor<Output, Input>)accepter, input);
+            if (accepter is IRepairmanVisitor<Output, Input>) {
+                return this.accept((IRepairmanVisitor<Output, Input>)accepter, input);
             } else {
                 throw new NotImplementedException();
             }
         }
 
-        public abstract void accept(IRepairmanCommandVisitor accepter);
+        public abstract void accept(IRepairmanVisitor accepter);
 
-        public abstract Output accept<Output>(IRepairmanCommandVisitor<Output> accepter);
+        public abstract Output accept<Output>(IRepairmanVisitor<Output> accepter);
 
 
-        public abstract Output accept<Output, Input>(IRepairmanCommandVisitor<Output, Input> accepter, Input input);
+        public abstract Output accept<Output, Input>(IRepairmanVisitor<Output, Input> accepter, Input input);
     }
 }

@@ -14,9 +14,10 @@ namespace BattlefieldLibrary.battlefield {
 
         private readonly List<Scan> scans = new List<Scan>();
         private readonly List<ViewerLibrary.Bullet> bullets = new List<ViewerLibrary.Bullet>();
+        private readonly List<ViewerLibrary.Mine> mines = new List<ViewerLibrary.Mine>();
+        private readonly List<ViewerLibrary.Repair> repairs = new List<ViewerLibrary.Repair>();
         private readonly List<Robot> robots = new List<Robot>();
         private readonly Object[] more = new Object[registratedObject];
-        private readonly List<Flag> flags = new List<Flag>();
 
         private readonly int turn;
 
@@ -26,6 +27,14 @@ namespace BattlefieldLibrary.battlefield {
 
         public void AddBullet(ViewerLibrary.Bullet bullet) {
             bullets.Add(bullet);
+        }
+
+        public void AddMine(ViewerLibrary.Mine mine) {
+            mines.Add(mine);
+        }
+
+        public void AddRepair(ViewerLibrary.Repair repair) {
+            repairs.Add(repair);
         }
 
         public void AddScan(Scan scan) {
@@ -40,14 +49,10 @@ namespace BattlefieldLibrary.battlefield {
             more[position] = @object;
         }
 
-        public void AddFlag(Flag flag) {
-            flags.Add(flag);
-        }
-
         public Turn ConvertToTurn() {
             Object[][] moreObject = (from o in more
-                                     select ((List<Object>) o).ToArray()).ToArray();
-            return new Turn(turn, bullets.ToArray(), robots.ToArray(), scans.ToArray(), moreObject);
+                                     select  (Object[]) o).ToArray();
+            return new Turn(turn, bullets.ToArray(), mines.ToArray(), repairs.ToArray(), robots.ToArray(), scans.ToArray(), moreObject);
         }
     }
 }

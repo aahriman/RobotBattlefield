@@ -13,10 +13,10 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
-        public ProtocolDouble X { get; private set; }
-        public ProtocolDouble Y { get; private set; }
+        public double X { get; private set; }
+        public double Y { get; private set; }
         public int HIT_POINTS { get; private set; }
-        public ProtocolDouble POWER { get; private set; }
+        public double POWER { get; private set; }
         public int TURN { get; private set; }
         public int MAX_TURN { get; private set; }
         public int COUNT_OF_LIFE_ROBOTS { get; private set; }
@@ -24,7 +24,7 @@ namespace BaseLibrary.command.common {
 
         public EndLapCommand END_LAP_COMMAND { get; private set; }
 
-        public RobotStateCommand(ProtocolDouble x, ProtocolDouble y, int hitPoints, ProtocolDouble power, int turn, int maxTurn, int countOfLefeRobots, int[] arrayIdsOfLifeRobots, EndLapCommand endLapCommand) {
+        public RobotStateCommand(double x, double y, int hitPoints, double power, int turn, int maxTurn, int countOfLefeRobots, int[] arrayIdsOfLifeRobots, EndLapCommand endLapCommand) {
             X = x;
             Y = y;
             HIT_POINTS = hitPoints;
@@ -35,30 +35,6 @@ namespace BaseLibrary.command.common {
             ARRAY_IDS_OF_LIFE_ROBOTS = arrayIdsOfLifeRobots;
             END_LAP_COMMAND = endLapCommand;
             MORE = new object[SUB_COMMAND_FACTORIES.Count];
-        }
-
-
-        protected String[] SerializeMore() {
-            String[] serializedMore = new string[MORE.Length];
-            for (int i = 0; i < MORE.Length; i++) {
-                foreach (var factory in SUB_COMMAND_FACTORIES) {
-                    if (factory.Serialize(MORE[i], out serializedMore[i])) {
-                        break;
-                    }
-                    
-                }
-            }
-            return serializedMore;
-        }
-
-        protected void DeserializeMore(String[] serializedMore, Object[] more) {
-            foreach (var moreString in serializedMore) {
-                foreach (var subCommandFactory in SUB_COMMAND_FACTORIES) {
-                    if (subCommandFactory.Deserialize(moreString, more)) {
-                        break;
-                    }
-                }
-            }
         }
 
         public sealed override void accept(ICommandVisitor accepter) {

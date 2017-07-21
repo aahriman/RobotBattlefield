@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
@@ -15,11 +17,13 @@ namespace BaseLibrary.command.common {
         public static DriveCommand GetInstance(ProtocolDouble speed, ProtocolDouble angle) {
             return new DriveCommand(speed, angle);
         }
-        public ProtocolDouble POWER { get; private set; }
-        public ProtocolDouble ANGLE { get; private set; }
+        public double POWER { get; private set; }
+        public double ANGLE { get; private set; }
 
-        public DriveCommand(ProtocolDouble speed, ProtocolDouble angle) {
-            POWER = speed;
+        public DriveCommand(double power, double angle) {
+            power = Math.Max(0, power);
+            power = Math.Min(100.0, power);
+            POWER = power;
             ANGLE = angle;
         }
 

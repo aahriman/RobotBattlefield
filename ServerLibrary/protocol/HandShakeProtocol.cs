@@ -6,7 +6,7 @@ using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
-using ServerLibrary.config;
+using BattlefieldLibrary.config;
 
 namespace ServerLibrary.protocol {
     public class HandShakeProtocol : AProtocol {
@@ -49,7 +49,7 @@ namespace ServerLibrary.protocol {
                 Console.Out.WriteLine("ERROR: " + ((ErrorCommand)command).MESSAGE);
             } else {
                 ErrorCommand error = new ErrorCommand(message);
-                socket.SendCommandAsyncDontWait(error);
+                socket.SendCommand(error);
                 Console.Out.WriteLine(message);
             }
         }

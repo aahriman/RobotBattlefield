@@ -14,29 +14,70 @@ namespace BaseLibrary.utils {
         /// Call static constructors for every class which is .dll in Plugins dictionary which have attribute <code>ModDesciption</code> 
         /// </summary>
         public static void LoadMods() {
-            if(Directory.Exists("./Plugins")) {
-                String[] files = Directory.GetFiles("./Plugins/", "*.dll");
+            Load(Assembly.GetCallingAssembly());
+            if (Directory.Exists("./")) {
+                String[] files = Directory.GetFiles("./", "*.dll");
                 foreach (var s in files) {
-                    Load(Path.Combine(Environment.CurrentDirectory, s));
+                    LoadFrom(s);
+                }
+                files = Directory.GetFiles("./", "*.exe");
+                foreach (var s in files) {
+                    LoadFrom(s);
                 }
             }
         }
 
-        public static void Load(String file) {
-            if (!File.Exists(file) || !file.EndsWith(".dll", true, null))
-                return;
+        /// <summary>
+        /// Support resursive go through
+        /// </summary>
+        /// <param name="file"></param>
+        public static void LoadFrom(String file) {
+            if (Directory.Exists(file)) {
+                foreach (var innetFile in Directory.GetFiles(file)) {
+                    LoadFrom(innetFile);
+                }
+            } else {
+                Assembly assembly = LoadAssembly(file);
+                if (assembly != null) {
+                    Load(assembly);
+                }
+            }
+        }
 
-            Assembly assembly = Assembly.LoadFile(file);
+        public static Assembly LoadAssembly(String file) {
+            if (!File.Exists(file)) {
+                return null;
+            }
 
-            Type [] modTypes = (Type[]) assembly
+            if (!file.EndsWith(".dll", true, null) && file.EndsWith(".exe", true, null)) {
+                return null;
+            }
+            
+            return Assembly.LoadFile(Path.GetFullPath(file));
+        }
+
+        public static void Load(Assembly assembly) {
+            Type[] modTypes = (Type[]) assembly
                 .GetTypes()
                 .Where(t =>
-                    t.IsClass &&
-                    t.GetCustomAttribute(typeof(ModDescription)) != null)
+                           t.IsClass &&
+                           t.GetCustomAttribute(typeof(ModDescription), false) != null)
                 .ToArray();
             foreach (Type modType in modTypes) {
                 System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(modType.TypeHandle);
             }
+        }
+
+        public static Assembly[] LoadAllAssemblyInDir(String dir) {
+            if (Directory.Exists(dir)) {
+                List<Assembly> assemblies = new List<Assembly>();
+                String[] files = Directory.GetFiles(dir, "*.dll");
+                foreach (var file in files) {
+                    assemblies.Add(LoadAssembly(file));
+                }
+                return assemblies.ToArray();
+            }
+            return new Assembly[0];
         }
     }
 }

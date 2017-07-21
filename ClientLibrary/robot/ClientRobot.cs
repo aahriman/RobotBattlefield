@@ -6,11 +6,14 @@ using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.equipment;
 using BaseLibrary.command.handshake;
+using BaseLibrary.config;
 using BaseLibrary.equip;
+using BaseLibrary.protocol;
 using BaseLibrary.utils;
+using ClientLibrary.config;
 
 namespace ClientLibrary.robot {
-    public abstract class ClientRobot : AClient {
+    public abstract class ClientRobot : AClientRobot {
         static ClientRobot() {
             ModUtils.LoadMods();
         }
@@ -22,6 +25,9 @@ namespace ClientLibrary.robot {
         public static readonly Dictionary<int, RepairTool> REPAIR_TOOLS_BY_ID = new Dictionary<int, RepairTool>();
         public static readonly Dictionary<int, MineGun> MINE_GUNS_BY_ID = new Dictionary<int, MineGun>();
 
+        public int MAX_LAP { get; private set; }
+        public int MAX_TURN { get; private set; }
+        public int LAP { get; private set; }
         public String NAME { get; private set; }
 
         public override int HitPoints { get; set; }
@@ -41,6 +47,23 @@ namespace ClientLibrary.robot {
         protected ClientRobot(bool processStateAfterEveryCommand, bool processMerchant) {
             this.processStateAfterEveryCommand = processStateAfterEveryCommand;
             this.processMerchant = processMerchant;
+            LAP = 1;
+        }
+
+        public GameTypeCommand Connect(String [] args) {
+            String ip = AClientRobot.LOCAL_ADDRES;
+            int port = GameProperties.DEFAULT_PORT;
+            if (args.Length >= 1) {
+                ip = args[0];
+            }
+
+            if (args.Length >= 2) {
+                port = int.Parse(args[1]);
+            }
+
+            GameTypeCommand gameTypeCommand = taskWait(ConnectAsync(ip, port));
+            afterConnect();
+            return gameTypeCommand;
         }
 
         public GameTypeCommand Connect() {
@@ -61,14 +84,27 @@ namespace ClientLibrary.robot {
             return gameTypeCommand;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"> name of this robot</param>
+        /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
+        /// <returns></returns>
         public InitAnswerCommand Init(String name, String teamName) {
             InitAnswerCommand answer = taskWait(InitAsync(name, teamName));
             return answer;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"> name of this robot</param>
+        /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
+        /// <returns></returns>
         public async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
             var answerCommand =  (InitAnswerCommand)await recieveCommandAsync();
+            ProcessInit(answerCommand);
             if (processStateAfterEveryCommand) {
                 ProcessState(await StateAsync());
             }
@@ -115,30 +151,44 @@ namespace ClientLibrary.robot {
             }
         }
 
-        public void ProcessInit(InitAnswerCommand init) {
+        /// <summary>
+        /// Set robot id and equipment
+        /// </summary>
+        /// <param name="init"></param>
+        public virtual void ProcessInit(InitAnswerCommand init) {
             this.ID = init.ROBOT_ID;
-            //this.Motor = MOTORS_BY_ID[init.MOTOR_ID_FOR_ROBOTS[ID]];
+            this.Motor = MOTORS_BY_ID[init.MOTOR_ID];
             this.Armor = ARMORS_BY_ID[init.ARMOR_ID];
+            MAX_LAP = init.MAX_LAP;
+            TEAM_ID = init.TEAM_ID;
+            MAX_TURN = init.MAX_TURN;
             setClassEquip(init.CLASS_EQUIPMENT_ID);
         }
 
         protected abstract void setClassEquip(int id);
         protected abstract ClassEquipment getClassEquip();
 
-        public void ProcessInit(Task<InitAnswerCommand> task) {
-            ProcessInit(task.Result);
-        }
-
-        public DriveAnswerCommand Drive(double speed, double angle) {
-            DriveAnswerCommand answer = taskWait(DriveAsync(speed, angle));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="power">percentage from 0 to 100.</param>
+        /// <returns></returns>
+        public DriveAnswerCommand Drive(double angle, double power) {
+            DriveAnswerCommand answer = taskWait(DriveAsync(angle, power));
             return answer;
         }
 
-        public async Task<DriveAnswerCommand> DriveAsync(double speed, double angle) {
-            await sendCommandAsync(new DriveCommand((ProtocolDouble)speed, (ProtocolDouble)angle));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="power">
+        public async Task<DriveAnswerCommand> DriveAsync(double angle, double power) {
+            await sendCommandAsync(new DriveCommand(power, angle));
             var answerCommand =  (DriveAnswerCommand)await recieveCommandAsync();
             if (answerCommand.SUCCES) {
-                AngleDrive = angle;
+                AngleDrive = AngleUtils.NormalizeDegree(angle);
             }
             if (processStateAfterEveryCommand) {
                 ProcessState(await StateAsync());
@@ -146,13 +196,23 @@ namespace ClientLibrary.robot {
             return answerCommand;
         }
 
-        public ScanAnswerCommand Scan(double precision, double angle) {
-            ScanAnswerCommand answer = taskWait(ScanAsync(precision, angle));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="precision">parameter for sector. Min is 0 max is 10</param>
+        public ScanAnswerCommand Scan(double angle, double precision) {
+            ScanAnswerCommand answer = taskWait(ScanAsync(angle, precision));
             return answer;
         }
 
-        public async Task<ScanAnswerCommand> ScanAsync(double precision, double angle) {
-            await sendCommandAsync(new ScanCommand((ProtocolDouble)precision, (ProtocolDouble)angle));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="precision">parameter for sector. Min is 0 max is 10</param>
+        public async Task<ScanAnswerCommand> ScanAsync(double angle, double precision) {
+            await sendCommandAsync(new ScanCommand(precision, angle));
             var answerCommand =  (ScanAnswerCommand)await recieveCommandAsync();
             if (processStateAfterEveryCommand) {
                 ProcessState(await StateAsync());
@@ -169,7 +229,11 @@ namespace ClientLibrary.robot {
             return (RobotStateCommand)await recieveCommandAsync();
         }
 
-        public void ProcessState(RobotStateCommand state) {
+        /// <summary>
+        /// Set x,y coordinates, hit points and power. Set score and gold and repair if is end of lap. 
+        /// </summary>
+        /// <param name="state"></param>
+        public virtual void ProcessState(RobotStateCommand state) {
             this.X = state.X;
             this.Y = state.Y;
             this.HitPoints = state.HIT_POINTS;
@@ -177,14 +241,16 @@ namespace ClientLibrary.robot {
             if (state.END_LAP_COMMAND != null) {
                 Gold = state.END_LAP_COMMAND.GOLD;
                 Score = state.END_LAP_COMMAND.SCORE;
+                
+                if (LAP == MAX_LAP) {
+                    Console.WriteLine("Match finish.");
+                    Environment.Exit(0);
+                }
                 if (processMerchant) {
                     ProcessMerchant(Merchant(Motor.ID, Armor.ID, getClassEquip().ID, 100));
                 }
+                LAP++;
             }
-        }
-
-        public void ProcessState(Task<RobotStateCommand> task) {
-            ProcessState(task.Result);
         }
 
         public void Wait() {
@@ -212,7 +278,7 @@ namespace ClientLibrary.robot {
             return answerCommand;
         }
 
-        public void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
+        public virtual void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
             this.Motor = MOTORS_BY_ID[merchantAnswer.MOTOR_ID_BOUGHT];
             this.Armor = ARMORS_BY_ID[merchantAnswer.ARMOR_ID_BOUGHT];
             setClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);

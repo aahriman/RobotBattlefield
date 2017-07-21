@@ -31,11 +31,11 @@ namespace BaseLibrary.command.v1._0 {
         }
         
 
-        public ScanCommandV1_0(ProtocolDouble precision, ProtocolDouble angle)
+        public ScanCommandV1_0(double precision, double angle)
             : base(precision, angle) { }
 
         public string Serialize() {
-            return ProtocolV1_0Utils.SerializeParams(NAME,PRECISION, ANGLE);
+            return ProtocolV1_0Utils.SerializeParams(NAME, (ProtocolDouble) PRECISION, (ProtocolDouble)ANGLE);
         }
     }
 }

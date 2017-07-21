@@ -39,5 +39,9 @@ namespace BaseLibrary.equip {
                 return hashCode;
             }
         }
+
+        public override string ToString() {
+            return $"{nameof(ID)}: {ID}, {nameof(COST)}: {COST}, {nameof(MAX_USAGES)}: {MAX_USAGES}, {nameof(ZONES)}: [{String.Join<Zone>(";", ZONES)}]";
+        }
     }
 }

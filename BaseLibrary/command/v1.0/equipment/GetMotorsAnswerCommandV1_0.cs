@@ -5,7 +5,7 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.command.v1._0.equipment{
     public class GetMotorsAnswerCommandV1_0 : GetMotorsAnswerCommand, ACommand.Sendable {
-		private const string NAME = "MOTOR_ANSER";
+		private const string NAME = "MOTOR_ANSWER";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             public override Boolean IsDeserializable(String s) {

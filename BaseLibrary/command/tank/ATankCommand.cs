@@ -9,8 +9,8 @@ namespace BaseLibrary.command.tank {
         /// <exception cref="NotImplementedException">if accepter is not ITankCommandVisitor</exception>
         /// <param name="accepter"></param>
         public sealed override void accept(ICommandVisitor accepter) {
-            if (accepter is ITankCommandVisitor) {
-                this.accept((ITankCommandVisitor)accepter);
+            if (accepter is ITankVisitor) {
+                this.accept((ITankVisitor)accepter);
             } else {
                 throw new NotImplementedException();
             }
@@ -22,8 +22,8 @@ namespace BaseLibrary.command.tank {
         // <exception cref="NotImplementedException">if accepter is not ITankCommandVisitor&lt;Output&gt;</exception>
         /// <param name="accepter"></param>
         public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            if (accepter is ITankCommandVisitor<Output>) {
-                return this.accept((ITankCommandVisitor<Output>)accepter);
+            if (accepter is ITankVisitor<Output>) {
+                return this.accept((ITankVisitor<Output>)accepter);
             } else {
                 throw new NotImplementedException();
             }
@@ -35,18 +35,18 @@ namespace BaseLibrary.command.tank {
         /// <exception cref="NotImplementedException">if accepter is not ITankCommandVisitor&lt;Output Intput&gt;</exception>
         /// <param name="accepter"></param>
         public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            if (accepter is ITankCommandVisitor<Output, Input>) {
-                return this.accept((ITankCommandVisitor<Output, Input>) accepter, input);
+            if (accepter is ITankVisitor<Output, Input>) {
+                return this.accept((ITankVisitor<Output, Input>) accepter, input);
             } else {
                 throw new NotImplementedException();
             }
         }
 
-        public abstract void accept(ITankCommandVisitor accepter);
+        public abstract void accept(ITankVisitor accepter);
 
-        public abstract Output accept<Output>(ITankCommandVisitor<Output> accepter);
+        public abstract Output accept<Output>(ITankVisitor<Output> accepter);
 
 
-        public abstract Output accept<Output, Input>(ITankCommandVisitor<Output, Input> accepter, Input input);
+        public abstract Output accept<Output, Input>(ITankVisitor<Output, Input> accepter, Input input);
     }
 }

@@ -46,7 +46,7 @@ namespace ClientLibrary.protocol {
                 Console.Out.WriteLine("ERROR: " + ((ErrorCommand)command).MESSAGE);
             } else {
                 ErrorCommand error = new ErrorCommand(message);
-                socket.SendCommandAsyncDontWait(error);
+                socket.SendCommand(error);
                 Console.Out.WriteLine(message);
             }
         }

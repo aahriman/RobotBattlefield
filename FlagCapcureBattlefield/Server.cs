@@ -1,11 +1,7 @@
-﻿using System.Linq;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
+﻿using BaseLibrary.command.handshake;
 using BattlefieldLibrary;
 using BattlefieldLibrary.battlefield;
 using FlagCapcureBattlefield.battlefield;
-using ServerLibrary.config;
 
 namespace FlagCapcureBattlefield {
     public class Server : AServer{
@@ -17,7 +13,7 @@ namespace FlagCapcureBattlefield {
         }
 
         protected override Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig) {
-            return new FlagCapture(FlagCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
+            return new FlagCaptureBattlefield(FlagCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
         }
     }
 }

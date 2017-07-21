@@ -10,5 +10,29 @@
             this.COST = COST;
             this.ID = ID;
         }
+
+        protected bool Equals(Armor other) {
+            return MAX_HP == other.MAX_HP && COST == other.COST && ID == other.ID;
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Armor) obj);
+        }
+
+        public override int GetHashCode() {
+            unchecked {
+                int hashCode = MAX_HP;
+                hashCode = (hashCode * 397) ^ COST;
+                hashCode = (hashCode * 397) ^ ID;
+                return hashCode;
+            }
+        }
+
+        public override string ToString() {
+            return $"{nameof(MAX_HP)}: {MAX_HP}, {nameof(COST)}: {COST}, {nameof(ID)}: {ID}";
+        }
     }
 }

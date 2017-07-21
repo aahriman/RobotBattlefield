@@ -1,4 +1,5 @@
-﻿using BaseLibrary.command;
+﻿using System;
+using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
 
@@ -14,16 +15,12 @@ namespace BaseLibrary.protocol {
 			return (ACommand) comandsFactory.Deserialize(s);
         }
 
-        public virtual ACommand GetCommand(ACommand s) {
-            return (ACommand) comandsFactory.Transfer(s);
-        }
-
-        public virtual ACommand.Sendable GetSendableCommand(string s) {
-            return comandsFactory.Deserialize(s);
-        }
-
-        public virtual ACommand.Sendable GetSendableCommand(ACommand s) {
-            return comandsFactory.Transfer(s);
+        public virtual String GetSendableCommand(ACommand s) {
+            ACommand.Sendable commandSendable = comandsFactory.Transfer(s);
+            if (commandSendable == null) {
+                throw new ArgumentException("Protocol (" + this.GetType().Name + ") do not know command type: " + s.GetType().Name);
+            }
+            return commandSendable.Serialize();
         }
     }
 }

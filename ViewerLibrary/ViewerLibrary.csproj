@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="serializers\ASerializer.cs" />
     <Compile Include="serializers\SerializerJSON.cs" />
     <Compile Include="Turn.cs" />
   </ItemGroup>

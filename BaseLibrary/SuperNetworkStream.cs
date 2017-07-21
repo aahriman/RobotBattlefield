@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -9,22 +10,6 @@ using BaseLibrary.protocol;
 
 namespace BaseLibrary {
 	public class SuperNetworkStream {
-
-		class Item {
-			public SuperNetworkStream SNS { get; private set; }
-			public String MESSAGE { get; private set; }
-			public Task TASK { get; private set; }
-
-			public Item(SuperNetworkStream SNS, String MESSAGE) {
-				this.MESSAGE = MESSAGE;
-				this.SNS = SNS;
-				this.TASK = new Task(() =>
-					SNS.sw.WriteLine(MESSAGE)
-				);
-			}
-		}
-
-		private readonly BlockingCollection<Item> queue = new BlockingCollection<Item>();
 
 		private static int ID = 0;
 
@@ -54,28 +39,19 @@ namespace BaseLibrary {
 				NewLine = "\n",
 				AutoFlush = true
 			};
-			consumentLoop();
-		}
-
-		private void consumentLoop() {
-			Thread t = new Thread(() => {
-				while (true) {
-					Item item = queue.Take();
-                    Console.WriteLine(item.MESSAGE);
-                    item.TASK.RunSynchronously();
-				}
-			}) { IsBackground = true };
-			t.Start();
 		}
 
 		public async Task<string> ReadLineAsync() {
 			return await sr.ReadLineAsync();
 		}
 
-		public Task WriteLineAsync(string s) {
-			Item i = new Item(this, s);
-			queue.Add(i);
-			return i.TASK;
+		public async Task WriteLineAsync(string s) {
+		    try {
+		        await sw.WriteLineAsync(s);
+		    } catch (IOException) {
+		        // socket was closed
+                this.Close();
+		    }
 		}
 
 		public virtual ACommand RecieveCommand() {
@@ -90,38 +66,51 @@ namespace BaseLibrary {
 			return command;
 		}
 
-		public virtual async Task<ACommand> RecieveCommandAsync() {
+	    public virtual async Task<ACommand> RecieveCommandAsync() {
+	        if (_protocol == null) {
+	            throw new Exception("Cannot read or write before set protocol.");
+	        }
+
+	        try {
+	            String s = await sr.ReadLineAsync();
+	            ACommand command = PROTOCOL.GetCommand(s);
+	            if (command == null) {
+	                throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " +
+	                                            s);
+	            }
+	            return command;
+	        } catch (IOException) {
+	            this.Close();
+	            return null; // client close socket
+	        } catch (ObjectDisposedException) {
+	            return null; // socket was closed
+	        }
+	    }
+
+        public virtual void SendCommand(ACommand command) {
+            if (_protocol == null) {
+                throw new Exception("Cannot read or write before set protocol.");
+            }
+            sw.WriteLine(PROTOCOL.GetSendableCommand(command));
+        }
+
+        public virtual async Task SendCommandAsync(ACommand command) {
 			if (_protocol == null) {
 				throw new Exception("Cannot read or write before set protocol.");
 			}
-			String s = await sr.ReadLineAsync();
-            Console.WriteLine(s);
-			ACommand command = PROTOCOL.GetCommand(s);
-			if (command == null) {
-				throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " + s);
-			}
-			return command;
+
+            String serializedCommand = PROTOCOL.GetSendableCommand(command);
+            await WriteLineAsync(serializedCommand);
 		}
 
-		public virtual Task SendCommandAsync(ACommand command) {
-			if (_protocol == null) {
-				throw new Exception("Cannot read or write before set protocol.");
-			}
-			ACommand.Sendable commandSendable = PROTOCOL.GetSendableCommand(command);
-			if (commandSendable == null) {
-				throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") do not know command type: " + command.GetType().Name);
-			}
-			return commandSendable.SendAsync(this);
-		}
-
-		public virtual async void SendCommandAsyncDontWait(ACommand command) {
-			await SendCommandAsync(command);
-		}
-
+	    private bool close = false;
 		public void Close() {
-			sw.Dispose();
-			sr.Dispose();
-			ns.Close();
+		    if (!close) {
+		        sw.Dispose();
+		        sr.Dispose();
+		        ns.Close();
+		        close = true;
+		    }
 		}
 	}
 }

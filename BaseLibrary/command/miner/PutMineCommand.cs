@@ -12,15 +12,15 @@ namespace BaseLibrary.command.miner {
             return position;
         }
 
-        public override void accept(IMinerCommandVisitor accepter) {
+        public override void accept(IMinerVisitor accepter) {
             accepter.visit(this);
         }
 
-        public override Output accept<Output>(IMinerCommandVisitor<Output> accepter) {
+        public override Output accept<Output>(IMinerVisitor<Output> accepter) {
             return accepter.visit(this);
         }
 
-        public override Output accept<Output, Input>(IMinerCommandVisitor<Output, Input> accepter, Input input) {
+        public override Output accept<Output, Input>(IMinerVisitor<Output, Input> accepter, Input input) {
             return accepter.visit(this, input);
         }
     }

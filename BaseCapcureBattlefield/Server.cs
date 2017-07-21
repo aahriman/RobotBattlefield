@@ -11,7 +11,6 @@ using BaseLibrary.command.handshake;
 using BaseLibrary.protocol;
 using BattlefieldLibrary;
 using BattlefieldLibrary.battlefield;
-using ServerLibrary.config;
 using ServerLibrary.protocol;
 
 namespace BaseCapcureBattlefield {
@@ -24,7 +23,7 @@ namespace BaseCapcureBattlefield {
         }
 
         protected override Battlefield NewBattlefield(BattlefieldConfig battlefielConfig) {
-            return new BaseCapture(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefielConfig));
+            return new BaseCaptureBattlefield(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefielConfig));
         }
     }
 }

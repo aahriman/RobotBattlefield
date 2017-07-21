@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ObtacleMap {
+namespace ObstacleMap {
     static class Program {
         /// <summary>
         /// The main entry point for the application.
@@ -10,7 +10,7 @@ namespace ObtacleMap {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new ObstacleMapForm());
         }
     }
 }

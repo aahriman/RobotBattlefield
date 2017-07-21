@@ -5,7 +5,7 @@ using BaseLibrary.visitors;
 namespace BaseLibrary.command.handshake {
     public class InitAnswerCommand : AHandShakeCommand {
 
-        private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
+        protected static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
         public static int RegisterSubCommandFactory(ISubCommandFactory subCommandFactory) {
             int position = SUB_COMMAND_FACTORIES.Count;
@@ -21,8 +21,9 @@ namespace BaseLibrary.command.handshake {
         public int TEAM_ID { get; private set; }
         public int CLASS_EQUIPMENT_ID { get; private set; }
 		public int ARMOR_ID { get; private set; }
+        public int MOTOR_ID { get; private set; }
 
-        public InitAnswerCommand(int maxTurn, int lapNumber, int maxLap, int robotId, int teamId, int classEquipmentId, int armorId) {
+        public InitAnswerCommand(int maxTurn, int lapNumber, int maxLap, int robotId, int teamId, int classEquipmentId, int armorId, int motorId) {
             MAX_TURN = maxTurn;
             LAP_NUMBER = lapNumber;
             MAX_LAP = maxLap;
@@ -30,6 +31,7 @@ namespace BaseLibrary.command.handshake {
             TEAM_ID = teamId;
 			CLASS_EQUIPMENT_ID = classEquipmentId;
 			ARMOR_ID = armorId;
+            MOTOR_ID = motorId;
             MORE = new object[SUB_COMMAND_FACTORIES.Count];
         }
 

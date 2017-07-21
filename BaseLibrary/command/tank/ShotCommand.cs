@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BaseLibrary.protocol;
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.tank {
@@ -12,24 +13,24 @@ namespace BaseLibrary.command.tank {
             return position;
         }
 
-        public ProtocolDouble ANGLE { get; private set; }
-        public ProtocolDouble RANGE { get; private set; }
+        public double ANGLE { get; private set; }
+        public double RANGE { get; private set; }
 
-        public ShotCommand(ProtocolDouble range, ProtocolDouble angle)
+        public ShotCommand(double range, double angle)
             : base() {
                 ANGLE = angle;
                 RANGE = range;
         }
 
-        public sealed override void accept(ITankCommandVisitor accepter) {
+        public sealed override void accept(ITankVisitor accepter) {
             accepter.visit(this);
         }
 
-        public sealed override Output accept<Output>(ITankCommandVisitor<Output> accepter) {
+        public sealed override Output accept<Output>(ITankVisitor<Output> accepter) {
             return accepter.visit(this);
         }
 
-        public sealed override Output accept<Output, Input>(ITankCommandVisitor<Output, Input> accepter, Input input) {
+        public sealed override Output accept<Output, Input>(ITankVisitor<Output, Input> accepter, Input input) {
             return accepter.visit(this, input);
         }
     }
