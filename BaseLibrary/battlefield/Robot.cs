@@ -9,10 +9,12 @@ namespace BaseLibrary.battlefield {
         public int TEAM_ID {
             get { return _teamID; }
             set {
-                if (_teamID == default(int)) {
-                    _teamID = value;
-                } else {
-                    throw new NotSupportedException("Team id can be set only once.");
+                if (_teamID != value) {
+                    if (_teamID == default(int)) {
+                        _teamID = value;
+                    } else {
+                        throw new NotSupportedException("Team id can be set only once.");
+                    }
                 }
             }
         }
