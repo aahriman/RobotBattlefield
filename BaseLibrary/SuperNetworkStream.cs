@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using BaseLibrary.command;
+using BaseLibrary.command.handshake;
 using BaseLibrary.protocol;
 
 namespace BaseLibrary {
@@ -77,6 +78,10 @@ namespace BaseLibrary {
 	            if (command == null) {
 	                throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " +
 	                                            s);
+	            }
+
+	            if (command is ErrorCommand) {
+	                Console.WriteLine(((ErrorCommand) command).MESSAGE);
 	            }
 	            return command;
 	        } catch (IOException) {
