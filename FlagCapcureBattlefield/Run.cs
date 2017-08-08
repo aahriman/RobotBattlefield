@@ -27,7 +27,7 @@ namespace FlagCapcureBattlefield {
                 battlefieldConfig = new FlagCaptureBattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, true, "arena_match" + port + ".txt", null, null, new [] { new FlagPlace(500, 200, 1), new FlagPlace(500, 800, 2)});
             }
             Battlefield arena = server.GetBattlefield(battlefieldConfig);
-            
+
             arena.RunEvent.WaitOne();
             arena.RunThread.Join();
         }

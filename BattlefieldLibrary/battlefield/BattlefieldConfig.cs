@@ -22,18 +22,18 @@ namespace BattlefieldLibrary.battlefield {
 
         public readonly Object[] MORE;
 
-        public BattlefieldConfig(int maxRobots, int maxTurn, int maxLap, int robotsInTeam, int respawnTimeout,
-                                 bool respawnAllowed, string matchSaveFile, string equipmentConfigFile, string obtacleConfigFile,
+        public BattlefieldConfig(int MAX_ROBOTS, int MAX_TURN, int MAX_LAP, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
+                                 bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE,
                                  object[] more) {
-            MAX_ROBOTS = maxRobots;
-            MAX_TURN = maxTurn;
-            MAX_LAP = maxLap;
-            ROBOTS_IN_TEAM = robotsInTeam;
-            RESPAWN_TIMEOUT = respawnTimeout;
-            RESPAWN_ALLOWED = respawnAllowed;
-            EQUIPMENT_CONFIG_FILE = equipmentConfigFile;
-            OBTACLE_CONFIG_FILE = obtacleConfigFile;
-            MATCH_SAVE_FILE = matchSaveFile;
+            this.MAX_ROBOTS = MAX_ROBOTS;
+            this.MAX_TURN = MAX_TURN;
+            this.MAX_LAP = MAX_LAP;
+            this.ROBOTS_IN_TEAM = ROBOTS_IN_TEAM;
+            this.RESPAWN_TIMEOUT = RESPAWN_TIMEOUT;
+            this.RESPAWN_ALLOWED = RESPAWN_ALLOWED;
+            this.EQUIPMENT_CONFIG_FILE = EQUIPMENT_CONFIG_FILE;
+            this.OBTACLE_CONFIG_FILE = OBTACLE_CONFIG_FILE;
+            this.MATCH_SAVE_FILE = MATCH_SAVE_FILE;
             MORE = more;
         }
 

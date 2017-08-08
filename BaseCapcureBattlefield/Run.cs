@@ -27,7 +27,7 @@ namespace BaseCapcureBattlefield {
             } else {
                 arena = server.GetBattlefield(new BattlefieldConfig(4, ServerConfig.MAX_TURN, 1, 2, 20, true, "arena_match" + port + ".txt", null, null, new [] {new Base(500, 100, 30), new Base(500, 900, 30) }));
             }
-            new BattlefieldConfig(4, ServerConfig.MAX_TURN, 1, 2, 20, true, "arena_match" + port + ".txt", null, null, new[] { new Base(500, 100, 30), new Base(500, 900, 30) }).Serialize("defaultConfig.json");
+            
 
             arena.RunEvent.WaitOne();
             arena.RunThread.Join();
