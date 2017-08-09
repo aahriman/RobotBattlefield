@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Viewer {
     public partial class AppForm : Form {
         private StreamReader reader;
+        private Thread drawingThread;
 
         public AppForm() {
             InitializeComponent();
@@ -22,13 +24,15 @@ namespace Viewer {
         private void start_Click(object sender, EventArgs e) {
             alternateStartStopVisibility();
             reader = new StreamReader(File.OpenRead(openFileDialog1.FileName));
-            draw().Start();
+            drawingThread = draw();
+            drawingThread.Start();
 
         }
 
         private void stop_Click(object sender, EventArgs e) {
-            reader.Close();
             alternateStartStopVisibility();
+            drawingThread.Join();
+            reader.Close();
         }
 
         private void alternateStartStopVisibility() {

@@ -189,27 +189,27 @@ namespace BattlefieldLibrary.battlefield {
 
         protected async void listen(BattlefieldRobot r) {
 			await Task.Yield();
-			try {
-				ACommand command = await r.SuperNetworkStream.RecieveCommandAsync();
-				
-				if (command is AEquipmentCommand) {
-					r.SuperNetworkStream.SendCommand(command.accept(GetActualArenaCommandVisitor(r), r));
-				    listen(r);
-				}  else {
-			        if (command is InitCommand) {
-			            lock (pendingRobots) {
-			                activeRobots++;
-			                pendingRobots.Remove(r);
-			            }
+            try {
+                ACommand command = await r.SuperNetworkStream.RecieveCommandAsync();
 
-			            lock (robots) {
-			                robots.Add(r);
+                if (command is AEquipmentCommand) {
+                    r.SuperNetworkStream.SendCommand(command.accept(GetActualArenaCommandVisitor(r), r));
+                    listen(r);
+                } else {
+                    if (command is InitCommand) {
+                        lock (pendingRobots) {
+                            activeRobots++;
+                            pendingRobots.Remove(r);
+                        }
+
+                        lock (robots) {
+                            robots.Add(r);
 
                             if (robots.Count == MAX_ROBOTS) {
-			                    setRun(true);
-			                }
-			            }
-			        }
+                                setRun(true);
+                            }
+                        }
+                    }
                     lock (receivedCommands) {
                         receivedCommands.Add(r, command);
                         robotsSendCommand.Remove(r);
@@ -221,17 +221,22 @@ namespace BattlefieldLibrary.battlefield {
                     }
                 }
 
-			} catch (IOException) {
-				// client was disconnected
-				lock (robots) {
-					robots.Remove(r);
-				}
-			} catch (ObjectDisposedException) {
-				// server disconnect client
-				lock (robots) {
-					robots.Remove(r);
-				}
-			}
+            } catch (IOException) {
+                // client was disconnected
+                lock (robots) {
+                    robots.Remove(r);
+                }
+            } catch (ObjectDisposedException) {
+                // server disconnect client
+                lock (robots) {
+                    robots.Remove(r);
+                }
+            } catch (ArgumentException e) {
+                lock (robots) {
+                    robots.Remove(r);
+                    Console.WriteLine(e.Message);
+                }
+            }
 		}
 
 		public bool AddRobot(SuperNetworkStream n) {
@@ -323,6 +328,7 @@ namespace BattlefieldLibrary.battlefield {
 		}
 
 		protected virtual void firstBattle() {
+            Console.WriteLine("Battle start");
             initEquip();
             newBattle();
 			foreach (BattlefieldRobot r in robots) {
@@ -590,6 +596,7 @@ namespace BattlefieldLibrary.battlefield {
 	    protected void singleTurnCycle() {
 	        lock (receivedCommands) {
 	            turn++;
+                Console.WriteLine("Turn: " + turn);
                 processCommands();
                 afterProcessCommand();
 	            changeBattlefieldState();

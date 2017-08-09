@@ -72,7 +72,7 @@ namespace BaseLibrary {
 	            throw new Exception("Cannot read or write before set protocol.");
 	        }
 
-	        try {
+	        
 	            String s = await sr.ReadLineAsync();
 	            ACommand command = PROTOCOL.GetCommand(s);
 	            if (command == null) {
@@ -84,12 +84,6 @@ namespace BaseLibrary {
 	                Console.WriteLine(((ErrorCommand) command).MESSAGE);
 	            }
 	            return command;
-	        } catch (IOException) {
-	            this.Close();
-	            return null; // client close socket
-	        } catch (ObjectDisposedException) {
-	            return null; // socket was closed
-	        }
 	    }
 
         public virtual void SendCommand(ACommand command) {
