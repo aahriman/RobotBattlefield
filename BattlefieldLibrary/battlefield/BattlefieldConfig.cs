@@ -9,9 +9,9 @@ using ViewerLibrary.serializers;
 
 namespace BattlefieldLibrary.battlefield {
     public class BattlefieldConfig {
-        public readonly int MAX_ROBOTS;
         public readonly int MAX_TURN;
         public readonly int MAX_LAP;
+        public readonly int TEAMS;
         public readonly int ROBOTS_IN_TEAM;
         public readonly int RESPAWN_TIMEOUT;
         public readonly bool RESPAWN_ALLOWED;
@@ -22,10 +22,10 @@ namespace BattlefieldLibrary.battlefield {
 
         public readonly Object[] MORE;
 
-        public BattlefieldConfig(int MAX_ROBOTS, int MAX_TURN, int MAX_LAP, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
+        public BattlefieldConfig(int MAX_TURN, int MAX_LAP, int TEAMS, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
                                  bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE,
                                  object[] more) {
-            this.MAX_ROBOTS = MAX_ROBOTS;
+            this.TEAMS = TEAMS;
             this.MAX_TURN = MAX_TURN;
             this.MAX_LAP = MAX_LAP;
             this.ROBOTS_IN_TEAM = ROBOTS_IN_TEAM;
@@ -37,6 +37,10 @@ namespace BattlefieldLibrary.battlefield {
             MORE = more;
         }
 
+        /// <summary>
+        /// Serialize config to JSON and store it into the file specified by <code>filename</code>.
+        /// </summary>
+        /// <param name="filename"></param>
         public void Serialize(String filename) {
             // serialize JSON directly to a file
             using (StreamWriter file = File.CreateText(filename)) {
@@ -45,6 +49,10 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
+        /// <summary>
+        /// Deserialize config from JSON stored in the file specified by <code>filename</code>.
+        /// </summary>
+        /// <param name="filename"></param>
         public static T  DeserializeFromFile<T>(String filename) where T : BattlefieldConfig {
             using (StreamReader file = File.OpenText(filename)) {
                 JsonSerializer serializer = new JsonSerializer();

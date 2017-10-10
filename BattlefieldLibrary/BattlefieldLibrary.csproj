@@ -54,6 +54,7 @@
     <Compile Include="battlefield\robot\Repairman.cs" />
     <Compile Include="battlefield\robot\Tank.cs" />
     <Compile Include="config\ServerConfig.cs" />
+    <Compile Include="gui\TurnDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

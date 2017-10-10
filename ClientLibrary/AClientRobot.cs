@@ -13,15 +13,15 @@ using BaseLibrary.protocol;
 using HandShakeProtocol = ClientLibrary.protocol.HandShakeProtocol;
 
 namespace ClientLibrary {
-    public abstract class AClientRobot : Robot {
-        protected const string LOCAL_ADDRES = "::1";
+    public sealed class ConnectionUtil {
+        public const string LOCAL_ADDRES = "::1";
         private Socket socket;
-        protected SuperNetworkStream sns;
+        public SuperNetworkStream COMMUNICATION { get; private set; }
 
-        public AClientRobot() { }
+        public ConnectionUtil() { }
 
         public void Close() {
-            sns.Close();
+            COMMUNICATION.Close();
             socket.Close();
         }
 
@@ -43,37 +43,36 @@ namespace ClientLibrary {
             IPEndPoint ipe = new IPEndPoint(ipAddress, port);
             await Task.Yield();
             ManualResetEvent waitHandle = new ManualResetEvent(false);
-            IAsyncResult beginConnection = socket.BeginConnect(ipe, (ar) => {
+            socket.BeginConnect(ipe, (ar) => {
                 socket.EndConnect(ar);
                 try {
-                    sns = new SuperNetworkStream(socket);
+                    COMMUNICATION = new SuperNetworkStream(socket);
                 } catch (TypeInitializationException e) {
                     throw e.InnerException;
                 }
-                Task.WaitAll(handShake());
+                handShake();
                 waitHandle.Set();
             }, socket);
             waitHandle.WaitOne();
-            return (GameTypeCommand) await sns.RecieveCommandAsync();
+            return (GameTypeCommand) await COMMUNICATION.RecieveCommandAsync();
         }
 
 
-        private async Task handShake() {
-            await Task.Yield();
+        private void handShake() {
             HandShakeProtocol handShakeProtocol = new HandShakeProtocol();
-            AProtocol protocol = await handShakeProtocol.HandShakeClient(sns);
+            AProtocol protocol = handShakeProtocol.HandShakeClient(COMMUNICATION).Result;
             if (protocol == null) {
                 disconnect("Handshake fail.");
             } else {
-                sns.PROTOCOL = protocol;
+                COMMUNICATION.PROTOCOL = protocol;
             }
         }
 
         private async void disconnect(String message) {
             await Task.Yield();
             ErrorCommand error = new ErrorCommand(message);
-            await sns.SendCommandAsync(error);
-            sns.Close();
+            await COMMUNICATION.SendCommandAsync(error);
+            COMMUNICATION.Close();
         }
     }
 }

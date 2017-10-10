@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
@@ -10,8 +11,7 @@ namespace ClientLibrary.robot {
     public class Repairman : ClientRobot {
         public RepairTool REPAIR_TOOL { get; private set; }
 
-        public Repairman() : base() { }
-        public Repairman(bool processStateAfterEveryCommand, bool processMerchant) : base(processStateAfterEveryCommand, processMerchant) { }
+        public Repairman(String name, String teamName) : base(name, teamName) { }
 
 
         public RepairAnswerCommand Repair() {
@@ -26,22 +26,12 @@ namespace ClientLibrary.robot {
 
         public async Task<RepairAnswerCommand> RepairAsync() {
             await sendCommandAsync(new RepairCommand());
-            var commnad = sns.RecieveCommand();
-            var answerCommand = (RepairAnswerCommand) commnad;
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
-            return answerCommand;
+            return await recieveCommandAsync<RepairAnswerCommand>();
         }
 
         public async Task<RepairAnswerCommand> RepairAsync(int maxDistance) {
             await sendCommandAsync(new RepairCommand(maxDistance));
-            var commnad = sns.RecieveCommand();
-            var answerCommand = (RepairAnswerCommand) commnad;
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
-            return answerCommand;
+            return await recieveCommandAsync<RepairAnswerCommand>();
         }
 
         public override RobotType GetRobotType() {

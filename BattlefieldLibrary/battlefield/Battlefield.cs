@@ -87,7 +87,7 @@ namespace BattlefieldLibrary.battlefield {
 		protected Merchant merchant;
 		protected int turn { get; private set; }
 
-	    public readonly int MAX_ROBOTS;
+	    public readonly int TEAMS;
 	    public readonly int ROBOTS_IN_TEAM;
 	    public readonly int MAX_TURN;
 	    public readonly int MAX_LAP;
@@ -110,7 +110,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected Battlefield(BattlefieldConfig battlefielConfig) {
             this.ROBOTS_IN_TEAM = battlefielConfig.ROBOTS_IN_TEAM;
-            this.MAX_ROBOTS = battlefielConfig.MAX_ROBOTS;
+            this.TEAMS = battlefielConfig.TEAMS;
             this.MAX_LAP = battlefielConfig.MAX_LAP;
             MAX_TURN = battlefielConfig.MAX_TURN;
             RESPAWN_TIMEOUT = battlefielConfig.RESPAWN_TIMEOUT;
@@ -205,7 +205,7 @@ namespace BattlefieldLibrary.battlefield {
                         lock (robots) {
                             robots.Add(r);
 
-                            if (robots.Count == MAX_ROBOTS) {
+                            if (robots.Count == TEAMS*ROBOTS_IN_TEAM) {
                                 setRun(true);
                             }
                         }
@@ -242,7 +242,7 @@ namespace BattlefieldLibrary.battlefield {
 		public bool AddRobot(SuperNetworkStream n) {
 			bool ret = false;
 		    lock (pendingRobots) {
-		        if (!RUN && (MAX_ROBOTS <= 0 || activeRobots + pendingRobots.Count < MAX_ROBOTS)) {
+		        if (!RUN && (TEAMS * ROBOTS_IN_TEAM <= 0 || activeRobots + pendingRobots.Count < TEAMS * ROBOTS_IN_TEAM)) {
 		            BattlefieldRobot r = new DefaultRobot(idForRobot++, n);
 		            pendingRobots.Add(r);
 		            robotsSendCommand.Add(r);
@@ -417,8 +417,10 @@ namespace BattlefieldLibrary.battlefield {
                 BattlefieldRobot robot = pair.Key;
                 ACommand command = pair.Value;
                 ACommand answerCommand = command.accept(GetActualArenaCommandVisitor(robot), robot);
-                Task t = robot.SuperNetworkStream.SendCommandAsync(answerCommand);
-                tasks.Add(t);
+                if (answerCommand != null) {
+                    Task t = robot.SuperNetworkStream.SendCommandAsync(answerCommand);
+                    tasks.Add(t);
+                }
                 if (command is InitCommand) {
                     switch (pair.Key.ROBOT_TYPE) {
                         case RobotType.MINER:

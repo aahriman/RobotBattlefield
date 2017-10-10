@@ -16,6 +16,8 @@ using ClientLibrary.robot;
 
 namespace MinerForBaseCapture {
     class Program {
+
+        static String TEAM_ID = Guid.NewGuid().ToString();
         private static Base[] bases;
 
         static private ScanAnswerCommand scan1;
@@ -23,15 +25,18 @@ namespace MinerForBaseCapture {
 
         static Base capturedBase = null;
                 
-        static MyMiner miner = new MyMiner();
-        static Repairman repairman = new Repairman();
+        static MyMiner miner = new MyMiner("mines", TEAM_ID);
+        static Repairman repairman = new Repairman("repairman", TEAM_ID);
 
         class MyMiner : Miner {
+
+            public MyMiner(String name, String teamName) : base(name, teamName) {}
+
             public int previousHitpoints = 0;
 
             public List<int> puttedMines;
 
-            public override void ProcessState(RobotStateCommand state) {
+            protected override void ProcessState(RobotStateCommand state) {
                 base.ProcessState(state);
                 bases = BaseCapture.GetBases(state);
 
@@ -126,9 +131,6 @@ namespace MinerForBaseCapture {
 
 
         public static void Main(string[] args) {
-
-        
-            String TEAM_ID = Guid.NewGuid().ToString();
             miner.Connect(args);
             repairman.Connect(args);
             Task.WaitAll(

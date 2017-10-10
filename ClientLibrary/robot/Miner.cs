@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
@@ -23,10 +24,8 @@ namespace ClientLibrary.robot {
 
         public readonly List<Mine> PutedMinesList = new List<Mine>();
 
-        public Miner() : base() {}
-
-        public Miner(bool processStateAfterEveryCommand, bool processMerchant)
-            : base(processStateAfterEveryCommand, processMerchant) {}
+        public Miner(String name, String teamName)
+            : base(name, teamName) {}
 
 
         public PutMineAnswerCommand PutMine() {
@@ -36,19 +35,14 @@ namespace ClientLibrary.robot {
 
         public async Task<PutMineAnswerCommand> PutMineAsync() {
             await sendCommandAsync(new PutMineCommand());
-            var commnad = sns.RecieveCommand();
-            var answerCommand = (PutMineAnswerCommand) commnad;
-
+            PutMineAnswerCommand answerCommand = await recieveCommandAsync<PutMineAnswerCommand>();
+            
             if (answerCommand.SUCCESS) {
                 PutedMinesList.Add(new Mine() {
                     ID = answerCommand.MINE_ID,
                     X = X,
                     Y = Y
                 });
-            }
-
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
             }
 
             if (answerCommand.SUCCESS) {
@@ -64,11 +58,7 @@ namespace ClientLibrary.robot {
 
         public async Task<DetonateMineAnswerCommand> DetonateMineAsync(int mineId) {
             await sendCommandAsync(new DetonateMineCommand(mineId));
-            var commnad = sns.RecieveCommand();
-            var answerCommand = (DetonateMineAnswerCommand) commnad;
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
+            var answerCommand = await recieveCommandAsync<DetonateMineAnswerCommand>();
 
             if (answerCommand.SUCCESS) {
                 PutedMines--;

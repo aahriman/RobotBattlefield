@@ -12,7 +12,7 @@ namespace Rabbit {
         private static readonly Random RANDOM = new Random();
 
         public static void Main(string[] args) {
-            Tank tank = new Tank();
+            Tank tank = new Tank("Rabbit", Guid.NewGuid().ToString());
             tank.Connect(args);
             tank.ProcessInit(tank.Init("Rabbit", Guid.NewGuid().ToString()));
 

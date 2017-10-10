@@ -13,7 +13,9 @@ namespace RobotForFlagCapture {
             public bool carryFlag = false;
             public double WantedPower;
 
-            public override void ProcessState(RobotStateCommand state) {
+            public MyTank(String name, String teamName) : base(name, teamName) {}
+
+            protected override void ProcessState(RobotStateCommand state) {
                 base.ProcessState(state);
                 Flag[] flags = FlagCapture.GetFlags(state);
 
@@ -26,7 +28,7 @@ namespace RobotForFlagCapture {
             }
         }
 
-        static MyTank tank = new MyTank();
+        static MyTank tank = new MyTank("Tank_FLAG", Guid.NewGuid().ToString());
 
         static void driveTo(FlagPlace place) {
             double driveAngle = AngleUtils.AngleDegree(tank.X, tank.Y, place.X, place.Y);

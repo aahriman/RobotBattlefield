@@ -212,8 +212,7 @@ namespace BattlefieldLibrary.battlefield {
 
                     int teamId;
                     if (!BATTLEFIELD.robotTeamIdByTeamName.TryGetValue(visitor.TEAM_NAME, out teamId)) {
-                        if (BATTLEFIELD.robotTeamIdByTeamName.Count <
-                            BATTLEFIELD.MAX_ROBOTS / BATTLEFIELD.ROBOTS_IN_TEAM) {
+                        if (BATTLEFIELD.robotTeamIdByTeamName.Count < BATTLEFIELD.TEAMS) {
                             teamId = this.teamId++;
                             BATTLEFIELD.robotsByTeamId[teamId] = new List<BattlefieldRobot> {r};
                             BATTLEFIELD.robotTeamIdByTeamName.Add(visitor.TEAM_NAME, teamId);

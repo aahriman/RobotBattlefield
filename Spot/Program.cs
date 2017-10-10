@@ -13,11 +13,10 @@ namespace Spot {
         public static void Main(string[] args) {
             Console.WriteLine("Spot is ready to action.");
             Console.WriteLine(TEAM_NAME + " " + TEAM_NAME.Length);
-            Tank spot = new Tank();
+            String name = "Spot";
+            Tank spot = new Tank(name, TEAM_NAME);
 		    spot.Connect(args);
-
-            String name = "Spot___1";
-		    spot.ProcessInit(spot.Init(name, TEAM_NAME));
+            spot.Init(name, TEAM_NAME);
 
             int direction = 90;
             while (true) {
@@ -30,8 +29,8 @@ namespace Spot {
                         spot.Drive(direction, 0);
                         direction = (direction + 90) % 360;
                 } else {
-                    ScanAnswerCommand scanAnswer;
                     for (int angle = 0; angle < 360; angle += 30) {
+                        ScanAnswerCommand scanAnswer;
                         if ((scanAnswer = spot.Scan(angle, 10)).ENEMY_ID != spot.ID) {
                             spot.Shot(angle, scanAnswer.RANGE);
                         }

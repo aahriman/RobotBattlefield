@@ -29,6 +29,8 @@ namespace BaseLibrary.command {
             String Serialize();
         }
 
+        protected bool pending = true;
+
         public Object[] MORE { get; protected set; }
 
         protected ACommand() {}

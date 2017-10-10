@@ -12,6 +12,9 @@ namespace BaseLibrary.command.tank {
             return position;
         }
 
+        /// <summary>
+        /// True if shoot was succesfull.
+        /// </summary>
         public bool SUCCESS { get; private set; }
 
         public ShotAnswerCommand(bool success)

@@ -20,7 +20,7 @@ namespace FlagCapcureBattlefield.battlefield {
             if (config == null) {
                 FlagPlace[] flagPlaces = fromMoreToFlags(bc.MORE);
                 if (flagPlaces.Length > 0) {
-                    config = new FlagCaptureBattlefieldConfig(bc.MAX_ROBOTS, bc.MAX_TURN, bc.MAX_LAP, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBTACLE_CONFIG_FILE, flagPlaces);
+                    config = new FlagCaptureBattlefieldConfig(bc.MAX_TURN, bc.MAX_LAP, bc.TEAMS, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBTACLE_CONFIG_FILE, flagPlaces);
                 } else {
                     throw new ArgumentException(nameof(bc) + "have to have same flags in more.");
                 }
@@ -29,11 +29,10 @@ namespace FlagCapcureBattlefield.battlefield {
         }
 
         public readonly FlagPlace[] FlagsPlace;
-        public FlagCaptureBattlefieldConfig(int maxRobots, int maxTurn, int maxLap, int robotsInTeam, int respawnTimeout,
+        public FlagCaptureBattlefieldConfig(int maxTurn, int maxLap, int teams, int robotsInTeam, int respawnTimeout,
                                             bool respawnAllowed, string matchSaveFile, string equipmentConfigFile, string obtacleConfigFile,
                                             FlagPlace[] flagsPlace)
-            : base(
-                   maxRobots, maxTurn, maxLap, robotsInTeam, respawnTimeout, respawnAllowed, matchSaveFile, equipmentConfigFile,
+            : base(maxTurn, maxLap, teams, robotsInTeam, respawnTimeout, respawnAllowed, matchSaveFile, equipmentConfigFile,
                    obtacleConfigFile, flagsPlace) {
             FlagsPlace = flagsPlace;
         }

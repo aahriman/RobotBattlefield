@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
 using BaseLibrary.command.common;
@@ -12,15 +13,14 @@ namespace ClientLibrary.robot {
 
         public Gun GUN { get; private set; }
 
-        public Tank() : base() {}
-        public Tank(bool processStateAfterEveryCommand, bool processMerchant) : base(processStateAfterEveryCommand, processMerchant) {}
+        public Tank(String name, String teamName) : base(name, teamName) {}
 
         public override RobotType GetRobotType() {
             return RobotType.TANK;
         }
 
         /// <summary>
-        /// 
+        /// Shoot bullet.
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="range">how far this robot wants to shot</param>
@@ -30,18 +30,13 @@ namespace ClientLibrary.robot {
         }
 
         /// <summary>
-        /// 
+        /// Shoot bullet and immediattely return. For answer you have to wait.
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="range">how far this robot wants to shot</param>
         public async Task<ShotAnswerCommand> ShotAsync(double angle, double range) {
             await sendCommandAsync(new ShotCommand(range, angle));
-            var commnad = sns.RecieveCommand();
-            var answerCommand = (ShotAnswerCommand) commnad;
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
-            return answerCommand;
+            return recieveCommand<ShotAnswerCommand>();
         }
 
         protected override void setClassEquip(int id) {

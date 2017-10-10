@@ -14,7 +14,7 @@ namespace BaseCapcureBattlefield.battlefield {
         public static BaseCaptureBattlefieldConfig ConvertFromBattlefieldConfig(BattlefieldConfig bc) {
             Base[] bases = basesFromMore(bc.MORE);
             if (bases.Length > 0) {
-                return new BaseCaptureBattlefieldConfig(bc.MAX_ROBOTS, bc.MAX_TURN, bc.MAX_LAP, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBTACLE_CONFIG_FILE, bases);
+                return new BaseCaptureBattlefieldConfig(bc.MAX_TURN, bc.MAX_LAP, bc.TEAMS, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBTACLE_CONFIG_FILE, bases);
             } else {
                 throw new ArgumentException(nameof(bc) + "have to have some bases in more.");
             }
@@ -26,11 +26,10 @@ namespace BaseCapcureBattlefield.battlefield {
                     select m as Base).ToArray();
         }
 
-        public BaseCaptureBattlefieldConfig(int maxRobots, int maxTurn, int maxLap, int robotsInTeam, int respawnTimeout,
+        public BaseCaptureBattlefieldConfig(int maxTurn, int maxLap, int teams, int robotsInTeam, int respawnTimeout,
                                             bool respawnAllowed, string matchSaveFile, string equipmentConfigFile, string obtacleConfigFile,
                                             Base[] bases)
-            : base(
-                   maxRobots, maxTurn, maxLap, robotsInTeam, respawnTimeout, respawnAllowed, matchSaveFile, equipmentConfigFile,
+            : base(maxTurn, maxLap, teams, robotsInTeam, respawnTimeout, respawnAllowed, matchSaveFile, equipmentConfigFile,
                    obtacleConfigFile, bases) {
             BASES = bases;
         }

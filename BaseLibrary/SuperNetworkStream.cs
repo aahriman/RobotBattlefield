@@ -25,7 +25,7 @@ namespace BaseLibrary {
 				return _protocol;
 			}
 			set {
-				if (_protocol == null) {
+				if (_protocol == null || _protocol == value) {
 					_protocol = value;
 				} else {
 					throw new Exception("Protocol can be set only once.");

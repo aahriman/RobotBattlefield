@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BaseLibrary;
+using BaseLibrary.battlefield;
 using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.equipment;
@@ -13,7 +15,16 @@ using BaseLibrary.utils;
 using ClientLibrary.config;
 
 namespace ClientLibrary.robot {
-    public abstract class ClientRobot : AClientRobot {
+    public abstract class ClientRobot : Robot {
+
+        public static readonly String TEAM_NAME = new Guid().ToString();
+
+        private static readonly List<ClientRobot> ROBOT_COLLECTION = new List<ClientRobot>();
+        private static readonly IDictionary<ClientRobot, Task> ROBOTS_TASK_COMMANDS = new Dictionary<ClientRobot, Task>();
+
+        private static String ip = null;
+        private static int port;
+
         static ClientRobot() {
             ModUtils.LoadMods();
         }
@@ -24,6 +35,61 @@ namespace ClientLibrary.robot {
         public static readonly Dictionary<int, Gun> GUNS_BY_ID = new Dictionary<int, Gun>();
         public static readonly Dictionary<int, RepairTool> REPAIR_TOOLS_BY_ID = new Dictionary<int, RepairTool>();
         public static readonly Dictionary<int, MineGun> MINE_GUNS_BY_ID = new Dictionary<int, MineGun>();
+
+        /// <summary>
+        /// Do connection to server.
+        /// </summary>
+        /// <param name="args">
+        ///   <list type="bullet">
+        ///     <item>
+        ///       <description><code>args[0]</code> is IP adress of server.</description>
+        ///     </item>
+        ///     <item>
+        ///       <description><code>args[1]</code> is port.</description>
+        ///     </item>
+        ///     <item>
+        ///       <description>If <code>args.length &lt; 2</code> then default port is choose, if <code>args.length &lt; 1</code> then local adress is use as ip.</description>
+        ///     </item>
+        ///   </list>
+        /// </param>
+        /// <returns>Game type</returns>
+        public static GameTypeCommand Connect(String[] args) {
+            ip = ConnectionUtil.LOCAL_ADDRES;
+            port = GameProperties.DEFAULT_PORT;
+            if (args.Length >= 1) {
+                ip = args[0];
+            }
+
+            if (args.Length >= 2) {
+                port = int.Parse(args[1]);
+            }
+
+            GameTypeCommand gameTypeCommand = null;
+            lock (ROBOT_COLLECTION) {
+                foreach (var robot in ROBOT_COLLECTION) {
+                    if (!robot.connected) {
+                        gameTypeCommand = robot.Connect(ip, port);
+                    }
+                }
+            }
+            return gameTypeCommand;
+        }
+
+
+        /// <summary>
+        /// End turn - every robots who do not send command will send command <code>Wait</code>
+        /// </summary>
+        public static void EndTurn() {
+            lock (ROBOTS_TASK_COMMANDS) {
+                lock (ROBOT_COLLECTION) {
+                    foreach (var robot in ROBOT_COLLECTION) {
+                        if (!ROBOTS_TASK_COMMANDS.ContainsKey(robot)) {
+                            robot.Wait();
+                        }
+                    }
+                }
+            }
+        }
 
         public int MAX_LAP { get; private set; }
         public int MAX_TURN { get; private set; }
@@ -40,47 +106,40 @@ namespace ClientLibrary.robot {
         public override Motor Motor { get; set; }
         public override Armor Armor { get; set; }
 
-        protected bool processStateAfterEveryCommand;
-        protected bool processMerchant;
-        protected ClientRobot() : this(true, true) {}
 
-        protected ClientRobot(bool processStateAfterEveryCommand, bool processMerchant) {
-            this.processStateAfterEveryCommand = processStateAfterEveryCommand;
-            this.processMerchant = processMerchant;
-            LAP = 1;
-        }
+        private SuperNetworkStream sns;
 
-        public GameTypeCommand Connect(String [] args) {
-            String ip = AClientRobot.LOCAL_ADDRES;
-            int port = GameProperties.DEFAULT_PORT;
-            if (args.Length >= 1) {
-                ip = args[0];
+        private String name;
+        private String teamName;
+        private bool connected;
+
+        protected ClientRobot(String name) : this(name, TEAM_NAME) {}
+
+        protected ClientRobot(String name, String teamName) {
+            lock (ROBOT_COLLECTION) {
+                LAP = 1;
+                this.name = name;
+                this.teamName = teamName;
+
+                if (ip != null) {
+                    Connect(ip, port);
+                }
+
+                ROBOT_COLLECTION.Add(this);
             }
+        }
 
-            if (args.Length >= 2) {
-                port = int.Parse(args[1]);
+        private GameTypeCommand Connect(String ip, int port) {
+            GameTypeCommand gameTypeCommand = null;
+            if (connected) {
+                ConnectionUtil connection = new ConnectionUtil();
+
+                gameTypeCommand = taskWait(connection.ConnectAsync(ip, port));
+                sns = connection.COMMUNICATION;
+                afterConnect();
+                this.connected = true;
+                Init(name, teamName);
             }
-
-            GameTypeCommand gameTypeCommand = taskWait(ConnectAsync(ip, port));
-            afterConnect();
-            return gameTypeCommand;
-        }
-
-        public GameTypeCommand Connect() {
-            GameTypeCommand gameTypeCommand = taskWait(ConnectAsync());
-            afterConnect();
-            return gameTypeCommand;
-        }
-
-        public GameTypeCommand Connect(int port) {
-            GameTypeCommand gameTypeCommand = taskWait(ConnectAsync(port));
-            afterConnect();
-            return gameTypeCommand;
-        }
-
-        public GameTypeCommand Connect(String ip, int port) {
-            GameTypeCommand gameTypeCommand = taskWait(ConnectAsync(ip, port));
-            afterConnect();
             return gameTypeCommand;
         }
 
@@ -90,7 +149,7 @@ namespace ClientLibrary.robot {
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
-        public InitAnswerCommand Init(String name, String teamName) {
+        private InitAnswerCommand Init(String name, String teamName) {
             InitAnswerCommand answer = taskWait(InitAsync(name, teamName));
             return answer;
         }
@@ -101,13 +160,10 @@ namespace ClientLibrary.robot {
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
-        public async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
+        private async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
-            var answerCommand =  (InitAnswerCommand)await recieveCommandAsync();
+            var answerCommand = await recieveCommandAsync<InitAnswerCommand>();
             ProcessInit(answerCommand);
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
             return answerCommand;
         }
 
@@ -117,15 +173,15 @@ namespace ClientLibrary.robot {
             lock (EQUIP_LOCK) {
                 if (MOTORS_BY_ID.Count == 0) {
                     Task.WaitAll(sendCommandAsync(new GetMotorsCommand()));
-                    GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) taskWait(recieveCommandAsync());
+                    GetMotorsAnswerCommand motorAnswer = recieveCommand<GetMotorsAnswerCommand>();
                     Task.WaitAll(sendCommandAsync(new GetArmorsCommand()));
-                    GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand) taskWait(recieveCommandAsync());
+                    GetArmorsAnswerCommand armorsAnswer = recieveCommand<GetArmorsAnswerCommand>();
                     Task.WaitAll(sendCommandAsync(new GetGunsCommand()));
-                    GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) taskWait(recieveCommandAsync());
+                    GetGunsAnswerCommand gunAnswer = recieveCommand<GetGunsAnswerCommand>();
                     Task.WaitAll(sendCommandAsync(new GetRepairToolCommand()));
-                    GetRepairToolAnswerCommand repairToolAnswer = (GetRepairToolAnswerCommand) taskWait(recieveCommandAsync());
+                    GetRepairToolAnswerCommand repairToolAnswer = recieveCommand<GetRepairToolAnswerCommand>();
                     Task.WaitAll(sendCommandAsync(new GetMineGunCommand()));
-                    GetMineGunAnswerCommand mineGunAnswer = (GetMineGunAnswerCommand) taskWait(recieveCommandAsync());
+                    GetMineGunAnswerCommand mineGunAnswer = recieveCommand<GetMineGunAnswerCommand>();
 
                     foreach (var motor in motorAnswer.MOTORS) {
                         MOTORS_BY_ID.Add(motor.ID, motor);
@@ -155,7 +211,7 @@ namespace ClientLibrary.robot {
         /// Set robot id and equipment
         /// </summary>
         /// <param name="init"></param>
-        public virtual void ProcessInit(InitAnswerCommand init) {
+        protected virtual void ProcessInit(InitAnswerCommand init) {
             this.ID = init.ROBOT_ID;
             this.Motor = MOTORS_BY_ID[init.MOTOR_ID];
             this.Armor = ARMORS_BY_ID[init.ARMOR_ID];
@@ -186,12 +242,9 @@ namespace ClientLibrary.robot {
         /// <param name="power">
         public async Task<DriveAnswerCommand> DriveAsync(double angle, double power) {
             await sendCommandAsync(new DriveCommand(power, angle));
-            var answerCommand =  (DriveAnswerCommand)await recieveCommandAsync();
+            var answerCommand =  await recieveCommandAsync<DriveAnswerCommand>();
             if (answerCommand.SUCCES) {
                 AngleDrive = AngleUtils.NormalizeDegree(angle);
-            }
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
             }
             return answerCommand;
         }
@@ -213,27 +266,15 @@ namespace ClientLibrary.robot {
         /// <param name="precision">parameter for sector. Min is 0 max is 10</param>
         public async Task<ScanAnswerCommand> ScanAsync(double angle, double precision) {
             await sendCommandAsync(new ScanCommand(precision, angle));
-            var answerCommand =  (ScanAnswerCommand)await recieveCommandAsync();
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
-            return answerCommand;
+            return await recieveCommandAsync<ScanAnswerCommand>();
         }
 
-        public RobotStateCommand State() {
-            RobotStateCommand answer = taskWait(StateAsync());
-            return answer;
-        }
-
-        public async Task<RobotStateCommand> StateAsync() {
-            return (RobotStateCommand)await recieveCommandAsync();
-        }
 
         /// <summary>
         /// Set x,y coordinates, hit points and power. Set score and gold and repair if is end of lap. 
         /// </summary>
         /// <param name="state"></param>
-        public virtual void ProcessState(RobotStateCommand state) {
+        protected virtual void ProcessState(RobotStateCommand state) {
             this.X = state.X;
             this.Y = state.Y;
             this.HitPoints = state.HIT_POINTS;
@@ -246,39 +287,40 @@ namespace ClientLibrary.robot {
                     Console.WriteLine("Match finish.");
                     Environment.Exit(0);
                 }
-                if (processMerchant) {
-                    ProcessMerchant(Merchant(Motor.ID, Armor.ID, getClassEquip().ID, 100));
-                }
+                SendMerchant();
                 LAP++;
             }
         }
 
+        /// <summary>
+        /// Robot will do nothing for this turn. He still move, but not change direction or wanted power (speed).
+        /// </summary>
         public void Wait() {
-            taskWait(WaitAsync());
+            addRobotTask(WaitAsync());
         }
 
-        public async Task WaitAsync() {
+        private async Task WaitAsync() {
             await sendCommandAsync(new WaitCommand());
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
         }
 
-        public MerchantAnswerCommand Merchant(int motorId, int armorId, int classEquipmentId, int repairHP) {
-            MerchantAnswerCommand answer = taskWait(MercantAsync(motorId, armorId, classEquipmentId, repairHP));
+        protected MerchantAnswerCommand Merchant(int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
+            MerchantAnswerCommand answer = new MerchantAnswerCommand();
+            addRobotTask(MercantAsync(answer, motorId, armorId, classEquipmentId, repairHitPoints));
             return answer;
         }
 
-        public async Task<MerchantAnswerCommand> MercantAsync(int motorId, int armorId, int classEquipmentId, int repairHP) {
-            await sendCommandAsync(new MerchantCommand(motorId, armorId, classEquipmentId, repairHP));
-            var answerCommand =  (MerchantAnswerCommand)await recieveCommandAsync();
-            if (processStateAfterEveryCommand) {
-                ProcessState(await StateAsync());
-            }
-            return answerCommand;
+        private async Task MercantAsync(MerchantAnswerCommand destination, int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
+            await sendCommandAsync(new MerchantCommand(motorId, armorId, classEquipmentId, repairHitPoints));
+            MerchantAnswerCommand answer = await recieveCommandAsync<MerchantAnswerCommand>();
+            ProcessMerchant(answer);
+            destination.FillData(answer);
         }
 
-        public virtual void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
+        protected virtual void SendMerchant() {
+            Merchant(Motor.ID, Armor.ID, getClassEquip().ID, 100);
+        }
+
+        protected virtual void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
             this.Motor = MOTORS_BY_ID[merchantAnswer.MOTOR_ID_BOUGHT];
             this.Armor = ARMORS_BY_ID[merchantAnswer.ARMOR_ID_BOUGHT];
             setClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);
@@ -288,9 +330,25 @@ namespace ClientLibrary.robot {
             await sns.SendCommandAsync(command);
         }
 
-        protected async Task<ACommand> recieveCommandAsync() {
-            return await sns.RecieveCommandAsync();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected async Task<T> recieveCommandAsync<T>() where T : ACommand{
+            T command = (T) await sns.RecieveCommandAsync();
+            ProcessState((RobotStateCommand) await sns.RecieveCommandAsync());
+            return command;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected T recieveCommand<T>() where T : ACommand {
+            T command = recieveCommandAsync<T>().Result;
+            return command;
+        }
+
 
         /// <summary>
         /// Wait for task and if his InnerException is not null it throw it else it throw AggregateException or nothing if no exception occures.
@@ -326,6 +384,17 @@ namespace ClientLibrary.robot {
                     throw e.InnerException;
                 } else {
                     throw e;
+                }
+            }
+        }
+
+        protected void addRobotTask(Task t) {
+            lock (ROBOTS_TASK_COMMANDS) {
+                ROBOTS_TASK_COMMANDS.Add(this, t);
+                lock (ROBOT_COLLECTION) {
+                    if (ROBOTS_TASK_COMMANDS.Count == ROBOT_COLLECTION.Count) {
+                        Task.WaitAll(ROBOTS_TASK_COMMANDS.Values.ToArray());
+                    }
                 }
             }
         }

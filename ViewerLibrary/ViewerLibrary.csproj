@@ -46,12 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="gui\DefaultDrawer.cs" />
+    <Compile Include="gui\IDrawer.cs" />
+    <Compile Include="gui\IDrawerMore.cs" />
+    <Compile Include="model\ITurnDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="serializers\SerializerJSON.cs" />
     <Compile Include="Turn.cs" />
+    <Compile Include="utils\ColorUtils.cs" />
+    <Compile Include="utils\DrawerUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
+      <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
+      <Name>BaseLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

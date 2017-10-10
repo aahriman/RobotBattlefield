@@ -106,7 +106,7 @@ namespace FlagCapcureBattlefield.battlefield {
         }
 
 	    private void check() {
-	        if (flagPlacesById.Count < MAX_ROBOTS / ROBOTS_IN_TEAM) {
+	        if (flagPlacesById.Count < TEAMS) {
 	            throw new ArgumentException("Every team have to have at least one flag place.");
 	        }
 	    }
