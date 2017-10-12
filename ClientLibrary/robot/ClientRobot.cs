@@ -113,8 +113,17 @@ namespace ClientLibrary.robot {
         private String teamName;
         private bool connected;
 
+        /// <summary>
+        /// Create new instance of robot.
+        /// </summary>
+        /// <param name="name"> name of this robot</param>
         protected ClientRobot(String name) : this(name, TEAM_NAME) {}
 
+        /// <summary>
+        /// Create new instance of robot.
+        /// </summary>
+        /// <param name="name"> name of this robot</param>
+        /// <param name="teamName">name of team</param>
         protected ClientRobot(String name, String teamName) {
             lock (ROBOT_COLLECTION) {
                 LAP = 1;
@@ -225,7 +234,7 @@ namespace ClientLibrary.robot {
         protected abstract ClassEquipment getClassEquip();
 
         /// <summary>
-        /// 
+        /// Set percentual power of motor and direction.
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="power">percentage from 0 to 100.</param>
@@ -236,7 +245,7 @@ namespace ClientLibrary.robot {
         }
 
         /// <summary>
-        /// 
+        /// Set percentual power of motor and direction. 
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="power">
