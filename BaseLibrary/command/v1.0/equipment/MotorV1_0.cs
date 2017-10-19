@@ -18,7 +18,7 @@ namespace BaseLibrary.command.v1._0.equipment {
 			return ProtocolV1_0Utils.SerializeParams(NAME, deep, (ProtocolDouble) MAX_SPEED, (ProtocolDouble) ROTATE_IN, (ProtocolDouble) SPEED_UP, (ProtocolDouble) SPEED_DOWN, (ProtocolDouble) SPEED_UP_TO, COST, ID);
         }
 
-		public static bool Deserialize(String orig, Deep deep, out MotorV1_0 deserialized) {
+		public static bool Deserialize(string orig, Deep deep, out MotorV1_0 deserialized) {
 			string[] rest;
 			if (ProtocolV1_0Utils.GetParams(orig, NAME, deep, out rest)) {
 				if (rest.Length == 7) {

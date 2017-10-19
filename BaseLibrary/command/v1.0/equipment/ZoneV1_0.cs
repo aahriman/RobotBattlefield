@@ -15,7 +15,7 @@ namespace BaseLibrary.command.v1._0.equipment {
             return ProtocolV1_0Utils.SerializeParams(NAME, deep, DISTANCE, EFFECT);
         }
 
-        public static bool Deserialize(String orig, Deep deep, out ZoneV1_0 deserialized) {
+        public static bool Deserialize(string orig, Deep deep, out ZoneV1_0 deserialized) {
             string[] rest;
             int[] param;
             if (ProtocolV1_0Utils.GetParams(orig, NAME, deep, out rest)) {

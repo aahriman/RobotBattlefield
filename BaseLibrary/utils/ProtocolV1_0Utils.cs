@@ -49,7 +49,7 @@ namespace BaseLibrary.utils {
 
 		public const string DICTIONARY_KEY_VALUE_SEPARATOR = "=>";
 
-	    public static String ConvertToDeeper(String serializedString, Deep toDeep) {
+	    public static string ConvertToDeeper(string serializedString, Deep toDeep) {
 	        StringBuilder sb = new StringBuilder();
 	        char[] serializedCharacter = serializedString.ToCharArray();
 
@@ -73,7 +73,7 @@ namespace BaseLibrary.utils {
 	        return sb.ToString();
 	    }
 
-	    public static String ConvertToShallowly(String serializedString, int howManyTimes) {
+	    public static string ConvertToShallowly(string serializedString, int howManyTimes) {
 	        if (howManyTimes <= 0) {
 	            throw new ArgumentException(nameof(howManyTimes) + "have to be positive.");
 	        }
@@ -101,11 +101,11 @@ namespace BaseLibrary.utils {
         }
 
         // =========== PARAMS ========
-        public static String SerializeParams(String commandName, params object[] param) {
+        public static string SerializeParams(string commandName, params object[] param) {
 			return SerializeParams(commandName, DEFAULT, param);
 		}
 
-		public static String SerializeParams(String commandName, Deep deep, params object[] param) {
+		public static string SerializeParams(string commandName, Deep deep, params object[] param) {
 			StringBuilder s = new StringBuilder();
 			s.Append(commandName);
 			s.Append("(");
@@ -119,20 +119,20 @@ namespace BaseLibrary.utils {
 			return s.Append(")").ToString();
 		}
 
-		public static bool GetParams(String orig, String commandName, out string rest) {
+		public static bool GetParams(string orig, string commandName, out string rest) {
 			return StringUtils.GetRestOfString(orig, commandName + "(", ")", out rest);
 		}
 
-        public static bool GetParams(String orig, String commandName, out string[] rest) {
+        public static bool GetParams(string orig, string commandName, out string[] rest) {
 			return GetParams(orig, commandName, DEFAULT, out rest);
 		}
 
-		public static bool GetParams(String orig, String commandName, Deep deep, out string[] rest) {
+		public static bool GetParams(string orig, string commandName, Deep deep, out string[] rest) {
 			return StringUtils.GetRestOfStringSplited(orig, commandName + "(", ")", out rest, deep.SEPARATOR);
 		}
 
 		// =========== ARRAY ========
-		public static String SerializeArray(IEnumerable enumerable, Deep deep) {
+		public static string SerializeArray(IEnumerable enumerable, Deep deep) {
 			StringBuilder s = new StringBuilder();
 			s.Append("[");
 			foreach (var item in enumerable) {
@@ -150,7 +150,7 @@ namespace BaseLibrary.utils {
 			return s.Append("]").ToString();
 		}
 
-		public static String Serialize(IEnumerable enumerable, Deep deep) {
+		public static string Serialize(IEnumerable enumerable, Deep deep) {
 			StringBuilder s = new StringBuilder();
 			s.Append("[");
 			foreach (var item in enumerable) {
@@ -163,16 +163,16 @@ namespace BaseLibrary.utils {
 			return s.Append("]").ToString();
 		}
 
-		public static bool Deserialize(String s, out string[] array, Deep deep) {
+		public static bool Deserialize(string s, out string[] array, Deep deep) {
 			return StringUtils.GetRestOfStringSplited(s, "[", "]", out array, deep.SEPARATOR);
 		}
 
-		public static bool Deserialize(String s, out Double[] array, Deep deep) {
+		public static bool Deserialize(string s, out double[] array, Deep deep) {
 			string[] rest;
 			if (StringUtils.GetRestOfStringSplited(s, "[", "]", out rest, deep.SEPARATOR)) {
-				array = new Double[rest.Length];
+				array = new double[rest.Length];
 				for (int i = 0; i < rest.Length; i++) {
-					if (!Double.TryParse(rest[i], out array[i])) {
+					if (!double.TryParse(rest[i], out array[i])) {
 						return false;
 					}
 				}
@@ -183,7 +183,7 @@ namespace BaseLibrary.utils {
 			}
 		}
 
-		public static bool Deserialize(String s, out int[] array, Deep deep) {
+		public static bool Deserialize(string s, out int[] array, Deep deep) {
 			string[] rest;
 			if (StringUtils.GetRestOfStringSplited(s, "[", "]", out rest, deep.SEPARATOR)) {
 				array = new int[rest.Length];
@@ -200,7 +200,7 @@ namespace BaseLibrary.utils {
 		}
 
 		// =========== DICTIONARY ========
-		public static String Serialize(IDictionary dict, Deep deep) {
+		public static string Serialize(IDictionary dict, Deep deep) {
 			List<string> serializeList = new List<string>();
 			foreach (var key in dict.Keys) {
 				serializeList.Add(serialize(key, deep) + DICTIONARY_KEY_VALUE_SEPARATOR + serialize(dict[key], deep));
@@ -209,16 +209,16 @@ namespace BaseLibrary.utils {
 		}
 
 		private static bool preDeserializeDict(string s, out KeyValuePair<string, string>[] dict, Deep deep) {
-			String[] rest;
+			string[] rest;
 			if (Deserialize(s, out rest, deep)) {
 				dict = new KeyValuePair<string, string>[rest.Length];
 				string[] keyValue;
 				for (int i = 0; i < dict.Length; i++) {
-					if (StringUtils.GetRestOfStringSplited(rest[i], String.Empty, String.Empty, out keyValue, DICTIONARY_KEY_VALUE_SEPARATOR)) {
+					if (StringUtils.GetRestOfStringSplited(rest[i], string.Empty, string.Empty, out keyValue, DICTIONARY_KEY_VALUE_SEPARATOR)) {
 						if (keyValue.Length == 2) {
 							dict[i] = new KeyValuePair<string, string>(keyValue[0], keyValue[1]);
 						} else {
-							throw new ArgumentException(String.Format("S containt illegal dictionary pair '{0}'", rest[i]));
+							throw new ArgumentException(string.Format("S containt illegal dictionary pair '{0}'", rest[i]));
 						}
 					}
 				}
@@ -239,7 +239,7 @@ namespace BaseLibrary.utils {
 						int.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -259,7 +259,7 @@ namespace BaseLibrary.utils {
 						double.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -280,7 +280,7 @@ namespace BaseLibrary.utils {
 						int.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -300,7 +300,7 @@ namespace BaseLibrary.utils {
 						double.TryParse(keyValue.Value, out value)) {
 						dict.Add(key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -318,7 +318,7 @@ namespace BaseLibrary.utils {
 					if (int.TryParse(keyValue.Key, out key)) {
 						dict.Add(key, keyValue.Value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -336,7 +336,7 @@ namespace BaseLibrary.utils {
 					if (double.TryParse(keyValue.Key, out key)) {
 						dict.Add(key, keyValue.Value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -354,7 +354,7 @@ namespace BaseLibrary.utils {
 					if (int.TryParse(keyValue.Value, out value)) {
 						dict.Add(keyValue.Key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -372,7 +372,7 @@ namespace BaseLibrary.utils {
 					if (double.TryParse(keyValue.Value, out value)) {
 						dict.Add(keyValue.Key, value);
 					} else {
-						throw new ArgumentException(String.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
+						throw new ArgumentException(string.Format("String '{0}' constaint illegal values for dict<{1},{2}>.", keyValue, dict.GetType().GetGenericArguments()[0].Name, dict.GetType().GetGenericArguments()[1].Name));
 					}
 				}
 				return true;
@@ -394,13 +394,13 @@ namespace BaseLibrary.utils {
 			}
 		}
 
-		private static String serialize(object o, Deep d) {
+		private static string serialize(object o, Deep d) {
 			IDictionary dictionary = o as IDictionary;
 			IEnumerable enumerable = o as IEnumerable;
-            String asString = o as String;
+            string asString = o as string;
             InnerSerializerV1_0 innerSerializable = o as InnerSerializerV1_0;
-		    if (o is Boolean) {
-		        return ((Boolean) o) ? "1" : "0";
+		    if (o is bool) {
+		        return ((bool) o) ? "1" : "0";
 		    } else if (innerSerializable != null) {
 				return innerSerializable.Serialize(d.NEXT);
 			} else if (dictionary != null) {
@@ -413,7 +413,7 @@ namespace BaseLibrary.utils {
 			    }
 			} else {
 			    if (o == null) {
-			        return String.Empty;
+			        return string.Empty;
 			    }
 				return o.ToString();
 			}

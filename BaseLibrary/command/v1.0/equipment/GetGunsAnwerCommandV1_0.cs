@@ -10,7 +10,7 @@ namespace BaseLibrary.command.v1._0.equipment{
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
 				string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, ProtocolV1_0Utils.DEFAULT, out rest)) {

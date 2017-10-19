@@ -18,7 +18,7 @@ namespace ClientLibrary.robot {
             ModUtils.LoadMods();
         }
 
-        private static readonly Object EQUIP_LOCK = new Object();
+        private static readonly object EQUIP_LOCK = new object();
         public static readonly Dictionary<int, Motor> MOTORS_BY_ID = new Dictionary<int, Motor>();
         public static readonly Dictionary<int, Armor> ARMORS_BY_ID = new Dictionary<int, Armor>();
         public static readonly Dictionary<int, Gun> GUNS_BY_ID = new Dictionary<int, Gun>();
@@ -28,7 +28,7 @@ namespace ClientLibrary.robot {
         public int MAX_LAP { get; private set; }
         public int MAX_TURN { get; private set; }
         public int LAP { get; private set; }
-        public String NAME { get; private set; }
+        public string NAME { get; private set; }
 
         public override int HitPoints { get; set; }
         public override int Score { get; set; }
@@ -50,8 +50,8 @@ namespace ClientLibrary.robot {
             LAP = 1;
         }
 
-        public GameTypeCommand Connect(String [] args) {
-            String ip = AClientRobot.LOCAL_ADDRES;
+        public GameTypeCommand Connect(string[] args) {
+            string ip = AClientRobot.LOCAL_ADDRES;
             int port = GameProperties.DEFAULT_PORT;
             if (args.Length >= 1) {
                 ip = args[0];
@@ -78,7 +78,7 @@ namespace ClientLibrary.robot {
             return gameTypeCommand;
         }
 
-        public GameTypeCommand Connect(String ip, int port) {
+        public GameTypeCommand Connect(string ip, int port) {
             GameTypeCommand gameTypeCommand = taskWait(ConnectAsync(ip, port));
             afterConnect();
             return gameTypeCommand;
@@ -90,7 +90,7 @@ namespace ClientLibrary.robot {
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
-        public InitAnswerCommand Init(String name, String teamName) {
+        public InitAnswerCommand Init(string name, string teamName) {
             InitAnswerCommand answer = taskWait(InitAsync(name, teamName));
             return answer;
         }
@@ -101,7 +101,7 @@ namespace ClientLibrary.robot {
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
-        public async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
+        public async Task<InitAnswerCommand> InitAsync(string name, string teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
             var answerCommand =  (InitAnswerCommand)await recieveCommandAsync();
             ProcessInit(answerCommand);
@@ -127,23 +127,23 @@ namespace ClientLibrary.robot {
                     Task.WaitAll(sendCommandAsync(new GetMineGunCommand()));
                     GetMineGunAnswerCommand mineGunAnswer = (GetMineGunAnswerCommand) taskWait(recieveCommandAsync());
 
-                    foreach (var motor in motorAnswer.MOTORS) {
+                    foreach (Motor motor in motorAnswer.MOTORS) {
                         MOTORS_BY_ID.Add(motor.ID, motor);
                     }
 
-                    foreach (var armor in armorsAnswer.ARMORS) {
+                    foreach (Armor armor in armorsAnswer.ARMORS) {
                         ARMORS_BY_ID.Add(armor.ID, armor);
                     }
 
-                    foreach (var gun in gunAnswer.GUNS) {
+                    foreach (Gun gun in gunAnswer.GUNS) {
                         GUNS_BY_ID.Add(gun.ID, gun);
                     }
 
-                    foreach (var repairTool in repairToolAnswer.REPAIR_TOOLS) {
+                    foreach (RepairTool repairTool in repairToolAnswer.REPAIR_TOOLS) {
                         REPAIR_TOOLS_BY_ID.Add(repairTool.ID, repairTool);
                     }
 
-                    foreach (var mineGun in mineGunAnswer.MINE_GUNS) {
+                    foreach (MineGun mineGun in mineGunAnswer.MINE_GUNS) {
                         MINE_GUNS_BY_ID.Add(mineGun.ID, mineGun);
                     }
 
@@ -162,11 +162,11 @@ namespace ClientLibrary.robot {
             MAX_LAP = init.MAX_LAP;
             TEAM_ID = init.TEAM_ID;
             MAX_TURN = init.MAX_TURN;
-            setClassEquip(init.CLASS_EQUIPMENT_ID);
+            SetClassEquip(init.CLASS_EQUIPMENT_ID);
         }
 
-        protected abstract void setClassEquip(int id);
-        protected abstract ClassEquipment getClassEquip();
+        protected abstract void SetClassEquip(int id);
+        protected abstract ClassEquipment GetClassEquip();
 
         /// <summary>
         /// 
@@ -247,7 +247,7 @@ namespace ClientLibrary.robot {
                     Environment.Exit(0);
                 }
                 if (processMerchant) {
-                    ProcessMerchant(Merchant(Motor.ID, Armor.ID, getClassEquip().ID, 100));
+                    ProcessMerchant(Merchant(Motor.ID, Armor.ID, GetClassEquip().ID, 100));
                 }
                 LAP++;
             }
@@ -265,11 +265,11 @@ namespace ClientLibrary.robot {
         }
 
         public MerchantAnswerCommand Merchant(int motorId, int armorId, int classEquipmentId, int repairHP) {
-            MerchantAnswerCommand answer = taskWait(MercantAsync(motorId, armorId, classEquipmentId, repairHP));
+            MerchantAnswerCommand answer = taskWait(MerchantAsync(motorId, armorId, classEquipmentId, repairHP));
             return answer;
         }
 
-        public async Task<MerchantAnswerCommand> MercantAsync(int motorId, int armorId, int classEquipmentId, int repairHP) {
+        public async Task<MerchantAnswerCommand> MerchantAsync(int motorId, int armorId, int classEquipmentId, int repairHP) {
             await sendCommandAsync(new MerchantCommand(motorId, armorId, classEquipmentId, repairHP));
             var answerCommand =  (MerchantAnswerCommand)await recieveCommandAsync();
             if (processStateAfterEveryCommand) {
@@ -281,7 +281,7 @@ namespace ClientLibrary.robot {
         public virtual void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
             this.Motor = MOTORS_BY_ID[merchantAnswer.MOTOR_ID_BOUGHT];
             this.Armor = ARMORS_BY_ID[merchantAnswer.ARMOR_ID_BOUGHT];
-            setClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);
+            SetClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);
         }
 
         protected async Task sendCommandAsync(ACommand command) {
@@ -317,9 +317,15 @@ namespace ClientLibrary.robot {
         /// <typeparam name="TResult"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-        protected TResult taskWait<TResult>(Task<TResult> task) {
+        protected TResult taskWait<TResult>(Task<TResult> task) where TResult:ACommand{
             try {
                 Task.WaitAll(task);
+                TResult result = task.Result;
+                ErrorCommand command = result as ErrorCommand;
+                if (command != null) {
+                    Console.Error.WriteLine(command.MESSAGE);
+                    Environment.Exit(0);
+                }
                 return task.Result;
             } catch (AggregateException e) {
                 if (e.InnerException != null) {

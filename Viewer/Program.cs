@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using ViewerLibrary.model;
 
 namespace Viewer {
     static class Program {
@@ -10,7 +11,7 @@ namespace Viewer {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AppForm());
+            Application.Run(new ViewerForm());
         }
     }
 }

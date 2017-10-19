@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
 using BaseLibrary.command.common;
@@ -258,15 +259,16 @@ namespace BattlefieldLibrary.battlefield {
             }
 
             public override ACommand visit(ScanCommand visitor, BattlefieldRobot input) {
-                double minDistance = Battlefield.ARENA_MAX_SIZE*10;
-                BattlefieldRobot r = input; {
+                double minDistance = Battlefield.ARENA_MAX_SIZE * 10;
+                BattlefieldRobot r = input;
+                {
                     BattlefieldRobot minTarget = r;
                     if (r.HitPoints > 0) {
                         foreach (BattlefieldRobot target in BATTLEFIELD.robots) {
-                            if (r != target && target.HitPoints > 0 && BATTLEFIELD.obtacleManager.CanScan(BATTLEFIELD.turn, r.X, r.Y, target.X, target.Y)) {
-                                double distance = Math.Sqrt(Math.Pow(r.X - target.X, 2) + Math.Pow(r.Y - target.Y, 2));
+                            if (r.ID != target.ID && target.HitPoints > 0 && BATTLEFIELD.obtacleManager.CanScan(BATTLEFIELD.Turn, r.X, r.Y, target.X, target.Y)) {
+                                double distance = EuclideanSpaceUtils.Distance(r.X, r.Y, target.X, target.Y);
                                 if (distance < minDistance) {
-                                    double degree = AngleUtils.ToDegree(BATTLEFIELD.computeAngle(r.X, r.Y, target.X, target.Y));
+                                    double degree = AngleUtils.NormalizeDegree(AngleUtils.AngleDegree(r.X, r.Y, target.X, target.Y));
                                     if (Math.Abs(degree - visitor.ANGLE) <= visitor.PRECISION) {
                                         minDistance = distance;
                                         minTarget = target;
@@ -274,11 +276,10 @@ namespace BattlefieldLibrary.battlefield {
                                 }
                             }
                         }
-                    
-                        BATTLEFIELD.battlefieldTurn.AddScan(new Scan(visitor.ANGLE, visitor.PRECISION, minDistance, r.X,
-                                                                     r.Y));
+
+                        BATTLEFIELD.battlefieldTurn.AddScan(new Scan(visitor.ANGLE, visitor.PRECISION, minDistance, r.X, r.Y));
                     }
-                    return ScanAnswerCommand.GetInstance((ProtocolDouble)minDistance, minTarget.ID);
+                    return ScanAnswerCommand.GetInstance((ProtocolDouble) minDistance, minTarget.ID);
                 }
             }
 
@@ -292,7 +293,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected class TankFightVisitor : FinghtVisitor {
 
-            int LOAD_TIME = 20;
+            public const int LOAD_TIME = 20;
 
             public TankFightVisitor(Battlefield battlefield) : base(battlefield) {}
 
@@ -306,15 +307,15 @@ namespace BattlefieldLibrary.battlefield {
                         }
                         double toX = range * Math.Cos(AngleUtils.ToRads(visitor.ANGLE)) + tank.X;
                         double toY = range * Math.Sin(AngleUtils.ToRads(visitor.ANGLE)) + tank.Y;
-                        BATTLEFIELD.obtacleManager.ShotChange(BATTLEFIELD.turn, tank.X, tank.Y, ref toX, ref toY);
-                        int toLap = (int)Math.Ceiling(range / tank.Gun.SHOT_SPEED) + BATTLEFIELD.turn;
+                        BATTLEFIELD.obtacleManager.ShotChange(BATTLEFIELD.Turn, tank.X, tank.Y, ref toX, ref toY);
+                        int toLap = (int)Math.Ceiling(range / tank.Gun.SHOT_SPEED) + BATTLEFIELD.Turn;
                         List<Bullet> bulletList;
                         if (!BATTLEFIELD.heapBullet.TryGetValue(toLap, out bulletList)) {
                             bulletList = new List<Bullet>();
                             BATTLEFIELD.heapBullet.Add(toLap, bulletList);
                         }
-                        bulletList.Add(new Bullet(BATTLEFIELD.turn, toLap, toX, toY, tank));
-                        int loadAtTurn = BATTLEFIELD.turn + LOAD_TIME;
+                        bulletList.Add(new Bullet(BATTLEFIELD.Turn, toLap, toX, toY, tank));
+                        int loadAtTurn = BATTLEFIELD.Turn + LOAD_TIME;
                         List<Tank> list;
                         if (!BATTLEFIELD.gunLoaded.TryGetValue(loadAtTurn, out list)) {
                             list = new List<Tank>();
@@ -402,7 +403,7 @@ namespace BattlefieldLibrary.battlefield {
 
             public override ACommand visit(MerchantCommand visitor, BattlefieldRobot input) {
                 BattlefieldRobot r = input; 
-                return BATTLEFIELD.merchant.Buy(r, visitor.MOTOR_ID, visitor.ARMOR_ID, visitor.CLASS_EQUIPMENT_ID, visitor.REPAIR_HP);
+                return BATTLEFIELD.Merchant.Buy(r, visitor.MOTOR_ID, visitor.ARMOR_ID, visitor.CLASS_EQUIPMENT_ID, visitor.REPAIR_HP);
             }
         }
     }

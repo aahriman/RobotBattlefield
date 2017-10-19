@@ -15,7 +15,7 @@ namespace BaseLibrary.command.miner {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, out rest) && rest.Length == 1) {
                     int mineId;

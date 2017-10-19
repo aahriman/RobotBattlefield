@@ -8,7 +8,7 @@ namespace BaseLibrary.protocol {
 
         public const double MULTIPLE = 1000.0; // it has to be power of ten
 
-        public static bool TryParse(String s, out ProtocolDouble result) {
+        public static bool TryParse(string s, out ProtocolDouble result) {
             int v;
             bool succes = int.TryParse(s, out v);
             result = v;

@@ -18,11 +18,11 @@ namespace ObstacleMod {
         private sealed class SubCommandFactory : ISubCommandFactory {
             public bool Deserialize(string s, object[] commandsMore) {
 
-                    String[] obtaclesString;
+                    string[] obtaclesString;
                     if (ProtocolV1_0Utils.Deserialize(s, out obtaclesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
                         List<IObstacle> obtacles = new List<IObstacle>();
                         foreach (var obtacleString in obtaclesString) {
-                            String obtacleStringDefaultDeep = obtacleString; // parametrs is separated by DEFAULT.NEXT.NEXT
+                            string obtacleStringDefaultDeep = obtacleString; // parametrs is separated by DEFAULT.NEXT.NEXT
                             obtacleStringDefaultDeep = ProtocolV1_0Utils.ConvertToShallowly(obtacleString, 3); // parametrs is separated by DEFAULT.NEXT
                             IObstacle o = OBSTACLE_FACTORIES.Deserialize(obtacleStringDefaultDeep);
                             if (o != default(IObstacle)) {

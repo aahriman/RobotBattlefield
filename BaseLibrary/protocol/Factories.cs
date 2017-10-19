@@ -13,7 +13,7 @@ namespace BaseLibrary.protocol {
             commandFactories.Remove(factory);
         }
 
-        public TResult Deserialize(String transferString) {
+        public TResult Deserialize(string transferString) {
             foreach (IFactory<TResult, TTransfer> commandFactory in commandFactories) {
                 if (commandFactory.IsDeserializable(transferString)) {
                     return commandFactory.Deserialize(transferString);

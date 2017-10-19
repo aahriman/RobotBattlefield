@@ -8,7 +8,7 @@ namespace BaseLibrary.command.v1._0.equipment {
 		private const string NAME = "ARMOR_ANSWER";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
 				string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, ProtocolV1_0Utils.DEFAULT, out rest)) {

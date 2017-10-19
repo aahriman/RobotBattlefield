@@ -26,7 +26,7 @@ namespace BattlefieldLibrary.config {
         static ServerConfig() {
             int index = 0;
 
-            KeyValuePair<String, AProtocol>[] supportedProtocols = getSupportedProcotols();
+            KeyValuePair<string, AProtocol>[] supportedProtocols = getSupportedProcotols();
             SUPPORTED_PROTOCOLS = new string[supportedProtocols.Length];
             foreach (var pair in supportedProtocols) {
                 SUPPORTED_PROTOCOLS[index++] = pair.Key;

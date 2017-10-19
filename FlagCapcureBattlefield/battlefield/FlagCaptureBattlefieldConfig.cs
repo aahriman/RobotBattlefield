@@ -20,7 +20,7 @@ namespace FlagCapcureBattlefield.battlefield {
             if (config == null) {
                 FlagPlace[] flagPlaces = fromMoreToFlags(bc.MORE);
                 if (flagPlaces.Length > 0) {
-                    config = new FlagCaptureBattlefieldConfig(bc.MAX_ROBOTS, bc.MAX_TURN, bc.MAX_LAP, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBTACLE_CONFIG_FILE, flagPlaces);
+                    config = new FlagCaptureBattlefieldConfig(bc.MAX_ROBOTS, bc.MAX_TURN, bc.MAX_LAP, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBTACLE_CONFIG_FILE, bc.WAITING_TIME_BETWEEN_TURNS, bc.GUI, flagPlaces);
                 } else {
                     throw new ArgumentException(nameof(bc) + "have to have same flags in more.");
                 }
@@ -28,14 +28,14 @@ namespace FlagCapcureBattlefield.battlefield {
             return config;
         }
 
-        public readonly FlagPlace[] FlagsPlace;
-        public FlagCaptureBattlefieldConfig(int maxRobots, int maxTurn, int maxLap, int robotsInTeam, int respawnTimeout,
-                                            bool respawnAllowed, string matchSaveFile, string equipmentConfigFile, string obtacleConfigFile,
-                                            FlagPlace[] flagsPlace)
-            : base(
-                   maxRobots, maxTurn, maxLap, robotsInTeam, respawnTimeout, respawnAllowed, matchSaveFile, equipmentConfigFile,
-                   obtacleConfigFile, flagsPlace) {
-            FlagsPlace = flagsPlace;
+        public readonly FlagPlace[] FlagsPlaces;
+        public FlagCaptureBattlefieldConfig(int MAX_ROBOTS, int MAX_TURN, int MAX_LAP, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
+            bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE, int WAITING_TIME_BETWEEN_TURNS, bool GUI,
+            FlagPlace[] flagPlaces)
+            : base(MAX_ROBOTS, MAX_TURN, MAX_LAP, ROBOTS_IN_TEAM, RESPAWN_TIMEOUT,
+                RESPAWN_ALLOWED, MATCH_SAVE_FILE, EQUIPMENT_CONFIG_FILE, OBTACLE_CONFIG_FILE, WAITING_TIME_BETWEEN_TURNS, GUI, flagPlaces)
+        {
+            FlagsPlaces = flagPlaces;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace FlagCaptureLibrary.battlefield {
         public double X { get; internal set; }
         public double Y { get; internal set; }
 
-        public readonly String TYPE_NAME;
+        public readonly string TYPE_NAME;
 
         public FlagPlace(double X, double Y, int TEAM_ID) {
             ID = FlagPlace.id++;

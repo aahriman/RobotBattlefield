@@ -11,7 +11,7 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string[] rest;
 				if (ProtocolV1_0Utils.GetParams(s, "INIT_ANSWER", out rest)) {
@@ -23,7 +23,7 @@ namespace BaseLibrary.command.v1._0 {
 
                             
 
-                            String[] moreString;
+                            string[] moreString;
                             if (ProtocolV1_0Utils.Deserialize(rest[8], out moreString, ProtocolV1_0Utils.DEFAULT.NEXT)) {
                                 initAnswer.DeserializeMore(moreString, initAnswer.MORE, SUB_COMMAND_FACTORIES);
                             }

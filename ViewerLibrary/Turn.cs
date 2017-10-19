@@ -11,9 +11,9 @@ namespace ViewerLibrary {
         public Robot[] ROBOTS { get; private set; }
         public Scan[] SCANS { get; private set; }
 
-        public Object[][] MORE { get; private set; }
+        public object[][] MORE { get; private set; }
 
-        public Turn(int TURN, Bullet[] BULLETS, Mine[] MINES, Repair[] REPAIRS, Robot[] ROBOTS, Scan[] SCANS, Object[][] MORE) {
+        public Turn(int TURN, Bullet[] BULLETS, Mine[] MINES, Repair[] REPAIRS, Robot[] ROBOTS, Scan[] SCANS, object[][] MORE) {
             this.BULLETS = BULLETS ?? new Bullet[0];
             this.MINES = MINES ?? new Mine[0];
             this.REPAIRS = REPAIRS ?? new Repair[0];

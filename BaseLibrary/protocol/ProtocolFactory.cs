@@ -13,7 +13,7 @@ namespace BaseLibrary.protocol {
 
         public AProtocol GetProtocol(out string selectedProtocolLabel, params string[] protocolLabels) {
             AProtocol protocol;
-            foreach (String protocolLabel in protocolLabels) {
+            foreach (string protocolLabel in protocolLabels) {
                 if (protocolsMap.TryGetValue(protocolLabel, out protocol)) {
                     selectedProtocolLabel = protocolLabel;
                     return protocol;

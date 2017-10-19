@@ -10,7 +10,7 @@ namespace BaseLibrary.command.handshake {
         private sealed class HelloCommandFactory : ACommandFactory {
             internal HelloCommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 if (s.StartsWith("HELLO "+GameProperties.APP_NAME)) {
                     var protocols = s.Substring(("HELLO "+GameProperties.APP_NAME).Length).Split(' ');
                     if (protocols.Length > 0) {
@@ -39,9 +39,9 @@ namespace BaseLibrary.command.handshake {
             return text.ToString();
         }
 
-        public String[] SUPPORTED_PROTOCOLS { get; private set; }
+        public string[] SUPPORTED_PROTOCOLS { get; private set; }
 
-        public HelloCommand(String[] supportedProtocols)
+        public HelloCommand(string[] supportedProtocols)
             : base() {
             Array.Sort(supportedProtocols);
             SUPPORTED_PROTOCOLS = supportedProtocols;

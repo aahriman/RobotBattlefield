@@ -44,11 +44,11 @@ namespace ClientLibrary.robot {
             return answerCommand;
         }
 
-        protected override void setClassEquip(int id) {
+        protected override void SetClassEquip(int id) {
             GUN = GUNS_BY_ID[id];
         }
 
-        protected override ClassEquipment getClassEquip() {
+        protected override ClassEquipment GetClassEquip() {
             return GUN;
         }
     }

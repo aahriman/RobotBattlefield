@@ -7,9 +7,9 @@ using BaseLibrary.utils.protocolV1_0Utils;
 
 namespace BaseLibrary.command.v1._0 {
 	internal class EndLapCommandV1_0 : EndLapCommand, ACommand.Sendable, InnerSerializerV1_0 {
-	    public const String COMMAND_NAME = "END_LAP";
+	    public const string COMMAND_NAME = "END_LAP";
 
-        public static bool Deserialize(String orig, Deep deep, out EndLapCommandV1_0 deserialized) {
+        public static bool Deserialize(string orig, Deep deep, out EndLapCommandV1_0 deserialized) {
             string[] rest;
             if (ProtocolV1_0Utils.GetParams(orig, COMMAND_NAME, deep, out rest)) {
                 if (rest.Length == 3) {
@@ -30,7 +30,7 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string[] rest;
                 if (StringUtils.GetRestOfStringSplited(s, "END_LAP(", ")", out rest, ';')) {

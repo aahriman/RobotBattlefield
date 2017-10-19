@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BaseLibrary.command {
     public interface ISubCommandFactory {
 
-        bool Deserialize(String s, Object[] commandsMore);
-        bool Serialize(Object singleMore, out String serializedSingleMore);
+        bool Deserialize(string s, object[] commandsMore);
+        bool Serialize(object singleMore, out string serializedSingleMore);
     }
 }

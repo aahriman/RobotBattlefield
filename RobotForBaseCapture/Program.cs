@@ -28,9 +28,6 @@ namespace MinerForBaseCapture {
 
         class MyMiner : Miner {
             public int previousHitpoints = 0;
-
-            public List<int> puttedMines;
-
             public override void ProcessState(RobotStateCommand state) {
                 base.ProcessState(state);
                 bases = BaseCapture.GetBases(state);
@@ -128,7 +125,7 @@ namespace MinerForBaseCapture {
         public static void Main(string[] args) {
 
         
-            String TEAM_ID = Guid.NewGuid().ToString();
+            string TEAM_ID = Guid.NewGuid().ToString();
             miner.Connect(args);
             repairman.Connect(args);
             Task.WaitAll(

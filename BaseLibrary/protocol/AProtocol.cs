@@ -15,7 +15,7 @@ namespace BaseLibrary.protocol {
 			return (ACommand) comandsFactory.Deserialize(s);
         }
 
-        public virtual String GetSendableCommand(ACommand s) {
+        public virtual string GetSendableCommand(ACommand s) {
             ACommand.Sendable commandSendable = comandsFactory.Transfer(s);
             if (commandSendable == null) {
                 throw new ArgumentException("Protocol (" + this.GetType().Name + ") do not know command type: " + s.GetType().Name);

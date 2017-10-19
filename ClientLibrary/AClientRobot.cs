@@ -33,7 +33,7 @@ namespace ClientLibrary {
             return await ConnectAsync(LOCAL_ADDRES, port);
         }
 
-        public async Task<GameTypeCommand> ConnectAsync(String url, int port) {
+        public async Task<GameTypeCommand> ConnectAsync(string url, int port) {
             IPAddress ipAddress = IPAddress.Parse(url);
             if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6) {
                 socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
@@ -69,7 +69,7 @@ namespace ClientLibrary {
             }
         }
 
-        private async void disconnect(String message) {
+        private async void disconnect(string message) {
             await Task.Yield();
             ErrorCommand error = new ErrorCommand(message);
             await sns.SendCommandAsync(error);

@@ -3,21 +3,21 @@
 namespace BaseLibrary.protocol {
     public interface IFactory<TReturn, TTransfered> {
 
-        TReturn Deserialize(String s);
-        Boolean IsDeserializable(String s);
+        TReturn Deserialize(string s);
+        bool IsDeserializable(string s);
 
         TReturn Transfer(TTransfered c);
-        Boolean IsTransferable(TTransfered c);
+        bool IsTransferable(TTransfered c);
 
-        String Serialize(TTransfered c);
-        Boolean IsSerializable(TTransfered c);
+        string Serialize(TTransfered c);
+        bool IsSerializable(TTransfered c);
     }
 
     public abstract class AFactory<TReturn, TTransfered> : IFactory<TReturn, TTransfered> {
-        protected Cache<Object, TReturn> cache = new Cache<Object, TReturn>();
-        protected Cache<Object, String> cacheForSerialize = new Cache<Object, String>();
+        protected Cache<object, TReturn> cache = new Cache<object, TReturn>();
+        protected Cache<object, string> cacheForSerialize = new Cache<object, string>();
 
-        public TReturn Deserialize(String s) {
+        public TReturn Deserialize(string s) {
             if (cache.IsCached(s) || IsDeserializable(s)) {
                 return cache.GetCached();
             } else {
@@ -39,7 +39,7 @@ namespace BaseLibrary.protocol {
             }
         }
 
-        public String Serialize(TTransfered c) {
+        public string Serialize(TTransfered c) {
             if (cacheForSerialize.IsCached(c) || IsSerializable(c)) {
                 return cacheForSerialize.GetCached();
             } else {
@@ -50,10 +50,10 @@ namespace BaseLibrary.protocol {
             }
         }
 
-        public abstract Boolean IsDeserializable(String s);
+        public abstract bool IsDeserializable(string s);
 
-        public abstract Boolean IsTransferable(TTransfered c);
+        public abstract bool IsTransferable(TTransfered c);
 
-        public abstract Boolean IsSerializable(TTransfered c);
+        public abstract bool IsSerializable(TTransfered c);
     }
 }

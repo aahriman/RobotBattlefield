@@ -1,16 +1,26 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
+using BaseLibrary.command.common;
 using BaseLibrary.config;
+using BaseLibrary.protocol;
+using BaseLibrary.utils;
 using BattlefieldLibrary.battlefield;
+using BattlefieldLibrary.battlefield.robot;
 using BattlefieldLibrary.config;
 
 namespace DeadmatchBattlefield {
     public class Run {
+
         /// <summary>
         /// Start server with specific arguments
         /// </summary>
         /// <param name="args">[0] => port, [1] => number of robots, [2] => number of teams, [3] => file to equipment</param>
-        public static void Main(String[] args) {
+        [STAThread]
+        public static void Main(string[] args) {
+
+
+
+
             Console.WriteLine("Arena start.");
 
             int port;
@@ -18,13 +28,15 @@ namespace DeadmatchBattlefield {
                 port = GameProperties.DEFAULT_PORT;
             }
             Server server = new Server(port);
-            Battlefield arena;
+            BattlefieldConfig battlefieldConfig;
             if (args.Length >= 2) {
-                arena = server.GetBattlefield(BattlefieldConfig.DeserializeFromFile<BattlefieldConfig>(args[1]));
+                battlefieldConfig = BattlefieldConfig.DeserializeFromFile<BattlefieldConfig>(args[1]);
             } else {
-                arena = server.GetBattlefield(new BattlefieldConfig(2, ServerConfig.MAX_TURN, 1, 1, 20, false, "arena_match" + port +".txt", null, null, new object[0]));
+                battlefieldConfig = new BattlefieldConfig(MAX_ROBOTS: 2, MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, ROBOTS_IN_TEAM: 1, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: false, MATCH_SAVE_FILE: "arena_match" + port +".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, more: new object[0]);
             }
 
+            Battlefield arena = server.GetBattlefield(battlefieldConfig);
+  
             arena.RunEvent.WaitOne();
             arena.RunThread.Join();
         }
