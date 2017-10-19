@@ -425,8 +425,10 @@ namespace BattlefieldLibrary.battlefield {
                 BattlefieldRobot robot = pair.Key;
                 ACommand command = pair.Value;
                 ACommand answerCommand = command.accept(GetActualArenaCommandVisitor(robot), robot);
-                Task t = robot.SuperNetworkStream.SendCommandAsync(answerCommand);
-                tasks.Add(t);
+                if (answerCommand != null) {
+                    Task t = robot.SuperNetworkStream.SendCommandAsync(answerCommand);
+                    tasks.Add(t);
+                }
                 if (command is InitCommand) {
                     switch (pair.Key.ROBOT_TYPE) {
                         case RobotType.MINER:
