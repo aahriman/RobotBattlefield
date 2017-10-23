@@ -47,7 +47,7 @@ namespace BaseLibrary.equip {
 		}
 
 	    public override string ToString() {
-	        return $"{nameof(ID)}: {ID}, {nameof(COST)}: {COST}, {nameof(MAX_BULLETS)}: {MAX_BULLETS}, {nameof(MAX_RANGE)}: {MAX_RANGE}, {nameof(SHOT_SPEED)}: {SHOT_SPEED}, {nameof(ZONES)}: [{String.Join<Zone>(";", ZONES)}]";
+	        return $"{nameof(ID)}: {ID}, {nameof(COST)}: {COST}, {nameof(MAX_BULLETS)}: {MAX_BULLETS}, {nameof(MAX_RANGE)}: {MAX_RANGE}, {nameof(SHOT_SPEED)}: {SHOT_SPEED}, {nameof(ZONES)}: [{string.Join<Zone>(";", ZONES)}]";
 	    }
 	}
 

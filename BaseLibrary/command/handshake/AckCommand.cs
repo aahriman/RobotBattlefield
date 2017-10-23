@@ -19,7 +19,7 @@ namespace BaseLibrary.command.handshake {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 if (s.Equals("ACK")) {
                     cache.Cached(s, new AckCommand());

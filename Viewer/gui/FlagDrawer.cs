@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FlagCaptureLibrary.battlefield;
 using Viewer.utils;
+using ViewerLibrary.gui;
 
 namespace Viewer.gui {
     public class FlagDrawer : IDrawerMore {

@@ -62,7 +62,7 @@ namespace BaseLibrary.utils {
 
         public static Point GetNearestIntersect(Segment leadSegment, Segment[] possibleegments) {
             double x, y;
-            double minDistance = Double.MaxValue;
+            double minDistance = double.MaxValue;
             Point nearestIntersect = default(Point);
             foreach (var segment in possibleegments) {
                 if (EuclideanSpaceUtils.FindIntersenction(leadSegment, segment, out x, out y)) {

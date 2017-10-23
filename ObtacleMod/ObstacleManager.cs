@@ -23,17 +23,17 @@ namespace ObstacleMod {
             return null;
         }
 
-        public static void SaveObtaclesToFile(IEnumerable<IObstacle> obtacles, String filename) {
+        public static void SaveObtaclesToFile(IEnumerable<IObstacle> obtacles, string filename) {
             SaveObtaclesToFile(obtacles.ToArray(), filename);
         }
 
-        public static void SaveObtaclesToFile(IObstacle[] obtacles, String filename) {
+        public static void SaveObtaclesToFile(IObstacle[] obtacles, string filename) {
             StreamWriter writer = new StreamWriter(filename);
             writer.WriteLine(JsonConvert.SerializeObject(obtacles));
             writer.Close();
         }
 
-        public static List<IObstacle> LoadObtaclesFromFile(String filename) {
+        public static List<IObstacle> LoadObtaclesFromFile(string filename) {
 
             List<IObstacle> obtacles = new List<IObstacle>();
             StreamReader reader = new StreamReader(filename);
@@ -157,8 +157,8 @@ namespace ObstacleMod {
             Console.WriteLine(
                 $"Cannot geneterate start position for robot. Please write it manualy (first x, second y splitted by space, decimal point is '.'). X in [0, {maxX}). Y in [0,{maxY})");
             while (true) {
-                String row = Console.ReadLine();
-                String[] splitedRow = row.Split(' ');
+                string row = Console.ReadLine();
+                string[] splitedRow = row.Split(' ');
                 if (splitedRow.Length == 2) {
                     double x, y;
                     if (double.TryParse(splitedRow[0], out x) && double.TryParse(splitedRow[1], out y)) {

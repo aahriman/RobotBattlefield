@@ -35,5 +35,27 @@ namespace BaseLibrary.battlefield {
         public Point GetPosition() {
             return new Point(X, Y);
         }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return $"Robot: {{ ID: {ID}, HitPoints: {HitPoints}, Position: [{X},{Y}]";
+        }
+
+        protected bool Equals(Robot other) {
+            return ID == other.ID;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Robot) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode() {
+            return ID;
+        }
     }
 }

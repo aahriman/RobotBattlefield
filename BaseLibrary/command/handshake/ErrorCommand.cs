@@ -19,7 +19,7 @@ namespace BaseLibrary.command.handshake {
 
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 if (s.StartsWith("ERROR")) {
                     var message = s.Substring(("ERROR").Length).Trim();
                     cache.Cached(s, new ErrorCommand(message));
@@ -38,9 +38,9 @@ namespace BaseLibrary.command.handshake {
             }
         }
 
-        public String MESSAGE { get; private set; }
+        public string MESSAGE { get; private set; }
 
-        public ErrorCommand(String message)
+        public ErrorCommand(string message)
             : base() {
             MESSAGE = message;
         }

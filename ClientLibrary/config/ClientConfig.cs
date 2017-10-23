@@ -13,7 +13,7 @@ namespace ClientLibrary.config {
         
         static ClientConfig() {
             int index = 0;
-            KeyValuePair<String, AProtocol>[] supportedProtocols = getSupportedProcotols();
+            KeyValuePair<string, AProtocol>[] supportedProtocols = getSupportedProcotols();
             SUPPERTED_PROTOCOLS = new string[supportedProtocols.Length];
             foreach (var pair in supportedProtocols) {
                 SUPPERTED_PROTOCOLS[index++] = pair.Key;

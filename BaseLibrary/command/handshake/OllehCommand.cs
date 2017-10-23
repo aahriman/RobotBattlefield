@@ -10,7 +10,7 @@ namespace BaseLibrary.command.handshake {
         private sealed class OllehCommandFactory : ACommandFactory {
             internal OllehCommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 if (s.StartsWith("OLLEH "+ GameProperties.APP_NAME)) {
                     var protocol = s.Substring(("OLLEH "+GameProperties.APP_NAME).Length).Trim();
                     if (!protocol.Contains(' ')) {
@@ -31,9 +31,9 @@ namespace BaseLibrary.command.handshake {
             }
         }
 
-        public String PROTOCOL { get; private set; }
+        public string PROTOCOL { get; private set; }
 
-        public OllehCommand(String protocol)
+        public OllehCommand(string protocol)
             : base() {
             if (protocol.Contains(' ')) {
                 throw new ArgumentException("Invalid protocol.");

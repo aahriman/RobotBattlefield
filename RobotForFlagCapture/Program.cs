@@ -8,6 +8,7 @@ using FlagCaptureLibrary.battlefield;
 
 namespace RobotForFlagCapture {
     class Program {
+        private static FlagPlace[] flagPlaces;
 
         class MyTank : Tank {
             public bool carryFlag = false;
@@ -26,11 +27,15 @@ namespace RobotForFlagCapture {
                     }
                 }   
             }
+
+            protected override void ProcessInit(InitAnswerCommand initAnswerCommand) {
+                flagPlaces = FlagCapture.GetFlagPlaces(initAnswerCommand);
+            }
         }
 
         static MyTank tank = new MyTank("Tank_FLAG", Guid.NewGuid().ToString());
 
-        static void driveTo(FlagPlace place) {
+        private static void driveTo(FlagPlace place) {
             double driveAngle = AngleUtils.AngleDegree(tank.X, tank.Y, place.X, place.Y);
 
 
@@ -56,9 +61,6 @@ namespace RobotForFlagCapture {
         }
 
         static void Main(string[] args) {
-            tank.Connect(args);
-            InitAnswerCommand initAnswerCommand = tank.Init("Tank_FLAG", Guid.NewGuid().ToString());
-            FlagPlace[] flagPlaces = FlagCapture.GetFlagPlaces(initAnswerCommand);
             FlagPlace toFlagPlace = null;
             FlagPlace ownFlagPlace = null;
 

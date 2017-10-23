@@ -17,7 +17,7 @@ namespace BattlefieldLibrary.battlefield {
         private readonly List<ViewerLibrary.Mine> mines = new List<ViewerLibrary.Mine>();
         private readonly List<ViewerLibrary.Repair> repairs = new List<ViewerLibrary.Repair>();
         private readonly List<Robot> robots = new List<Robot>();
-        private readonly Object[] more = new Object[registratedObject];
+        private readonly object[] more = new object[registratedObject];
 
         private readonly int turn;
 
@@ -45,13 +45,13 @@ namespace BattlefieldLibrary.battlefield {
             robots.Add(robot);
         }
 
-        public void AddMore(Object @object, int position) {
+        public void AddMore(object @object, int position) {
             more[position] = @object;
         }
 
         public Turn ConvertToTurn() {
-            Object[][] moreObject = (from o in more
-                                     select  (Object[]) o).ToArray();
+            object[][] moreObject = (from o in more
+                                     select  (object[]) o).ToArray();
             return new Turn(turn, bullets.ToArray(), mines.ToArray(), repairs.ToArray(), robots.ToArray(), scans.ToArray(), moreObject);
         }
     }

@@ -32,7 +32,7 @@ namespace FlagCapcureBattlefield.battlefield {
 
 	    public FlagCaptureBattlefield(FlagCaptureBattlefieldConfig battlefieldConfig) : base(battlefieldConfig) {
            
-	        foreach (var flagPlace in battlefieldConfig.FlagsPlace) {
+	        foreach (var flagPlace in battlefieldConfig.FlagsPlaces) {
 	            List<FlagPlace> flagPlaces;
 	            if (!flagPlacesByTeamId.TryGetValue(flagPlace.TEAM_ID, out flagPlaces)) {
 	                flagPlaces = new List<FlagPlace>();
@@ -58,7 +58,7 @@ namespace FlagCapcureBattlefield.battlefield {
 	    }
 
 		protected override LapState NewLapState() {
-            return turn > MAX_TURN ? LapState.LAP_OUT : LapState.NONE;
+            return Turn > MAX_TURN ? LapState.LAP_OUT : LapState.NONE;
         }
 
         protected override void afterProcessCommand() {
@@ -68,7 +68,7 @@ namespace FlagCapcureBattlefield.battlefield {
             foreach (var flag in flags) {
                 FlagPlace flagPlace = flagPlacesById[flag.FROM_FLAGPLACE_ID];
                 if (flag.RobotId == 0) {
-                    double minDistance = Double.MaxValue;
+                    double minDistance = double.MaxValue;
                     foreach (BattlefieldRobot robot in robots) {
                         if (robot.TEAM_ID != flagPlace.TEAM_ID) {
                             double distance = EuclideanSpaceUtils.Distance(robot.GetPosition(),

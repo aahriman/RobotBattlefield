@@ -17,7 +17,7 @@ namespace BaseLibrary.command.v1._0.equipment {
 			return ProtocolV1_0Utils.SerializeParams(NAME, deep, ID, COST, MAX_BULLETS, MAX_RANGE, SHOT_SPEED, ZONES);
 		}
 
-		public static bool Deserialize(String orig, Deep deep, out GunV1_0 deserialized) {
+		public static bool Deserialize(string orig, Deep deep, out GunV1_0 deserialized) {
 			string[] rest;
 			if (ProtocolV1_0Utils.GetParams(orig, NAME, deep, out rest)) {
 				if (rest.Length == 6) {

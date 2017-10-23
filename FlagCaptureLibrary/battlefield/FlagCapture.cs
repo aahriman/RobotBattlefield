@@ -22,12 +22,12 @@ namespace FlagCaptureLibrary.battlefield {
             private const string COMMAND_BASE_NAME = "FLAG_PLACE";
             internal SubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
-                String[] basesString;
+                string[] basesString;
                 if (ProtocolV1_0Utils.Deserialize(s, out basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
                     List<FlagPlace> flagPlaces = new List<FlagPlace>();
                     foreach (var baseString in basesString) {// parametrs are separated by DEFAULT.NEXT.NEXT.NEXT
-                        String[] flagPlaceParams;
+                        string[] flagPlaceParams;
 
                         if (ProtocolV1_0Utils.GetParams(baseString, COMMAND_BASE_NAME,
                                                         ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out flagPlaceParams)) {
@@ -80,12 +80,12 @@ namespace FlagCaptureLibrary.battlefield {
             private const string COMMAND_BASE_NAME = "FLAG";
             internal StateSubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
-                String[] basesString;
+                string[] basesString;
                 if (ProtocolV1_0Utils.Deserialize(s, out basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
                     List<Flag> flags = new List<Flag>();
                     foreach (var baseString in basesString) {// parametrs are separated by DEFAULT.NEXT.NEXT.NEXT
-                        String[] flagParams;
+                        string[] flagParams;
 
                         if (ProtocolV1_0Utils.GetParams(baseString, COMMAND_BASE_NAME,
                                                         ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out flagParams)) {

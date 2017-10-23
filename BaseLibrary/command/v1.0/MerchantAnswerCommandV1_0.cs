@@ -7,7 +7,7 @@ namespace BaseLibrary.command.v1._0 {
 	internal class MerchantAnswerCommandV1_0 : MerchantAnswerCommand, ACommand.Sendable {
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string[] rest;
                 if (StringUtils.GetRestOfStringSplited(s, "MERCHANT_ASNWER(", ")", out rest, ';')) {
@@ -39,7 +39,7 @@ namespace BaseLibrary.command.v1._0 {
         public MerchantAnswerCommandV1_0(int motorIdBought, int armorIdBought, int classEquipmentIdBought) : base(motorIdBought, armorIdBought, classEquipmentIdBought) { }
 
         public string Serialize() {
-            return String.Format("MERCHANT_ASNWER({0};{1};{2})", MOTOR_ID_BOUGHT, ARMOR_ID_BOUGHT, CLASS_EQUIPMENT_ID_BOUGHT);
+            return string.Format("MERCHANT_ASNWER({0};{1};{2})", MOTOR_ID_BOUGHT, ARMOR_ID_BOUGHT, CLASS_EQUIPMENT_ID_BOUGHT);
         }
     }
 }

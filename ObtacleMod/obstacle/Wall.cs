@@ -41,7 +41,7 @@ namespace ObstacleMod.obstacle {
             public override bool IsSerializable(IObstacle c) {
                 Wall c2 = c as Wall;
                 if (c2 != null) {
-                    String serialized = ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, c2.Y, c2.X);
+                    string serialized = ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, c2.Y, c2.X);
                     cacheForSerialize.Cached(c, serialized);
                     return true;
                 }

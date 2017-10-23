@@ -69,7 +69,7 @@ namespace BattlefieldLibrary {
             }
         }
 
-        protected async void disconnect(SuperNetworkStream n, String message) {
+        protected async void disconnect(SuperNetworkStream n, string message) {
             lock (networkStreamPool) {
                 networkStreamPool.Remove(n);
             }

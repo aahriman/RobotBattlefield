@@ -26,7 +26,7 @@ namespace BaseLibrary.command {
         /// If someone implements ACommand.Sendable it have to be child of ACommand
         /// </summary>
         public interface Sendable {
-            String Serialize();
+            string Serialize();
         }
 
         protected bool pending = true;
@@ -67,8 +67,8 @@ namespace BaseLibrary.command {
                 return sb.ToString();
             }
         }
-        protected String[] SerializeMore(IEnumerable<ISubCommandFactory> subCommandFactories) {
-            String[] serializedMore = new string[MORE.Length];
+        protected string[] SerializeMore(IEnumerable<ISubCommandFactory> subCommandFactories) {
+            string[] serializedMore = new string[MORE.Length];
             for (int i = 0; i < MORE.Length; i++) {
                 foreach (var factory in subCommandFactories) {
                     if (factory.Serialize(MORE[i], out serializedMore[i])) {
@@ -80,7 +80,7 @@ namespace BaseLibrary.command {
             return serializedMore;
         }
 
-        protected void DeserializeMore(String[] serializedMore, Object[] more, IEnumerable<ISubCommandFactory> subCommandFactories) {
+        protected void DeserializeMore(string[] serializedMore, object[] more, IEnumerable<ISubCommandFactory> subCommandFactories) {
             foreach (var moreString in serializedMore) {
                 foreach (var subCommandFactory in subCommandFactories) {
                     if (subCommandFactory.Deserialize(moreString, more)) {

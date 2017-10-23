@@ -38,11 +38,11 @@ namespace ClientLibrary.robot {
             return RobotType.REPAIRMAN;
         }
 
-        protected override void setClassEquip(int id) {
+        protected override void SetClassEquip(int id) {
             REPAIR_TOOL = REPAIR_TOOLS_BY_ID[id];
         }
 
-        protected override ClassEquipment getClassEquip() {
+        protected override ClassEquipment GetClassEquip() {
             return REPAIR_TOOL;
         }
     }

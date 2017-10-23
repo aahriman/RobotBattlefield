@@ -8,7 +8,7 @@ namespace BaseLibrary.command.v1._0.equipment {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 if (s.Equals("MOTORS()")) {
                     cache.Cached(s, new GetMotorsCommandV1_0());

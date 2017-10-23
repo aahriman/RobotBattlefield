@@ -9,14 +9,13 @@ using ClientLibrary.robot;
 
 namespace Spot {
 	class Program {
-	    public static String TEAM_NAME = Guid.NewGuid().ToString();
+	
+        public static string TEAM_NAME = Guid.NewGuid().ToString();
         public static void Main(string[] args) {
             Console.WriteLine("Spot is ready to action.");
             Console.WriteLine(TEAM_NAME + " " + TEAM_NAME.Length);
-            String name = "Spot";
+            string name = "Spot";
             Tank spot = new Tank(name, TEAM_NAME);
-		    spot.Connect(args);
-            spot.Init(name, TEAM_NAME);
 
             int direction = 90;
             while (true) {
@@ -36,7 +35,6 @@ namespace Spot {
                         }
                     }
                 }
-            }
-        }
+            }}
 	}
 }

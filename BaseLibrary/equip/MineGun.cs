@@ -40,7 +40,7 @@ namespace BaseLibrary.equip {
         }
 
         public override string ToString() {
-            return $"{nameof(ID)}: {ID}, {nameof(COST)}: {COST}, {nameof(MAX_MINES)}: {MAX_MINES}, {nameof(ZONES)}: [{String.Join<Zone>(";", ZONES)}]";
+            return $"{nameof(ID)}: {ID}, {nameof(COST)}: {COST}, {nameof(MAX_MINES)}: {MAX_MINES}, {nameof(ZONES)}: [{string.Join<Zone>(";", ZONES)}]";
         }
     }
 }

@@ -33,7 +33,7 @@ namespace ClientLibrary.protocol {
 					await ack.SendAsync(clientSocket);
                     return protocol;
                 }
-				ErrorCommand error = new ErrorCommand(String.Format("Unsupported protocols '{0}'. Handshake failed.", olleh.PROTOCOL));
+				ErrorCommand error = new ErrorCommand(string.Format("Unsupported protocols '{0}'. Handshake failed.", olleh.PROTOCOL));
                 await error.SendAsync(clientSocket);
             } else {
 				printIfErrorElseSendMessage(shouldBeOLLEH, "Handshake error. Expected OllehCommand but receive " + shouldBeOLLEH.GetType().Name, clientSocket);
@@ -41,7 +41,7 @@ namespace ClientLibrary.protocol {
             return null;
         }
 
-        private void printIfErrorElseSendMessage(ACommand command, String message, SuperNetworkStream socket) {
+        private void printIfErrorElseSendMessage(ACommand command, string message, SuperNetworkStream socket) {
             if (command is ErrorCommand) {
                 Console.Out.WriteLine("ERROR: " + ((ErrorCommand)command).MESSAGE);
             } else {

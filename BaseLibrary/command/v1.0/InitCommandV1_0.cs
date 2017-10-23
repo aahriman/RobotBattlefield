@@ -6,14 +6,14 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.command.v1._0 {
 	public class InitCommandV1_0 : InitCommand, ACommand.Sendable {
-	    private const String COMMAND_NAME = "INIT";
+	    private const string COMMAND_NAME = "INIT";
 
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
-                String[] rest;
+            public override bool IsDeserializable(string s) {
+                string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest) && rest.Length == 3) {
                     RobotType robotType;
                     if (Enum.TryParse(rest[2], true, out robotType)) {
@@ -35,7 +35,7 @@ namespace BaseLibrary.command.v1._0 {
             }
         }
 
-		public InitCommandV1_0(String name, String teamName, RobotType robotType) : base(name, teamName, robotType) { }
+		public InitCommandV1_0(string name, string teamName, RobotType robotType) : base(name, teamName, robotType) { }
 
 
         public string Serialize() {

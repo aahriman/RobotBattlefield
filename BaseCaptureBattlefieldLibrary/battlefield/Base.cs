@@ -15,7 +15,7 @@ namespace BaseCapcureBattlefieldLibrary.battlefield {
 
         public readonly int MAX_PROGRESS;
 
-        public readonly String TYPE_NAME;
+        public readonly string TYPE_NAME;
 
         public int Progress { get; set; }
         public int TeamId { get; set; }

@@ -26,7 +26,7 @@ namespace ServerLibrary.protocol {
             ACommand shoudBeHELLO = GetCommand(await serverSocket.ReadLineAsync());
 
             if (shoudBeHELLO is HelloCommand) {
-                String selectedProtocolLabel; 
+                string selectedProtocolLabel; 
                 HelloCommand hello = (HelloCommand)shoudBeHELLO;
                 AProtocol protocol = ServerConfig.PROTOCOL_FACTORY.GetProtocol(out selectedProtocolLabel, hello.SUPPORTED_PROTOCOLS);
                 if(protocol != null){
@@ -38,13 +38,13 @@ namespace ServerLibrary.protocol {
                         return protocol;
                     } else printIfErrorElseSendMessage(shoudBeACK, "Handshake error. Expected HelloCommand but receive:" + shoudBeACK.GetType().Name, serverSocket);
                 }
-                await serverSocket.SendCommandAsync(new ErrorCommand(String.Format("Unsupported protocols '{0}'. Handshake failed.", hello.SUPPORTED_PROTOCOLS)));
+                await serverSocket.SendCommandAsync(new ErrorCommand(string.Format("Unsupported protocols '{0}'. Handshake failed.", hello.SUPPORTED_PROTOCOLS)));
             } else printIfErrorElseSendMessage(shoudBeHELLO, "Handshake error. Expected HelloCommand but receive:" + shoudBeHELLO.GetType().Name, serverSocket);
             
             return null;
         }
 
-        private void printIfErrorElseSendMessage(ACommand command, String message, SuperNetworkStream socket) {
+        private void printIfErrorElseSendMessage(ACommand command, string message, SuperNetworkStream socket) {
             if (command is ErrorCommand) {
                 Console.Out.WriteLine("ERROR: " + ((ErrorCommand)command).MESSAGE);
             } else {

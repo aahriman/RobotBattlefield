@@ -29,7 +29,7 @@ namespace ClientLibrary.robot {
             ModUtils.LoadMods();
         }
 
-        private static readonly Object EQUIP_LOCK = new Object();
+        private static readonly object EQUIP_LOCK = new object();
         public static readonly Dictionary<int, Motor> MOTORS_BY_ID = new Dictionary<int, Motor>();
         public static readonly Dictionary<int, Armor> ARMORS_BY_ID = new Dictionary<int, Armor>();
         public static readonly Dictionary<int, Gun> GUNS_BY_ID = new Dictionary<int, Gun>();
@@ -94,7 +94,7 @@ namespace ClientLibrary.robot {
         public int MAX_LAP { get; private set; }
         public int MAX_TURN { get; private set; }
         public int LAP { get; private set; }
-        public String NAME { get; private set; }
+        public string NAME { get; private set; }
 
         public override int HitPoints { get; set; }
         public override int Score { get; set; }
@@ -192,23 +192,23 @@ namespace ClientLibrary.robot {
                     Task.WaitAll(sendCommandAsync(new GetMineGunCommand()));
                     GetMineGunAnswerCommand mineGunAnswer = recieveCommand<GetMineGunAnswerCommand>();
 
-                    foreach (var motor in motorAnswer.MOTORS) {
+                    foreach (Motor motor in motorAnswer.MOTORS) {
                         MOTORS_BY_ID.Add(motor.ID, motor);
                     }
 
-                    foreach (var armor in armorsAnswer.ARMORS) {
+                    foreach (Armor armor in armorsAnswer.ARMORS) {
                         ARMORS_BY_ID.Add(armor.ID, armor);
                     }
 
-                    foreach (var gun in gunAnswer.GUNS) {
+                    foreach (Gun gun in gunAnswer.GUNS) {
                         GUNS_BY_ID.Add(gun.ID, gun);
                     }
 
-                    foreach (var repairTool in repairToolAnswer.REPAIR_TOOLS) {
+                    foreach (RepairTool repairTool in repairToolAnswer.REPAIR_TOOLS) {
                         REPAIR_TOOLS_BY_ID.Add(repairTool.ID, repairTool);
                     }
 
-                    foreach (var mineGun in mineGunAnswer.MINE_GUNS) {
+                    foreach (MineGun mineGun in mineGunAnswer.MINE_GUNS) {
                         MINE_GUNS_BY_ID.Add(mineGun.ID, mineGun);
                     }
 
@@ -227,11 +227,11 @@ namespace ClientLibrary.robot {
             MAX_LAP = init.MAX_LAP;
             TEAM_ID = init.TEAM_ID;
             MAX_TURN = init.MAX_TURN;
-            setClassEquip(init.CLASS_EQUIPMENT_ID);
+            SetClassEquip(init.CLASS_EQUIPMENT_ID);
         }
 
-        protected abstract void setClassEquip(int id);
-        protected abstract ClassEquipment getClassEquip();
+        protected abstract void SetClassEquip(int id);
+        protected abstract ClassEquipment GetClassEquip();
 
         /// <summary>
         /// Set percentual power of motor and direction.
@@ -326,13 +326,13 @@ namespace ClientLibrary.robot {
         }
 
         protected virtual void SendMerchant() {
-            Merchant(Motor.ID, Armor.ID, getClassEquip().ID, 100);
+            Merchant(Motor.ID, Armor.ID, GetClassEquip().ID, 100);
         }
 
         protected virtual void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
             this.Motor = MOTORS_BY_ID[merchantAnswer.MOTOR_ID_BOUGHT];
             this.Armor = ARMORS_BY_ID[merchantAnswer.ARMOR_ID_BOUGHT];
-            setClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);
+            SetClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);
         }
 
         protected async Task sendCommandAsync(ACommand command) {
@@ -384,9 +384,15 @@ namespace ClientLibrary.robot {
         /// <typeparam name="TResult"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-        protected TResult taskWait<TResult>(Task<TResult> task) {
+        protected TResult taskWait<TResult>(Task<TResult> task) where TResult : ACommand{
             try {
                 Task.WaitAll(task);
+                TResult result = task.Result;
+                ErrorCommand command = result as ErrorCommand;
+                if (command != null) {
+                    Console.Error.WriteLine(command.MESSAGE);
+                    Environment.Exit(0);
+                }
                 return task.Result;
             } catch (AggregateException e) {
                 if (e.InnerException != null) {

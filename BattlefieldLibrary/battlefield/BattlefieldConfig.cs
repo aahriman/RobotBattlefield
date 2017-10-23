@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ViewerLibrary.serializers;
+using ViewerLibrary.serializer;
 
 namespace BattlefieldLibrary.battlefield {
     public class BattlefieldConfig {
@@ -16,14 +16,17 @@ namespace BattlefieldLibrary.battlefield {
         public readonly int RESPAWN_TIMEOUT;
         public readonly bool RESPAWN_ALLOWED;
 
-        public readonly String MATCH_SAVE_FILE;
-        public readonly String EQUIPMENT_CONFIG_FILE;
-        public readonly String OBTACLE_CONFIG_FILE;
+        public readonly string MATCH_SAVE_FILE;
+        public readonly string EQUIPMENT_CONFIG_FILE;
+        public readonly string OBTACLE_CONFIG_FILE;
 
-        public readonly Object[] MORE;
+        public readonly int WAITING_TIME_BETWEEN_TURNS;
+        public readonly bool GUI;
+
+        public readonly object[] MORE;
 
         public BattlefieldConfig(int MAX_TURN, int MAX_LAP, int TEAMS, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
-                                 bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE,
+                                 bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE, int WAITING_TIME_BETWEEN_TURNS, bool GUI,
                                  object[] more) {
             this.TEAMS = TEAMS;
             this.MAX_TURN = MAX_TURN;
@@ -34,6 +37,8 @@ namespace BattlefieldLibrary.battlefield {
             this.EQUIPMENT_CONFIG_FILE = EQUIPMENT_CONFIG_FILE;
             this.OBTACLE_CONFIG_FILE = OBTACLE_CONFIG_FILE;
             this.MATCH_SAVE_FILE = MATCH_SAVE_FILE;
+            this.WAITING_TIME_BETWEEN_TURNS = WAITING_TIME_BETWEEN_TURNS;
+            this.GUI = GUI;
             MORE = more;
         }
 

@@ -17,16 +17,16 @@ namespace BaseLibrary.command.handshake {
         }
 
 
-        public String NAME { get; private set; }
-        public String TEAM_NAME { get; private set; }
+        public string NAME { get; private set; }
+        public string TEAM_NAME { get; private set; }
         public RobotType ROBOT_TYPE { get; private set; }
 
 
-        public InitCommand(String name) : this(name, null) {}
+        public InitCommand(string name) : this(name, null) {}
 
-        public InitCommand(String name, String teamName) : this(name, teamName, RobotType.TANK) { }
+        public InitCommand(string name, string teamName) : this(name, teamName, RobotType.TANK) { }
 
-        public InitCommand(String name, String teamName, RobotType robotType) {
+        public InitCommand(string name, string teamName, RobotType robotType) {
             if (name == null) {
                 throw new ArgumentNullException(nameof(name));
             }

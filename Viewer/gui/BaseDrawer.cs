@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BaseCapcureBattlefieldLibrary.battlefield;
 using Viewer.utils;
 using ViewerLibrary;
+using ViewerLibrary.gui;
 
 namespace Viewer.gui {
     public class BaseDrawer : IDrawerMore {

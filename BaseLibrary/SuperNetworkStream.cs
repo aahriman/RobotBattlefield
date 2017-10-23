@@ -59,7 +59,7 @@ namespace BaseLibrary {
 			if (_protocol == null) {
 				throw new Exception("Cannot read or write before set protocol.");
 			}
-			String s = sr.ReadLine();
+			string s = sr.ReadLine();
 			ACommand command = PROTOCOL.GetCommand(s);
 			if (command == null) {
 				throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " + s);
@@ -73,7 +73,7 @@ namespace BaseLibrary {
 	        }
 
 	        
-	            String s = await sr.ReadLineAsync();
+	            string s = await sr.ReadLineAsync();
 	            ACommand command = PROTOCOL.GetCommand(s);
 	            if (command == null) {
 	                throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " +
@@ -98,7 +98,7 @@ namespace BaseLibrary {
 				throw new Exception("Cannot read or write before set protocol.");
 			}
 
-            String serializedCommand = PROTOCOL.GetSendableCommand(command);
+            string serializedCommand = PROTOCOL.GetSendableCommand(command);
             await WriteLineAsync(serializedCommand);
 		}
 

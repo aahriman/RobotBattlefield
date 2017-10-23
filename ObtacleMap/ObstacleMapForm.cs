@@ -13,7 +13,7 @@ namespace ObstacleMap {
         // TODO Preview
         // TODO Opravit posun u mezí (vždy má být vidět co nejvíce)
 
-        private const String CLEAR_OBTACLE = "<Clear>";
+        private const string CLEAR_OBTACLE = "<Clear>";
 
         public static readonly Size DEFAULT_IMAGE_SIZE = new Size(3000, 3000);
         private Image battlefieldImage;
@@ -143,7 +143,7 @@ namespace ObstacleMap {
         }
 
         private void addObtacles(Point point) {
-            String obtacleName = listBox1?.SelectedItem?.ToString();
+            string obtacleName = listBox1?.SelectedItem?.ToString();
             if (obtacleName != null) {
                 Point[] points;
                 if (squareStyleRadioButton.Checked) {
@@ -171,7 +171,7 @@ namespace ObstacleMap {
             }
         }
 
-        private void addObtacle(Point p, String obtacleName) {
+        private void addObtacle(Point p, string obtacleName) {
             obtacles.Remove(p);
             if (!CLEAR_OBTACLE.Equals(listBox1.SelectedItem)) {
                 IObstacle obtacle = ObstacleManager.GetObtacle(obtacleName, p.X, p.Y);

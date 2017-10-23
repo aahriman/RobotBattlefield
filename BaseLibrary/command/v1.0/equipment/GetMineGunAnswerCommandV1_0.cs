@@ -10,7 +10,7 @@ namespace BaseLibrary.command.v1._0.equipment {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, ProtocolV1_0Utils.DEFAULT, out rest)) {
@@ -40,7 +40,7 @@ namespace BaseLibrary.command.v1._0.equipment {
         public GetMineGunAnswerCommandV1_0(MineGunV1_0[] mineGuns) : base(mineGuns) { }
 
         public string Serialize() {
-            return ProtocolV1_0Utils.SerializeParams(NAME, ProtocolV1_0Utils.DEFAULT, new Object[] { MINE_GUNS});
+            return ProtocolV1_0Utils.SerializeParams(NAME, ProtocolV1_0Utils.DEFAULT, new object[] { MINE_GUNS});
         }
     }
 }

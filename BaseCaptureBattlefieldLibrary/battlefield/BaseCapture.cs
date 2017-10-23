@@ -28,12 +28,12 @@ namespace BaseCapcureBattlefieldLibrary.battlefield {
             private const string COMMAND_BASE_NAME = "BASE";
             internal SubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
-                String[] basesString;
+                string[] basesString;
                 if (ProtocolV1_0Utils.Deserialize(s, out basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
                     List<Base> bases = new List<Base>();
                     foreach (var baseString in basesString) {// parametrs are separated by DEFAULT.NEXT.NEXT.NEXT
-                        String[] baseParam;
+                        string[] baseParam;
 
                         if (ProtocolV1_0Utils.GetParams(baseString, COMMAND_BASE_NAME,
                                                         ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out baseParam)) {

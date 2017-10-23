@@ -34,8 +34,6 @@ namespace MinerForBaseCapture {
 
             public int previousHitpoints = 0;
 
-            public List<int> puttedMines;
-
             protected override void ProcessState(RobotStateCommand state) {
                 base.ProcessState(state);
                 bases = BaseCapture.GetBases(state);
@@ -131,13 +129,6 @@ namespace MinerForBaseCapture {
 
 
         public static void Main(string[] args) {
-            miner.Connect(args);
-            repairman.Connect(args);
-            Task.WaitAll(
-                         miner.InitAsync("Miner", TEAM_ID),
-                         repairman.InitAsync("Repairmen", TEAM_ID)
-                        );
-
             while (true) {
 
                 RepairmenState repairmenState = getRepairmenState();

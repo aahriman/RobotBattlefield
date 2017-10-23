@@ -10,7 +10,7 @@ namespace BattlefieldLibrary.battlefield.robot {
         
         public abstract double WantedPower { get; set; }
         public abstract int OldScore {get; set; }
-        public String NAME {
+        public string NAME {
             get { return _name; }
             set {
                 if (_name == null) {
@@ -35,7 +35,7 @@ namespace BattlefieldLibrary.battlefield.robot {
         public abstract DateTime LastRequestAt { get; set; }
 
 
-        private String _name;
+        private string _name;
         private RobotType _robotType = RobotType.NONE;
 
         protected BattlefieldRobot(int id, SuperNetworkStream superNetworkStream) {
@@ -54,6 +54,8 @@ namespace BattlefieldLibrary.battlefield.robot {
             TEAM_ID = teamId;
             this.SuperNetworkStream = superNetworkStream;
         }
+
+        
         
     }
 }

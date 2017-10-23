@@ -7,7 +7,7 @@ namespace BaseLibrary.command.v1._0 {
 	internal class MerchantCommandV1_0 : MerchantCommand, ACommand.Sendable{
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string[] rest;
                 if (StringUtils.GetRestOfStringSplited(s, "MERCHANT(", ")", out rest, ';')) {
@@ -39,7 +39,7 @@ namespace BaseLibrary.command.v1._0 {
         public MerchantCommandV1_0(int motorId, int gunId, int armorId, int repairHp) : base(motorId, gunId, armorId, repairHp) { }
 
         public string Serialize() {
-            return String.Format("MERCHANT({0};{1};{2};{3})", MOTOR_ID, CLASS_EQUIPMENT_ID, ARMOR_ID, REPAIR_HP);
+            return string.Format("MERCHANT({0};{1};{2};{3})", MOTOR_ID, CLASS_EQUIPMENT_ID, ARMOR_ID, REPAIR_HP);
         }
     }
 }

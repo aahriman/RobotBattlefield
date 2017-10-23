@@ -10,7 +10,7 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
 				if (s.StartsWith(NAME+"(") && s.EndsWith(")")) {
 					var rest = s.Substring(NAME.Length+1, s.Length - 2 - NAME.Length).Trim().Split(';');

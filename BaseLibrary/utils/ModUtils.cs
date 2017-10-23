@@ -16,7 +16,7 @@ namespace BaseLibrary.utils {
         public static void LoadMods() {
             Load(Assembly.GetCallingAssembly());
             if (Directory.Exists("./")) {
-                String[] files = Directory.GetFiles("./", "*.dll");
+                string[] files = Directory.GetFiles("./", "*.dll");
                 foreach (var s in files) {
                     LoadFrom(s);
                 }
@@ -31,7 +31,7 @@ namespace BaseLibrary.utils {
         /// Support resursive go through
         /// </summary>
         /// <param name="file"></param>
-        public static void LoadFrom(String file) {
+        public static void LoadFrom(string file) {
             if (Directory.Exists(file)) {
                 foreach (var innetFile in Directory.GetFiles(file)) {
                     LoadFrom(innetFile);
@@ -44,7 +44,7 @@ namespace BaseLibrary.utils {
             }
         }
 
-        public static Assembly LoadAssembly(String file) {
+        public static Assembly LoadAssembly(string file) {
             if (!File.Exists(file)) {
                 return null;
             }
@@ -68,10 +68,10 @@ namespace BaseLibrary.utils {
             }
         }
 
-        public static Assembly[] LoadAllAssemblyInDir(String dir) {
+        public static Assembly[] LoadAllAssemblyInDir(string dir) {
             if (Directory.Exists(dir)) {
                 List<Assembly> assemblies = new List<Assembly>();
-                String[] files = Directory.GetFiles(dir, "*.dll");
+                string[] files = Directory.GetFiles(dir, "*.dll");
                 foreach (var file in files) {
                     assemblies.Add(LoadAssembly(file));
                 }

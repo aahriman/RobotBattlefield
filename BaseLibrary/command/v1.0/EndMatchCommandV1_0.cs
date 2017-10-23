@@ -9,7 +9,7 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override Boolean IsDeserializable(String s) {
+            public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string rest;
 				if (StringUtils.GetRestOfString(s, "END_MATCH(", ")", out rest)) {
@@ -29,11 +29,11 @@ namespace BaseLibrary.command.v1._0 {
             }
         }
 
-        public EndMatchCommandV1_0(String fileUrl) : base(fileUrl) { }
+        public EndMatchCommandV1_0(string fileUrl) : base(fileUrl) { }
 
 
         public string Serialize() {
-            return String.Format("END_MATCH({0})", FILE_URL);
+            return string.Format("END_MATCH({0})", FILE_URL);
         }
     }
 }

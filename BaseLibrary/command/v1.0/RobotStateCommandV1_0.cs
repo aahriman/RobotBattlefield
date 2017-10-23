@@ -10,7 +10,7 @@ namespace BaseLibrary.command.v1._0 {
 
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
-			public override Boolean IsDeserializable(String s) {
+			public override bool IsDeserializable(string s) {
 				
 				string[] rest;
 				if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {
@@ -31,7 +31,7 @@ namespace BaseLibrary.command.v1._0 {
 						                                                                            paramInts[1], paramInts[2],
 						                                                                            paramInts[3],
 						                                                                            arrayIdsOfLifeRobots, endLapCommand);
-					        String[] moreString;
+					        string[] moreString;
 					        if (ProtocolV1_0Utils.Deserialize(rest[9], out moreString, ProtocolV1_0Utils.DEFAULT.NEXT)) {
 					            robotStateCommand.DeserializeMore(moreString, robotStateCommand.MORE, SUB_COMMAND_FACTORIES);
 					        }
