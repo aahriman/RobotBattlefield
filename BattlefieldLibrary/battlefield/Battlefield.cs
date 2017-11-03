@@ -113,8 +113,9 @@ namespace BattlefieldLibrary.battlefield {
 	    private readonly SerialTurnDataModel TURN_DATA_MODEL;
 
        protected Battlefield(BattlefieldConfig battlefieldConfig) {
-            this.ROBOTS_IN_TEAM = battlefieldConfig.ROBOTS_IN_TEAM;
-            this.MAX_LAP = battlefieldConfig.MAX_LAP;
+            ROBOTS_IN_TEAM = battlefieldConfig.ROBOTS_IN_TEAM;
+            TEAMS = battlefieldConfig.TEAMS;
+            MAX_LAP = battlefieldConfig.MAX_LAP;
             MAX_TURN = battlefieldConfig.MAX_TURN;
             RESPAWN_TIMEOUT = battlefieldConfig.RESPAWN_TIMEOUT;
             RESPAWN_ALLOWED = battlefieldConfig.RESPAWN_ALLOWED;

@@ -20,10 +20,19 @@ namespace BaseLibrary.command.common {
         public ProtocolDouble RANGE {get; private set;}
         public int ENEMY_ID { get; private set; }
 
+        public ScanAnswerCommand() { }
+
         public ScanAnswerCommand(ProtocolDouble range, int enemyID)
             : base() {
                 ENEMY_ID = enemyID;
                 RANGE = range;
+            pending = false;
+        }
+
+        public void FillData(ScanAnswerCommand source) {
+            ENEMY_ID = source.ENEMY_ID;
+            RANGE = source.RANGE;
+            pending = false;
         }
 
         public sealed override void accept(ICommandVisitor accepter) {

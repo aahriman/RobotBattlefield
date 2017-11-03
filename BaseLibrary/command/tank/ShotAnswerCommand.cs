@@ -17,9 +17,17 @@ namespace BaseLibrary.command.tank {
         /// </summary>
         public bool SUCCESS { get; private set; }
 
+        public ShotAnswerCommand() { }
+
         public ShotAnswerCommand(bool success)
             : base() {
             SUCCESS = success;
+            pending = false;
+        }
+
+        public void FillData(ShotAnswerCommand source) {
+            SUCCESS = source.SUCCESS;
+            pending = false;
         }
 
         public sealed override void accept(ITankVisitor accepter) {

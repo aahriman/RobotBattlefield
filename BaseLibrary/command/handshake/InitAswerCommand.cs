@@ -23,6 +23,8 @@ namespace BaseLibrary.command.handshake {
 		public int ARMOR_ID { get; private set; }
         public int MOTOR_ID { get; private set; }
 
+        public InitAnswerCommand() { }
+
         public InitAnswerCommand(int maxTurn, int lapNumber, int maxLap, int robotId, int teamId, int classEquipmentId, int armorId, int motorId) {
             MAX_TURN = maxTurn;
             LAP_NUMBER = lapNumber;
@@ -33,7 +35,23 @@ namespace BaseLibrary.command.handshake {
 			ARMOR_ID = armorId;
             MOTOR_ID = motorId;
             MORE = new object[SUB_COMMAND_FACTORIES.Count];
+            pending = false;
         }
+
+        public void FillData(InitAnswerCommand source) {
+            MAX_TURN = source.MAX_TURN;
+            LAP_NUMBER = source.LAP_NUMBER;
+            MAX_LAP = source.MAX_LAP;
+
+            ROBOT_ID = source.ROBOT_ID;
+            TEAM_ID = source.TEAM_ID;
+            CLASS_EQUIPMENT_ID = source.CLASS_EQUIPMENT_ID;
+            ARMOR_ID = source.ARMOR_ID;
+            MOTOR_ID = source.MOTOR_ID;
+
+            MORE = source.MORE;
+            pending = false;
+        } 
 
         public sealed override void accept(ICommandVisitor accepter) {
             accepter.visit(this);

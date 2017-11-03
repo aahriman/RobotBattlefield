@@ -14,8 +14,16 @@ namespace BaseLibrary.command.miner {
 
         public bool SUCCESS { get; private set; }
 
+        public DetonateMineAnswerCommand() { }
+
         public DetonateMineAnswerCommand(bool success) {
             SUCCESS = success;
+            pending = false;
+        }
+
+        public void FillData(DetonateMineAnswerCommand source) {
+            SUCCESS = source.SUCCESS;
+            pending = false;
         }
 
         public override void accept(IMinerVisitor accepter) {

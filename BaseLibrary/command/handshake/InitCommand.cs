@@ -40,6 +40,7 @@ namespace BaseLibrary.command.handshake {
             ROBOT_TYPE = robotType;
         }
 
+
         public sealed override void accept(ICommandVisitor accepter) {
             accepter.visit(this);
         }

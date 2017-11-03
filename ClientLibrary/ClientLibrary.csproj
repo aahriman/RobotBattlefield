@@ -51,7 +51,6 @@
     <Compile Include="robot\Repairman.cs" />
     <Compile Include="robot\ClientRobot.cs" />
     <Compile Include="robot\Tank.cs" />
-    <Compile Include="utils\Class1.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

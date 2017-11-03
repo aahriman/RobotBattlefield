@@ -29,14 +29,16 @@ namespace ClientLibrary.robot {
 
 
         public PutMineAnswerCommand PutMine() {
-            PutMineAnswerCommand answer = taskWait(PutMineAsync());
+            PutMineAnswerCommand answer = new PutMineAnswerCommand();
+            addRobotTask(PutMineAsync(answer));
             return answer;
         }
 
-        public async Task<PutMineAnswerCommand> PutMineAsync() {
+        private async Task<PutMineAnswerCommand> PutMineAsync(PutMineAnswerCommand destinaton) {
             await sendCommandAsync(new PutMineCommand());
-            PutMineAnswerCommand answerCommand = await recieveCommandAsync<PutMineAnswerCommand>();
-            
+            PutMineAnswerCommand answerCommand = await receiveCommandAsync<PutMineAnswerCommand>();
+
+            destinaton.FillData(answerCommand);
             if (answerCommand.SUCCESS) {
                 PutedMinesList.Add(new Mine() {
                     ID = answerCommand.MINE_ID,
@@ -52,13 +54,16 @@ namespace ClientLibrary.robot {
         }
 
         public DetonateMineAnswerCommand DetonateMine(int mineId) {
-            DetonateMineAnswerCommand answer = taskWait(DetonateMineAsync(mineId));
+            DetonateMineAnswerCommand answer = new DetonateMineAnswerCommand();
+            addRobotTask(DetonateMineAsync(answer, mineId));
             return answer;
         }
 
-        public async Task<DetonateMineAnswerCommand> DetonateMineAsync(int mineId) {
+        private async Task<DetonateMineAnswerCommand> DetonateMineAsync(DetonateMineAnswerCommand destination, int mineId) {
             await sendCommandAsync(new DetonateMineCommand(mineId));
-            var answerCommand = await recieveCommandAsync<DetonateMineAnswerCommand>();
+            var answerCommand = await receiveCommandAsync<DetonateMineAnswerCommand>();
+
+            destination.FillData(answerCommand);
 
             if (answerCommand.SUCCESS) {
                 PutedMines--;

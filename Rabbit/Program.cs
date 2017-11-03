@@ -13,6 +13,7 @@ namespace Rabbit {
 
         public static void Main(string[] args) {
             Tank tank = new Tank("Rabbit", Guid.NewGuid().ToString());
+            ClientRobot.Connect(args);
 
             while (true) {
                 double toX = RANDOM.Next(0, 1000);

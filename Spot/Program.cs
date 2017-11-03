@@ -10,12 +10,12 @@ using ClientLibrary.robot;
 namespace Spot {
 	class Program {
 	
-        public static string TEAM_NAME = Guid.NewGuid().ToString();
         public static void Main(string[] args) {
-            Console.WriteLine("Spot is ready to action.");
-            Console.WriteLine(TEAM_NAME + " " + TEAM_NAME.Length);
+            Console.WriteLine("Spot is ready for action.");
             string name = "Spot";
-            Tank spot = new Tank(name, TEAM_NAME);
+            Tank spot = new Tank(name, ClientRobot.TEAM_NAME);
+
+            ClientRobot.Connect(args);
 
             int direction = 90;
             while (true) {

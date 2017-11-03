@@ -17,7 +17,10 @@ using ClientLibrary.config;
 namespace ClientLibrary.robot {
     public abstract class ClientRobot : Robot {
 
-        public static readonly String TEAM_NAME = new Guid().ToString();
+        /// <summary>
+        /// Team name which is globally unique.
+        /// </summary>
+        public static readonly String TEAM_NAME = Guid.NewGuid().ToString();
 
         private static readonly List<ClientRobot> ROBOT_COLLECTION = new List<ClientRobot>();
         private static readonly IDictionary<ClientRobot, Task> ROBOTS_TASK_COMMANDS = new Dictionary<ClientRobot, Task>();
@@ -30,6 +33,7 @@ namespace ClientLibrary.robot {
         }
 
         private static readonly object EQUIP_LOCK = new object();
+
         public static readonly Dictionary<int, Motor> MOTORS_BY_ID = new Dictionary<int, Motor>();
         public static readonly Dictionary<int, Armor> ARMORS_BY_ID = new Dictionary<int, Armor>();
         public static readonly Dictionary<int, Gun> GUNS_BY_ID = new Dictionary<int, Gun>();
@@ -77,8 +81,9 @@ namespace ClientLibrary.robot {
 
 
         /// <summary>
-        /// End turn - every robots who do not send command will send command <code>Wait</code>
+        /// End turn - every robots who do not send command will send command <code>Wait</code>.
         /// </summary>
+        /// <seealso cref="Wait"/>
         public static void EndTurn() {
             lock (ROBOTS_TASK_COMMANDS) {
                 lock (ROBOT_COLLECTION) {
@@ -91,31 +96,98 @@ namespace ClientLibrary.robot {
             }
         }
 
+        /// <summary>
+        /// How many lap will play.
+        /// </summary>
         public int MAX_LAP { get; private set; }
-        public int MAX_TURN { get; private set; }
-        public int LAP { get; private set; }
-        public string NAME { get; private set; }
 
+        /// <summary>
+        /// Number of actual lap.
+        /// </summary>
+        public int LAP { get; private set; }
+
+        /// <summary>
+        /// How many turn is maximally in one lap.
+        /// </summary>
+        public int MAX_TURN { get; private set; }
+
+        /// <summary>
+        /// Number of actual turn.
+        /// </summary>
+        public int TURN { get; private set; }
+
+        /// <summary>
+        /// HitPoints which robot has.
+        /// </summary>
         public override int HitPoints { get; set; }
+
+        /// <summary>
+        /// Score which robot has.
+        /// </summary>
         public override int Score { get; set; }
+
+        /// <summary>
+        /// Gold which robot has.
+        /// </summary>
         public override int Gold { get; set; }
+
+        /// <summary>
+        /// X-coordinate of robot.
+        /// </summary>
         public override double X { get; set; }
+
+        /// <summary>
+        /// Y-coordinate of robot.
+        /// </summary>
         public override double Y { get; set; }
+
+        /// <summary>
+        /// Power which robot's motor currently use.
+        /// </summary>
         public override double Power { get; set; }
+
+        /// <summary>
+        /// Angle where robot goes.
+        /// </summary>
         public override double AngleDrive { get; set; }
+
+        /// <summary>
+        /// What motor do robot has.
+        /// </summary>
+        /// <seealso cref="Motor"/>
         public override Motor Motor { get; set; }
+
+        /// <summary>
+        /// What armor do robot has.
+        /// </summary>
+        /// <seealso cref="Armor"/>
         public override Armor Armor { get; set; }
 
 
+        /// <summary>
+        /// Communication with server.
+        /// </summary>
         private SuperNetworkStream sns;
 
+        /// <summary>
+        /// Robot's name.
+        /// </summary>
         private String name;
+
+        /// <summary>
+        /// Robot's team name.
+        /// </summary>
         private String teamName;
+
+        /// <summary>
+        /// Flag if is robot already connected.
+        /// </summary>
         private bool connected;
 
         /// <summary>
-        /// Create new instance of robot.
+        /// Create new instance of robot. Robot's team name is <code>TEAM_NAME</code>
         /// </summary>
+        /// <seealso cref="TEAM_NAME"/>
         /// <param name="name"> name of this robot</param>
         protected ClientRobot(String name) : this(name, TEAM_NAME) {}
 
@@ -138,12 +210,18 @@ namespace ClientLibrary.robot {
             }
         }
 
+        /// <summary>
+        /// Connect unconnected robot.
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
         private GameTypeCommand Connect(String ip, int port) {
             GameTypeCommand gameTypeCommand = null;
-            if (connected) {
+            if (!connected) {
                 ConnectionUtil connection = new ConnectionUtil();
 
-                gameTypeCommand = taskWait(connection.ConnectAsync(ip, port));
+                gameTypeCommand = connection.ConnectAsync(ip, port).Result;
                 sns = connection.COMMUNICATION;
                 afterConnect();
                 this.connected = true;
@@ -153,44 +231,54 @@ namespace ClientLibrary.robot {
         }
 
         /// <summary>
-        /// 
+        /// Set robot name and team name.
         /// </summary>
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
         private InitAnswerCommand Init(String name, String teamName) {
-            InitAnswerCommand answer = taskWait(InitAsync(name, teamName));
+            InitAnswerCommand answer = new InitAnswerCommand();
+            addRobotTask(InitAsync(answer, name, teamName));
             return answer;
         }
 
         /// <summary>
-        /// 
+        /// Set robot name and team name and send it to server asynchronously.
         /// </summary>
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
-        private async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
+        private async Task<InitAnswerCommand> InitAsync(InitAnswerCommand destination, String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
-            var answerCommand = await recieveCommandAsync<InitAnswerCommand>();
+            var answerCommand = await receiveCommandAsync<InitAnswerCommand>();
             ProcessInit(answerCommand);
+            destination.FillData(answerCommand);
             return answerCommand;
         }
 
+        /// <summary>
+        /// What kind of robot it is.
+        /// </summary>
+        /// <seealso cref="RobotType"/>
+        /// <returns></returns>
         public abstract RobotType GetRobotType();
 
+        /// <summary>
+        /// Get equipment from server.
+        /// </summary>
         public void LoadEquip() {
             lock (EQUIP_LOCK) {
                 if (MOTORS_BY_ID.Count == 0) {
-                    Task.WaitAll(sendCommandAsync(new GetMotorsCommand()));
-                    GetMotorsAnswerCommand motorAnswer = recieveCommand<GetMotorsAnswerCommand>();
-                    Task.WaitAll(sendCommandAsync(new GetArmorsCommand()));
-                    GetArmorsAnswerCommand armorsAnswer = recieveCommand<GetArmorsAnswerCommand>();
-                    Task.WaitAll(sendCommandAsync(new GetGunsCommand()));
-                    GetGunsAnswerCommand gunAnswer = recieveCommand<GetGunsAnswerCommand>();
-                    Task.WaitAll(sendCommandAsync(new GetRepairToolCommand()));
-                    GetRepairToolAnswerCommand repairToolAnswer = recieveCommand<GetRepairToolAnswerCommand>();
-                    Task.WaitAll(sendCommandAsync(new GetMineGunCommand()));
-                    GetMineGunAnswerCommand mineGunAnswer = recieveCommand<GetMineGunAnswerCommand>();
+                    sendCommandAsync(new GetMotorsCommand()).Wait();
+                    GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) sns.RecieveCommand();
+                    sendCommandAsync(new GetArmorsCommand()).Wait();
+                    GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand) sns.RecieveCommand();
+                    sendCommandAsync(new GetGunsCommand()).Wait();
+                    GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) sns.RecieveCommand(); ;
+                    sendCommandAsync(new GetRepairToolCommand()).Wait();
+                    GetRepairToolAnswerCommand repairToolAnswer = (GetRepairToolAnswerCommand) sns.RecieveCommand();
+                    sendCommandAsync(new GetMineGunCommand()).Wait();
+                    GetMineGunAnswerCommand mineGunAnswer = (GetMineGunAnswerCommand) sns.RecieveCommand(); ;
 
                     foreach (Motor motor in motorAnswer.MOTORS) {
                         MOTORS_BY_ID.Add(motor.ID, motor);
@@ -230,64 +318,79 @@ namespace ClientLibrary.robot {
             SetClassEquip(init.CLASS_EQUIPMENT_ID);
         }
 
+        /// <summary>
+        /// Set class equipment to robot by id.
+        /// </summary>
+        /// <param name="id"></param>
         protected abstract void SetClassEquip(int id);
+
+        /// <summary>
+        /// What class equipment id is had by robot.
+        /// </summary>
+        /// <returns></returns>
         protected abstract ClassEquipment GetClassEquip();
 
         /// <summary>
-        /// Set percentual power of motor and direction.
+        /// Set percentage power of motor and direction. At the end set <code>AngleDrive</code> if rotation success.
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="power">percentage from 0 to 100.</param>
+        /// <seealso cref="AngleDrive"/>
         /// <returns></returns>
         public DriveAnswerCommand Drive(double angle, double power) {
-            DriveAnswerCommand answer = taskWait(DriveAsync(angle, power));
+            DriveAnswerCommand answer = new DriveAnswerCommand();
+            addRobotTask(DriveAsync(answer, angle, power));
             return answer;
         }
 
         /// <summary>
-        /// Set percentual power of motor and direction. 
+        /// Set percentage power of motor and direction. It send this action to server asynchronously. At the end set <code>AngleDrive</code> if rotation success and fill answer data to <code>destination</code>.
         /// </summary>
-        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.<</param>
         /// <param name="power">
-        public async Task<DriveAnswerCommand> DriveAsync(double angle, double power) {
+        public async Task DriveAsync(DriveAnswerCommand destination, double angle, double power) {
             await sendCommandAsync(new DriveCommand(power, angle));
-            var answerCommand =  await recieveCommandAsync<DriveAnswerCommand>();
-            if (answerCommand.SUCCES) {
+            var answerCommand =  await receiveCommandAsync<DriveAnswerCommand>();
+            if (answerCommand.SUCCESS) {
                 AngleDrive = AngleUtils.NormalizeDegree(angle);
             }
-            return answerCommand;
+            destination.FillData(answerCommand);
         }
 
         /// <summary>
-        /// 
+        /// Robot make scan to angle and witch precision. That is mean if scanned robot is in angle to robot in range (angle - precision, angle+precision) it is success.
         /// </summary>
-        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="angle">in degree. 0 is 3 hour. 90 is 6 hour and so on. 12 hour in up.</param>
         /// <param name="precision">parameter for sector. Min is 0 max is 10</param>
         public ScanAnswerCommand Scan(double angle, double precision) {
-            ScanAnswerCommand answer = taskWait(ScanAsync(angle, precision));
+            ScanAnswerCommand answer = new ScanAnswerCommand();
+            addRobotTask(ScanAsync(answer, angle, precision));
             return answer;
         }
 
         /// <summary>
-        /// 
+        /// Robot make scan and send that action to server asynchronously. Answer data fill to <code>destination</code>.
         /// </summary>
-        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.<</param>
         /// <param name="precision">parameter for sector. Min is 0 max is 10</param>
-        public async Task<ScanAnswerCommand> ScanAsync(double angle, double precision) {
+        private async Task ScanAsync(ScanAnswerCommand destination, double angle, double precision) {
             await sendCommandAsync(new ScanCommand(precision, angle));
-            return await recieveCommandAsync<ScanAnswerCommand>();
+            ScanAnswerCommand answer = await receiveCommandAsync<ScanAnswerCommand>();
+            destination.FillData(answer);
         }
 
 
         /// <summary>
-        /// Set x,y coordinates, hit points and power. Set score and gold and repair if is end of lap. 
+        /// Set x,y coordinates, hit points and power. Set score and gold and call <code>sendMerchant</code> if is end of lap
         /// </summary>
+        /// <seealso cref="SendMerchant"/>
         /// <param name="state"></param>
         protected virtual void ProcessState(RobotStateCommand state) {
             this.X = state.X;
             this.Y = state.Y;
             this.HitPoints = state.HIT_POINTS;
             this.Power = state.POWER;
+            this.TURN = state.TURN;
             if (state.END_LAP_COMMAND != null) {
                 Gold = state.END_LAP_COMMAND.GOLD;
                 Score = state.END_LAP_COMMAND.SCORE;
@@ -302,120 +405,109 @@ namespace ClientLibrary.robot {
         }
 
         /// <summary>
-        /// Robot will do nothing for this turn. He still move, but not change direction or wanted power (speed).
+        /// Robot will do nothing for this turn. He still move.
         /// </summary>
         public void Wait() {
             addRobotTask(WaitAsync());
         }
 
+        /// <summary>
+        /// Robot set action to do nothing and sent it to server asynchronously.
+        /// </summary>
+        /// <returns></returns>
         private async Task WaitAsync() {
             await sendCommandAsync(new WaitCommand());
         }
 
-        protected MerchantAnswerCommand Merchant(int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
-            MerchantAnswerCommand answer = new MerchantAnswerCommand();
-            addRobotTask(MercantAsync(answer, motorId, armorId, classEquipmentId, repairHitPoints));
-            return answer;
+        /// <summary>
+        /// Send request for buying motorId, armorId, classEquipmentId and repairHitPoints.
+        /// </summary>
+        /// <param name="motorId"></param>
+        /// <param name="armorId"></param>
+        /// <param name="classEquipmentId"></param>
+        /// <param name="repairHitPoints"></param>
+        /// <returns></returns>
+        protected void Merchant(int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
+            addRobotTask(MerchantAsync(motorId, armorId, classEquipmentId, repairHitPoints));
         }
 
-        private async Task MercantAsync(MerchantAnswerCommand destination, int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
+        /// <summary>
+        /// Asynchronously send request for buying motorId, armorId, classEquipmentId and repairHitPoints.
+        /// </summary>
+        /// <param name="motorId"></param>
+        /// <param name="armorId"></param>
+        /// <param name="classEquipmentId"></param>
+        /// <param name="repairHitPoints"></param>
+        /// <returns></returns>
+        private async Task MerchantAsync(int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
             await sendCommandAsync(new MerchantCommand(motorId, armorId, classEquipmentId, repairHitPoints));
-            MerchantAnswerCommand answer = await recieveCommandAsync<MerchantAnswerCommand>();
+            MerchantAnswerCommand answer = await receiveCommandAsync<MerchantAnswerCommand>();
             ProcessMerchant(answer);
-            destination.FillData(answer);
         }
 
+        /// <summary>
+        /// Setting what you want to buy at the end of lap. Use <code>Merchant</code> method for buying.
+        /// </summary>
+        /// <seealso cref="Merchant"/>
         protected virtual void SendMerchant() {
             Merchant(Motor.ID, Armor.ID, GetClassEquip().ID, 100);
         }
 
+        /// <summary>
+        /// Processing merchant answer. Set motor, armor and class equipment.
+        /// </summary>
+        /// <param name="merchantAnswer"></param>
         protected virtual void ProcessMerchant(MerchantAnswerCommand merchantAnswer) {
             this.Motor = MOTORS_BY_ID[merchantAnswer.MOTOR_ID_BOUGHT];
             this.Armor = ARMORS_BY_ID[merchantAnswer.ARMOR_ID_BOUGHT];
             SetClassEquip(merchantAnswer.CLASS_EQUIPMENT_ID_BOUGHT);
         }
 
+        /// <summary>
+        /// Asynchronously sending command.
+        /// </summary>
+        /// <param name="command">Instance of command witch you want to send.</param>
+        /// <returns></returns>
         protected async Task sendCommandAsync(ACommand command) {
             await sns.SendCommandAsync(command);
         }
 
         /// <summary>
-        /// 
+        /// Asynchronously receiving command from server.
         /// </summary>
-        /// <returns></returns>
-        protected async Task<T> recieveCommandAsync<T>() where T : ACommand{
+        /// <returns>Command</returns>
+        protected async Task<T> receiveCommandAsync<T>() where T : ACommand{
             T command = (T) await sns.RecieveCommandAsync();
             ProcessState((RobotStateCommand) await sns.RecieveCommandAsync());
             return command;
         }
 
         /// <summary>
-        /// 
+        /// Receiving command from server.
         /// </summary>
-        /// <returns></returns>
-        protected T recieveCommand<T>() where T : ACommand {
-            T command = recieveCommandAsync<T>().Result;
+        /// <returns>Command</returns>
+        protected T receiveCommand<T>() where T : ACommand {
+            T command = receiveCommandAsync<T>().Result;
             return command;
         }
 
-
-        /// <summary>
-        /// Wait for task and if his InnerException is not null it throw it else it throw AggregateException or nothing if no exception occures.
-        /// </summary>
-        /// <exception cref="AggregateException">If waited task throw <code>AggregateException</code> and dont have any InnerException it throw it</exception>
-        /// <param name="task"></param>
-        protected void taskWait(Task task) {
-            try {
-                Task.WaitAll(task);
-            } catch (AggregateException e) {
-                if (e.InnerException != null) {
-                    throw e.InnerException;
-                } else {
-                    throw e;
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Wait for task and if his InnerException is not null it throw it else it throw AggregateException. If no exception occured it throw <code>TResult</code>
-        /// </summary>
-        /// <exception cref="AggregateException">If waited task throw <code>AggregateException</code> and dont have any InnerException it throw it</exception>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="task"></param>
-        /// <returns></returns>
-        protected TResult taskWait<TResult>(Task<TResult> task) where TResult : ACommand{
-            try {
-                Task.WaitAll(task);
-                TResult result = task.Result;
-                ErrorCommand command = result as ErrorCommand;
-                if (command != null) {
-                    Console.Error.WriteLine(command.MESSAGE);
-                    Environment.Exit(0);
-                }
-                return task.Result;
-            } catch (AggregateException e) {
-                if (e.InnerException != null) {
-                    throw e.InnerException;
-                } else {
-                    throw e;
-                }
-            }
-        }
-
         protected void addRobotTask(Task t) {
+            if (!connected) {
+                throw new NotSupportedException("Robots have to be connected. Use ClientRobot.Connect(args) first.");
+            }
             lock (ROBOTS_TASK_COMMANDS) {
                 ROBOTS_TASK_COMMANDS.Add(this, t);
                 lock (ROBOT_COLLECTION) {
                     if (ROBOTS_TASK_COMMANDS.Count == ROBOT_COLLECTION.Count) {
                         Task.WaitAll(ROBOTS_TASK_COMMANDS.Values.ToArray());
+                        ROBOTS_TASK_COMMANDS.Clear();
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Specify what to do at the end of Connection methods
+        /// Specify what to do at the end of Connection.
         /// </summary>
         protected void afterConnect() {
             LoadEquip();

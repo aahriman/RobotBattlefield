@@ -25,7 +25,8 @@ namespace ClientLibrary.robot {
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="range">how far this robot wants to shot</param>
         public ShotAnswerCommand Shot(double angle, double range) {
-            ShotAnswerCommand answer = taskWait(ShotAsync(angle, range));
+            ShotAnswerCommand answer = new ShotAnswerCommand();
+            addRobotTask(ShotAsync(answer, angle, range));
             return answer;
         }
 
@@ -34,9 +35,11 @@ namespace ClientLibrary.robot {
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="range">how far this robot wants to shot</param>
-        public async Task<ShotAnswerCommand> ShotAsync(double angle, double range) {
+        private async Task<ShotAnswerCommand> ShotAsync(ShotAnswerCommand destination, double angle, double range) {
             await sendCommandAsync(new ShotCommand(range, angle));
-            return recieveCommand<ShotAnswerCommand>();
+            ShotAnswerCommand answer = receiveCommand<ShotAnswerCommand>();
+            destination.FillData(answer);
+            return answer;
         }
 
         protected override void SetClassEquip(int id) {

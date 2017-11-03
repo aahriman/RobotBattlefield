@@ -16,10 +16,18 @@ namespace BaseLibrary.command.common {
             return new DriveAnswerCommand(succes);
         }
 
-        public bool SUCCES { get; private set; }
+        public bool SUCCESS { get; private set; }
 
-        public DriveAnswerCommand(bool succes) {
-            SUCCES = succes;
+        public DriveAnswerCommand() {}
+
+        public DriveAnswerCommand(bool success) {
+            SUCCESS = success;
+            pending = false;
+        }
+
+        public void FillData(DriveAnswerCommand source) {
+            SUCCESS = source.SUCCESS;
+            pending = false;
         }
 
         public sealed override void accept(ICommandVisitor accepter) {

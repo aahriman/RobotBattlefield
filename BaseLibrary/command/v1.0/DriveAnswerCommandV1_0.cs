@@ -22,17 +22,17 @@ namespace BaseLibrary.command.v1._0 {
 
             public override bool IsTransferable(ACommand c) {
                 if (c is DriveAnswerCommand) {
-                    cache.Cached(c, new DriveAnswerCommandV1_0(((DriveAnswerCommand)c).SUCCES));
+                    cache.Cached(c, new DriveAnswerCommandV1_0(((DriveAnswerCommand)c).SUCCESS));
                     return true;
                 }
                 return false;
             }
         }
 
-        public DriveAnswerCommandV1_0(bool succes) : base(succes){ }
+        public DriveAnswerCommandV1_0(bool success) : base(success){ }
 
         public string Serialize() {
-            return ProtocolV1_0Utils.SerializeParams(NAME, (SUCCES? 1 : 0));
+            return ProtocolV1_0Utils.SerializeParams(NAME, (SUCCESS? 1 : 0));
         }
     }
 }

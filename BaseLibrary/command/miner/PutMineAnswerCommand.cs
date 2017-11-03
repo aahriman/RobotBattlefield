@@ -17,9 +17,18 @@ namespace BaseLibrary.command.miner {
         public bool SUCCESS { get; private set; }
         public int MINE_ID { get; private set; }
 
+        public PutMineAnswerCommand() { }
+
         public PutMineAnswerCommand(bool success, int mineId) {
             SUCCESS = success;
             MINE_ID = mineId;
+            pending = false;
+        }
+
+        public void FillData(PutMineAnswerCommand source) {
+            SUCCESS = source.SUCCESS;
+            MINE_ID = source.MINE_ID;
+            pending = false;
         }
 
         public override void accept(IMinerVisitor accepter) {

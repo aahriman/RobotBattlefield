@@ -13,25 +13,39 @@ namespace ClientLibrary.robot {
 
         public Repairman(String name, String teamName) : base(name, teamName) { }
 
-
+        /// <summary>
+        /// Repair robots in max range.
+        /// </summary>
+        /// <returns></returns>
         public RepairAnswerCommand Repair() {
-            RepairAnswerCommand answer = taskWait(RepairAsync());
+            RepairAnswerCommand answer = new RepairAnswerCommand();
+            addRobotTask(RepairAsync(answer));
             return answer;
         }
 
+        /// <summary>
+        /// Repair robots closer then <code>maxDistance</code>.
+        /// </summary>
+        /// <param name="maxDistance">How far can be robots witch will be repaired.</param>
+        /// <returns></returns>
         public RepairAnswerCommand Repair(int maxDistance) {
-            RepairAnswerCommand answer = taskWait(RepairAsync(maxDistance));
+            RepairAnswerCommand answer = new RepairAnswerCommand();
+            addRobotTask(RepairAsync(answer, maxDistance));
             return answer;
         }
 
-        public async Task<RepairAnswerCommand> RepairAsync() {
+        private async Task<RepairAnswerCommand> RepairAsync(RepairAnswerCommand destination) {
             await sendCommandAsync(new RepairCommand());
-            return await recieveCommandAsync<RepairAnswerCommand>();
+            RepairAnswerCommand answer = await receiveCommandAsync<RepairAnswerCommand>();
+            destination.FillData(answer);
+            return answer;
         }
 
-        public async Task<RepairAnswerCommand> RepairAsync(int maxDistance) {
+        private async Task<RepairAnswerCommand> RepairAsync(RepairAnswerCommand destination, int maxDistance) {
             await sendCommandAsync(new RepairCommand(maxDistance));
-            return await recieveCommandAsync<RepairAnswerCommand>();
+            RepairAnswerCommand answer = await receiveCommandAsync<RepairAnswerCommand>();
+            destination.FillData(answer);
+            return answer;
         }
 
         public override RobotType GetRobotType() {

@@ -14,8 +14,16 @@ namespace BaseLibrary.command.repairman {
 
         public bool SUCCESS { get; private set; }
 
+        public RepairAnswerCommand() { }
+
         public RepairAnswerCommand(bool succes) {
             SUCCESS = succes;
+            pending = false;
+        }
+
+        public void FillData(RepairAnswerCommand source) {
+            SUCCESS = source.SUCCESS;
+            pending = false;
         }
 
         public override void accept(IRepairmanVisitor accepter) {
