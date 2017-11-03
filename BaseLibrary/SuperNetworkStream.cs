@@ -56,15 +56,7 @@ namespace BaseLibrary {
 		}
 
 		public virtual ACommand RecieveCommand() {
-			if (_protocol == null) {
-				throw new Exception("Cannot read or write before set protocol.");
-			}
-			string s = sr.ReadLine();
-			ACommand command = PROTOCOL.GetCommand(s);
-			if (command == null) {
-				throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " + s);
-			}
-			return command;
+		    return RecieveCommandAsync().Result;
 		}
 
 	    public virtual async Task<ACommand> RecieveCommandAsync() {
@@ -72,26 +64,22 @@ namespace BaseLibrary {
 	            throw new Exception("Cannot read or write before set protocol.");
 	        }
 
-	        
-	            string s = await sr.ReadLineAsync();
-	            ACommand command = PROTOCOL.GetCommand(s);
-	            if (command == null) {
-	                throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " +
-	                                            s);
-	            }
+	        string s = await sr.ReadLineAsync();
+	        ACommand command = PROTOCOL.GetCommand(s);
+	        if (command == null) {
+	            throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " +
+	                                        s);
+	        }
 
-	            if (command is ErrorCommand) {
-	                Console.WriteLine(((ErrorCommand) command).MESSAGE);
-	            }
-	            return command;
+	        if (command is ErrorCommand) {
+	            Console.Error.WriteLine(((ErrorCommand) command).MESSAGE);
+	        }
+	        return command;
 	    }
 
-        public virtual void SendCommand(ACommand command) {
-            if (_protocol == null) {
-                throw new Exception("Cannot read or write before set protocol.");
-            }
-            sw.WriteLine(PROTOCOL.GetSendableCommand(command));
-        }
+	    public virtual void SendCommand(ACommand command) {
+	        SendCommandAsync(command).Wait();
+	    }
 
         public virtual async Task SendCommandAsync(ACommand command) {
 			if (_protocol == null) {
@@ -99,6 +87,8 @@ namespace BaseLibrary {
 			}
 
             string serializedCommand = PROTOCOL.GetSendableCommand(command);
+
+            Console.WriteLine(serializedCommand);
             await WriteLineAsync(serializedCommand);
 		}
 
