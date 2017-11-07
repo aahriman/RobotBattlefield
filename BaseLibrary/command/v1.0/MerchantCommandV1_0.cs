@@ -10,7 +10,7 @@ namespace BaseLibrary.command.v1._0 {
             public override bool IsDeserializable(string s) {
                 s = s.Trim();
                 string[] rest;
-                if (StringUtils.GetRestOfStringSplited(s, "MERCHANT(", ")", out rest, ';')) {
+                if (StringUtils.GetRestOfStringSplitted(s, "MERCHANT(", ")", out rest, ';')) {
                     if (rest.Length != 4) {
                         return false;
                     }

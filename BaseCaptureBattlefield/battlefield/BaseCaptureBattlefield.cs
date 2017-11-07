@@ -124,7 +124,7 @@ namespace BaseCapcureBattlefield.battlefield {
                 return LapState.WIN;
             }
 
-            return Turn > MAX_TURN ? LapState.LAP_OUT : LapState.NONE;
+            return Turn > MAX_TURN ? LapState.TURN_OUT : LapState.NONE;
         }
     }
 }

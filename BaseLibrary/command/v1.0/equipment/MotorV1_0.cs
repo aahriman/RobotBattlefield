@@ -8,14 +8,14 @@ namespace BaseLibrary.command.v1._0.equipment {
     public class MotorV1_0 : Motor, InnerSerializerV1_0 {
 		private const string NAME = "MOTOR";
 
-		public MotorV1_0(double maxSpeed, double rotateIn, double speedUp, double speedDown, double speedUpTo, int cost, int id) :
-			base(maxSpeed, rotateIn, speedUp, speedDown, speedUpTo, cost, id) { }
+		public MotorV1_0(double maxSpeed, double rotateIn, double acceleration, double deceleration, double maxInitialPower, int cost, int id) :
+			base(maxSpeed, rotateIn, acceleration, deceleration, maxInitialPower, cost, id) { }
 
 		public MotorV1_0(Motor m) :
-			base(m.MAX_SPEED, m.ROTATE_IN, m.SPEED_UP, m.SPEED_DOWN, m.SPEED_UP_TO, m.COST, m.ID) { }
+			base(m.MAX_SPEED, m.ROTATE_IN, m.ACCELERATION, m.DECELERATION, m.MAX_INITIAL_POWER, m.COST, m.ID) { }
 
         public string Serialize(Deep deep) {
-			return ProtocolV1_0Utils.SerializeParams(NAME, deep, (ProtocolDouble) MAX_SPEED, (ProtocolDouble) ROTATE_IN, (ProtocolDouble) SPEED_UP, (ProtocolDouble) SPEED_DOWN, (ProtocolDouble) SPEED_UP_TO, COST, ID);
+			return ProtocolV1_0Utils.SerializeParams(NAME, deep, (ProtocolDouble) MAX_SPEED, (ProtocolDouble) ROTATE_IN, (ProtocolDouble) ACCELERATION, (ProtocolDouble) DECELERATION, (ProtocolDouble) MAX_INITIAL_POWER, COST, ID);
         }
 
 		public static bool Deserialize(string orig, Deep deep, out MotorV1_0 deserialized) {

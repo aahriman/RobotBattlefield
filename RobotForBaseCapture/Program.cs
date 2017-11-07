@@ -28,7 +28,7 @@ namespace MinerForBaseCapture {
         static MyMiner miner = new MyMiner("mines", TEAM_ID);
         static Repairman repairman = new Repairman("repairman", TEAM_ID);
 
-        class MyMiner : Miner {
+        class MyMiner : MineLayer {
 
             public MyMiner(String name, String teamName) : base(name, teamName) {}
 
@@ -66,28 +66,28 @@ namespace MinerForBaseCapture {
             DRIVE
         }
 
-        private static Task<DriveAnswerCommand> robotDriveToBase(ClientRobot robot) {
+        private static DriveAnswerCommand robotDriveToBase(ClientRobot robot) {
             double angle = AngleUtils.AngleDegree(robot.X, robot.Y, capturedBase.X, capturedBase.Y);
 
             if (robot.Power > robot.Motor.ROTATE_IN && Math.Abs(angle - robot.AngleDrive) > 1){
-                return robot.DriveAsync(robot.AngleDrive, robot.Motor.ROTATE_IN);
+                return robot.Drive(robot.AngleDrive, robot.Motor.ROTATE_IN);
             } else {
-               return robot.DriveAsync(angle, 100); 
+               return robot.Drive(angle, 100); 
             }
         }
 
-        private static Task<DriveAnswerCommand> robotDriveAround(ClientRobot robot) {
+        private static DriveAnswerCommand robotDriveAround(ClientRobot robot) {
             if (robot.Power > robot.Motor.ROTATE_IN) {
-                return robot.DriveAsync(robot.AngleDrive, robot.Motor.ROTATE_IN);
+                return robot.Drive(robot.AngleDrive, robot.Motor.ROTATE_IN);
             } else {
                 if (0 <= robot.AngleDrive && robot.AngleDrive < 90) {
-                    return robot.DriveAsync(180, 100);
+                    return robot.Drive(180, 100);
                 } else if (90 <= robot.AngleDrive && robot.AngleDrive < 180) {
-                    return robot.DriveAsync(270, 100);
+                    return robot.Drive(270, 100);
                 } else if (180 <= robot.AngleDrive && robot.AngleDrive < 270) {
-                    return robot.DriveAsync(0, 100);
+                    return robot.Drive(0, 100);
                 } else if (270 <= robot.AngleDrive && robot.AngleDrive < 360) {
-                    return robot.DriveAsync(90, 100);
+                    return robot.Drive(90, 100);
                 }
             }
             return null;
@@ -116,7 +116,7 @@ namespace MinerForBaseCapture {
             if (EuclideanSpaceUtils.Distance(new Point(miner.X, miner.Y), new Point(capturedBase.X, capturedBase.Y)) >
                 BaseCapture.BASE_SIZE) {
                 return MinerState.GO_TO_BASE;
-            } else if (miner.PutedMines < miner.MINE_GUN.MAX_MINES) {
+            } else if (miner.PuttedMines < miner.MINE_GUN.MAX_MINES) {
                 return MinerState.PUT_MINE;
             } else if (miner.HitPoints < miner.previousHitpoints) {
                 return MinerState.GO_TO_REPAIRMAN;
@@ -136,89 +136,72 @@ namespace MinerForBaseCapture {
 
                 SubState minerSubState = default(SubState);
                 SubState repairmenSubState = default(SubState);
-                List<Task> taskToWait = new List<Task>();
 
-                Task<DriveAnswerCommand> minerDriveTask = null;
-                Task<PutMineAnswerCommand> minerPutTask = null;
-                Task<DetonateMineAnswerCommand> minerDetonateTask = null;
-                Task<ScanAnswerCommand> minerScanTask = null;
+                DriveAnswerCommand minerDrive = null;
+                PutMineAnswerCommand minerPut = null;
+                DetonateMineAnswerCommand minerDetonate = null;
+                ScanAnswerCommand minerScan = null;
                 
                 switch (minetState) {
                     case MinerState.DETONATE:
-                        minerDetonateTask = miner.DetonateMineAsync(miner.PutedMinesList[0].ID);
-                        taskToWait.Add(minerDetonateTask);
+                        minerDetonate = miner.DetonateMine(miner.PuttedMinesList[0].ID);
+                        
                         break;
                     case MinerState.PUT_MINE:
-                        minerPutTask = miner.PutMineAsync();
-                        taskToWait.Add(minerPutTask);
+                        minerPut = miner.PutMine();
                         break;
                     case MinerState.GO_TO_REPAIRMAN:
-                        minerDriveTask =
-                            miner.DriveAsync(AngleUtils.AngleDegree(miner.X, miner.Y, repairman.X, repairman.Y),
+                        minerDrive =
+                            miner.Drive(AngleUtils.AngleDegree(miner.X, miner.Y, repairman.X, repairman.Y),
                                              miner.Motor.ROTATE_IN);
-                        taskToWait.Add(minerDriveTask);
                         break;
                     case MinerState.GO_TO_BASE:
-                        minerDriveTask = robotDriveToBase(miner);
-                        taskToWait.Add(minerDriveTask);
+                        minerDrive = robotDriveToBase(miner);
                         break;
                     case MinerState.GO_AROUND:
                         if (EuclideanSpaceUtils.Distance(miner.X, miner.Y, capturedBase.X, capturedBase.Y) < BaseCapture.BASE_SIZE  * 3.0 / 4.0) {
                             minerSubState = SubState.SCAN;
-                            minerScanTask = miner.ScanAsync(AngleUtils.AngleDegree(miner.X, miner.Y, capturedBase.X, capturedBase.Y), 10);
-                            taskToWait.Add(minerScanTask);
+                            minerScan = miner.Scan(AngleUtils.AngleDegree(miner.X, miner.Y, capturedBase.X, capturedBase.Y), 10);
                         } else {
 
                             minerSubState = SubState.DRIVE;
-                            minerDriveTask = robotDriveAround(miner);
-
-                            
-                            taskToWait.Add(minerDriveTask);
+                            minerDrive = robotDriveAround(miner);
                         }
                         break;
                 }
 
-                Task<DriveAnswerCommand> repairmenDriveTask = null;
-                Task<ScanAnswerCommand> repairmenScanTask = null;
-                Task<RepairAnswerCommand> repairmenRepairTask = null;
+                DriveAnswerCommand repairmenDrive = null;
+                ScanAnswerCommand repairmenScan = null;
+                RepairAnswerCommand repairmenRepair = null;
 
                 switch (repairmenState) {
                     case RepairmenState.GO_AROUND:
                         if (EuclideanSpaceUtils.Distance(miner.X, miner.Y, capturedBase.X, capturedBase.Y) <
                             BaseCapture.BASE_SIZE * 3.0 / 4.0) {
                             repairmenSubState = SubState.SCAN;
-                            repairmenScanTask =
-                                repairman.ScanAsync(
+                            repairmenScan =
+                                repairman.Scan(
                                                     AngleUtils.AngleDegree(miner.X, miner.Y, capturedBase.X,
                                                                            capturedBase.Y), 10);
-                            taskToWait.Add(repairmenScanTask);
                         } else {
 
                             repairmenSubState = SubState.DRIVE;
-                            repairmenDriveTask = robotDriveAround(repairman);
-
-
-                            taskToWait.Add(repairmenDriveTask);
+                            repairmenDrive = robotDriveAround(repairman);
                         }
                         break;
 
                     case RepairmenState.GO_TO_BASE:
                         repairmenSubState = SubState.DRIVE;
-                        repairmenDriveTask = robotDriveToBase(repairman);
-
-                        taskToWait.Add(repairmenDriveTask);
+                        repairmenDrive = robotDriveToBase(repairman);
                         break;
 
                     case RepairmenState.REPAIR:
-                        repairmenRepairTask =
-                            repairman.RepairAsync((int)EuclideanSpaceUtils.Distance(repairman.X, repairman.Y, miner.X,
+                        repairmenRepair =
+                            repairman.Repair((int)EuclideanSpaceUtils.Distance(repairman.X, repairman.Y, miner.X,
                                                                                miner.Y) + 1);
-                        taskToWait.Add(repairmenRepairTask);
                         break;
                 }
-
-                Task.WaitAll(taskToWait.ToArray());
-                taskToWait.Clear();
+                
 
                 switch (minetState) {
                     case MinerState.DETONATE:
@@ -231,9 +214,11 @@ namespace MinerForBaseCapture {
                         break;
                     case MinerState.GO_AROUND:
                         if (minerSubState == SubState.SCAN) {
-                            if (minerScanTask != null) scan1 = minerScanTask.Result;
+                            if (minerScan != null) scan1 = minerScan;
                         }
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
                 switch (repairmenState) {
@@ -244,9 +229,11 @@ namespace MinerForBaseCapture {
                         break;
                     case RepairmenState.GO_AROUND:
                         if (repairmenSubState == SubState.SCAN) {
-                            if (repairmenScanTask != null) scan2 = repairmenScanTask.Result;
+                            if (repairmenScan != null) scan2 = repairmenScan;
                         }
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
             }

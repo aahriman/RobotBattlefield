@@ -58,7 +58,7 @@ namespace FlagCapcureBattlefield.battlefield {
 	    }
 
 		protected override LapState NewLapState() {
-            return Turn > MAX_TURN ? LapState.LAP_OUT : LapState.NONE;
+            return Turn > MAX_TURN ? LapState.TURN_OUT : LapState.NONE;
         }
 
         protected override void afterProcessCommand() {

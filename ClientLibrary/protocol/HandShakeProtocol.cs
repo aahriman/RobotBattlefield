@@ -8,7 +8,11 @@ using BaseLibrary.protocol;
 using ClientLibrary.config;
 
 namespace ClientLibrary.protocol {
+    /// <summary>
+    /// Handshake protocol for client side.
+    /// </summary>
     public class HandShakeProtocol : AProtocol {
+
         public HandShakeProtocol() : base(){
             comandsFactory.RegisterCommand(AckCommand.FACTORY);
             comandsFactory.RegisterCommand(HelloCommand.FACTORY);
@@ -22,7 +26,7 @@ namespace ClientLibrary.protocol {
         /// <param name="clientSocket"> Socket from client side to server side</param>
         /// <returns>null if handShake fail otherwise return instance of AProtocol</returns>
         public async Task<AProtocol> HandShakeClient(SuperNetworkStream clientSocket) {
-            HelloCommand hello = new HelloCommand(ClientConfig.SUPPERTED_PROTOCOLS);
+            HelloCommand hello = new HelloCommand(ClientConfig.SUPPORTED_PROTOCOLS);
             await hello.SendAsync(clientSocket);
             ACommand shouldBeOLLEH = GetCommand(await clientSocket.ReadLineAsync());
             if (shouldBeOLLEH is OllehCommand) {

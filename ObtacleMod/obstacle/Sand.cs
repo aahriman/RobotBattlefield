@@ -79,8 +79,8 @@ namespace ObstacleMod.obstacle {
 
         public void Change(Robot robot, int turn, ref double fromX, ref double fromY, ref double toX, ref double toY) {
             // TODO can not leave sand
-            double speedX = RobotUtils.getSpeedX(robot);
-            double speedY = RobotUtils.getSpeedX(robot);
+            double speedX = RobotUtils.GetSpeedX(robot);
+            double speedY = RobotUtils.GetSpeedX(robot);
 
             double dX = toX - robot.X;
             double dY = toY - robot.Y;

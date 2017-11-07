@@ -1,8 +1,15 @@
 ﻿namespace BaseLibrary.equip
 {
-    public class Armor : Equipment{
+    public class Armor : IEquipment{
+        /// <summary>
+        /// How taught is armor. How many hit points can robot have.
+        /// </summary>
         public int MAX_HP { get; private set; }
+
+        /// <inheritdoc />
         public int COST { get; private set; }
+
+        /// <inheritdoc />
         public int ID { get; private set; }
 
         public Armor(int MAX_HP, int COST, int ID) {

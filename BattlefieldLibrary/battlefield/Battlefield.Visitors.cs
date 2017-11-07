@@ -183,7 +183,7 @@ namespace BattlefieldLibrary.battlefield {
                     r.NAME = visitor.NAME;
                     r.ROBOT_TYPE = visitor.ROBOT_TYPE;
                     BATTLEFIELD.robots.Remove(r);
-                    ClassEquipment classEquipment = null;
+                    IClassEquipment classEquipment = null;
                     switch (r.ROBOT_TYPE) {
                         case RobotType.MINER:
                             var miner = new Miner(r);
@@ -292,7 +292,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected class TankFightVisitor : FinghtVisitor {
 
-            public const int LOAD_TIME = 20;
+            public const int RELOAD_TIME = 20;
 
             public TankFightVisitor(Battlefield battlefield) : base(battlefield) {}
 
@@ -314,7 +314,7 @@ namespace BattlefieldLibrary.battlefield {
                             BATTLEFIELD.heapBullet.Add(toLap, bulletList);
                         }
                         bulletList.Add(new Bullet(BATTLEFIELD.Turn, toLap, toX, toY, tank));
-                        int loadAtTurn = BATTLEFIELD.Turn + LOAD_TIME;
+                        int loadAtTurn = BATTLEFIELD.Turn + RELOAD_TIME;
                         List<Tank> list;
                         if (!BATTLEFIELD.gunLoaded.TryGetValue(loadAtTurn, out list)) {
                             list = new List<Tank>();

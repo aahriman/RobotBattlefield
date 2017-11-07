@@ -1,13 +1,33 @@
 ﻿using System;
 
 namespace BaseLibrary.equip {
-	public class Gun : ClassEquipment {
-		
-		public int ID { get; private set; }
+	public class Gun : IClassEquipment {
+
+        /// <inheritdoc />
+        public int ID { get; private set; }
+
+	    /// <inheritdoc />
 		public int COST { get; private set; }
+
+        /// <summary>
+        /// How many barrel this cannot have. Every barrel can be use again after reload time (<code>TankFightVisitor.RELOAD_TIME</code>)
+        /// </summary>
+        /// <seealso cref="TankFightVisitor.RELOAD_TIME"/>
 		public int MAX_BULLETS { get; private set; }
+
+        /// <summary>
+        /// How far can gun shoot.
+        /// </summary>
 		public int MAX_RANGE { get; private set; }
+
+        /// <summary>
+        /// How fast bullet fly.
+        /// </summary>
 		public double SHOT_SPEED { get; private set; }
+
+	    /// <summary>
+	    /// Effect of bullets. Their damaging and range of effect.
+	    /// </summary>
 		public Zone[] ZONES { get; private set; }
 
 		public Gun(int ID, int COST, int MAX_BULLETS, int MAX_RANGE, double SHOT_SPEED, Zone[] ZONES) {

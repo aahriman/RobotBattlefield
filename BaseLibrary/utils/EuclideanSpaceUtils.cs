@@ -3,22 +3,51 @@ using BaseLibrary.utils.euclidianSpaceStruct;
 
 namespace BaseLibrary.utils {
     public static class EuclideanSpaceUtils {
+
+        /// <summary>
+        /// Epsilon for comparing doubles.
+        /// </summary>
         private const double EqualsEpsilon = 0.000001;
 
-        public static bool FindIntersenction(Segment segment1, Segment segment2) {
-            double x, y;
-            return FindIntersenction(segment1, segment2, out x, out y);
-        }
-
+        /// <summary>
+        /// Calculate distance between two points.
+        /// </summary>
+        /// <param name="point1">First point.</param>
+        /// <param name="point2">Second point.</param>
+        /// <returns>Distance between object</returns>
         public static double Distance(Point point1, Point point2) {
             return Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2));
         }
 
+        /// <summary>
+        /// Calculate distance between two object.
+        /// </summary>
+        /// <param name="x1">X-coordinate of first object.</param>
+        /// <param name="y1">Y-coordinate of first object.</param>
+        /// <param name="x2">X-coordinate of second object.</param>
+        /// <param name="y2">Y-coordinate of second object.</param>
+        /// <returns>Distance between object</returns>
         public static double Distance(double x1, double y1, double x2, double y2) {
             return Distance(new Point(x1, y1), new Point(x2, y2));
         }
 
-        public static bool FindIntersenction(Segment segment1, Segment segment2, out double x, out double y) {
+        /// <summary>
+        /// Find intersect of two segments.
+        /// </summary>
+        /// <param name="segment1">First segment.</param>
+        /// <param name="segment2">Second segment.</param>
+        /// <returns>True if this segments intersect each other.</returns>
+        public static bool FindIntersection(Segment segment1, Segment segment2) {
+            return FindIntersection(segment1, segment2, out double x, out double y);
+        }
+
+        /// <summary>
+        /// Find intersect of two segments.
+        /// </summary>
+        /// <param name="segment1">First segment.</param>
+        /// <param name="segment2">Second segment.</param>
+        /// <returns>True if this segments intersect each other.</returns>
+        public static bool FindIntersection(Segment segment1, Segment segment2, out double x, out double y) {
             double dX1 = segment1.To.X - segment1.From.X;
             double dY1 = segment1.To.Y - segment1.From.Y;
 
@@ -56,16 +85,27 @@ namespace BaseLibrary.utils {
                    Math.Abs(segment2.From.Y - y) < Math.Abs(dY2) && Math.Abs(segment2.To.Y - y) < Math.Abs(dY2);
         }
 
-        public static bool DEquals(this double compared, double with) {
-            return Math.Abs(compared - with) < EqualsEpsilon;
+        /// <summary>
+        /// Compare two doubles.
+        /// </summary>
+        /// <param name="self">Self (this) double.</param>
+        /// <param name="compared">Compared double with self.</param>
+        /// <returns>true if there are close enough. </returns>
+        public static bool DEquals(this double self, double compared) {
+            return Math.Abs(self - compared) < EqualsEpsilon;
         }
 
-        public static Point GetNearestIntersect(Segment leadSegment, Segment[] possibleegments) {
-            double x, y;
+        /// <summary>
+        /// Find nearest intersect from segment of default Point.
+        /// </summary>
+        /// <param name="leadSegment">This segment do you want to cross</param>
+        /// <param name="possibleSegments">Those segments can cross leadSegment</param>
+        /// <returns>Nearest intersect or default(Point)</returns>
+        public static Point GetNearestIntersect(Segment leadSegment, Segment[] possibleSegments) {
             double minDistance = double.MaxValue;
             Point nearestIntersect = default(Point);
-            foreach (var segment in possibleegments) {
-                if (EuclideanSpaceUtils.FindIntersenction(leadSegment, segment, out x, out y)) {
+            foreach (var segment in possibleSegments) {
+                if (EuclideanSpaceUtils.FindIntersection(leadSegment, segment, out double x, out double y)) {
                     Point intersect = new Point(x, y);
                     double distance = EuclideanSpaceUtils.Distance(leadSegment.From, intersect);
                     if (distance < minDistance) {

@@ -15,6 +15,10 @@ using BaseLibrary.utils;
 using ClientLibrary.config;
 
 namespace ClientLibrary.robot {
+
+    /// <summary>
+    /// Abstract class for robot's classes at client side. Implement all common methods.
+    /// </summary>
     public abstract class ClientRobot : Robot {
 
         /// <summary>
@@ -58,7 +62,7 @@ namespace ClientLibrary.robot {
         /// </param>
         /// <returns>Game type</returns>
         public static GameTypeCommand Connect(String[] args) {
-            ip = ConnectionUtil.LOCAL_ADDRES;
+            ip = ConnectionUtil.LOCAL_ADDRESS;
             port = GameProperties.DEFAULT_PORT;
             if (args.Length >= 1) {
                 ip = args[0];
@@ -116,51 +120,31 @@ namespace ClientLibrary.robot {
         /// </summary>
         public int TURN { get; private set; }
 
-        /// <summary>
-        /// HitPoints which robot has.
-        /// </summary>
+        /// <inheritdoc />
         public override int HitPoints { get; set; }
 
-        /// <summary>
-        /// Score which robot has.
-        /// </summary>
+        /// <inheritdoc />
         public override int Score { get; set; }
 
-        /// <summary>
-        /// Gold which robot has.
-        /// </summary>
+        /// <inheritdoc />
         public override int Gold { get; set; }
 
-        /// <summary>
-        /// X-coordinate of robot.
-        /// </summary>
+        /// <inheritdoc />
         public override double X { get; set; }
 
-        /// <summary>
-        /// Y-coordinate of robot.
-        /// </summary>
+        /// <inheritdoc />
         public override double Y { get; set; }
 
-        /// <summary>
-        /// Power which robot's motor currently use.
-        /// </summary>
+        /// <inheritdoc />
         public override double Power { get; set; }
 
-        /// <summary>
-        /// Angle where robot goes.
-        /// </summary>
+        /// <inheritdoc />
         public override double AngleDrive { get; set; }
 
-        /// <summary>
-        /// What motor do robot has.
-        /// </summary>
-        /// <seealso cref="Motor"/>
+        /// <inheritdoc />
         public override Motor Motor { get; set; }
 
-        /// <summary>
-        /// What armor do robot has.
-        /// </summary>
-        /// <seealso cref="Armor"/>
+        /// <inheritdoc />
         public override Armor Armor { get; set; }
 
 
@@ -328,7 +312,7 @@ namespace ClientLibrary.robot {
         /// What class equipment id is had by robot.
         /// </summary>
         /// <returns></returns>
-        protected abstract ClassEquipment GetClassEquip();
+        protected abstract IClassEquipment GetClassEquip();
 
         /// <summary>
         /// Set percentage power of motor and direction. At the end set <code>AngleDrive</code> if rotation success.

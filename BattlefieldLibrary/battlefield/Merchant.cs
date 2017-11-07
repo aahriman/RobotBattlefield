@@ -86,13 +86,13 @@ namespace BattlefieldLibrary.battlefield {
 		        }
 	        }
 
-            ClassEquipment classEquipment = buyClassEquipment(r, classEquipmentID);
+            IClassEquipment classEquipment = buyClassEquipment(r, classEquipmentID);
 
 	        return new MerchantAnswerCommand(r.Motor.ID, r.Armor.ID, classEquipment.ID);
         }
 
-        private ClassEquipment buyClassEquipment(BattlefieldRobot r, int classEquipmentId) {
-            ClassEquipment classEquipment = null;
+        private IClassEquipment buyClassEquipment(BattlefieldRobot r, int classEquipmentId) {
+            IClassEquipment classEquipment = null;
             {
                 Tank tank = r as Tank;
                 if (tank != null) {

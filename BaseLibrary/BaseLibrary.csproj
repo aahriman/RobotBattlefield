@@ -131,8 +131,8 @@
     <Compile Include="command\common\WaitCommand.cs" />
     <Compile Include="config\Configs.cs" />
     <Compile Include="equip\Armor.cs" />
-    <Compile Include="equip\ClassEquipment.cs" />
-    <Compile Include="equip\Equipment.cs" />
+    <Compile Include="equip\IClassEquipment.cs" />
+    <Compile Include="equip\IEquipment.cs" />
     <Compile Include="equip\Gun.cs" />
     <Compile Include="equip\MineGun.cs" />
     <Compile Include="equip\Motor.cs" />
@@ -156,6 +156,7 @@
     <Compile Include="utils\ProtocolV1_0Utils.cs" />
     <Compile Include="utils\RobotUtils.cs" />
     <Compile Include="utils\StringUtils.cs" />
+    <Compile Include="utils\Utils.cs" />
     <Compile Include="visitors\IMinerVisitor.cs" />
     <Compile Include="visitors\IRepairmanVisitor.cs" />
     <Compile Include="visitors\ITankVisitor.cs" />

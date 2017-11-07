@@ -11,8 +11,9 @@ namespace BaseLibrary.utils {
     public static class ModUtils {
 
         /// <summary>
-        /// Call static constructors for every class which is .dll in Plugins dictionary which have attribute <code>ModDesciption</code> 
+        /// Call static constructors for every class which is .dll in Plugins dictionary which have attribute <code>ModDescription</code> 
         /// </summary>
+        /// <seealso cref="ModDescription"/>
         public static void LoadMods() {
             Load(Assembly.GetCallingAssembly());
             if (Directory.Exists("./")) {
@@ -28,7 +29,7 @@ namespace BaseLibrary.utils {
         }
 
         /// <summary>
-        /// Support resursive go through
+        /// Support recursive go through
         /// </summary>
         /// <param name="file"></param>
         public static void LoadFrom(string file) {

@@ -25,7 +25,7 @@ namespace DeadmatchBattlefield.battlefield {
 
 		protected override LapState NewLapState() {
 			if (Turn > MAX_TURN) {
-				return LapState.LAP_OUT;
+				return LapState.TURN_OUT;
 			}
             List<BattlefieldRobot> aliveRobots = getAliveRobots();
             if (aliveRobots.Count <= 1 && aliveRobots.Count != robots.Count) {

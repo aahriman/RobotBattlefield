@@ -207,23 +207,23 @@ namespace ObstacleMod {
                 bool crossUpOrDown = false;
 
                 if (actualSpaceToPrevLeftBorder.CompareTo(0) < 0) { // maybe cross left
-                    crossLeftOrRigh |= EuclideanSpaceUtils.FindIntersenction(directrix, new Segment(prevLeftBorder, prevUpBorder, prevLeftBorder, prevDownBorder));
+                    crossLeftOrRigh |= EuclideanSpaceUtils.FindIntersection(directrix, new Segment(prevLeftBorder, prevUpBorder, prevLeftBorder, prevDownBorder));
                     // can cross also up or down (throught corner)
                     if (actualSpaceToPrevUpBorder.CompareTo(0) < 0) { // maybe cross up
-                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersenction(directrix, new Segment(prevLeftBorder, prevUpBorder, prevRightBorder, prevUpBorder));
+                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersection(directrix, new Segment(prevLeftBorder, prevUpBorder, prevRightBorder, prevUpBorder));
                     } else if (actualSpaceToPrevDownBorder.CompareTo(0) < 0) { // maybe cross down
-                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersenction(directrix,
+                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersection(directrix,
                             new Segment(prevLeftBorder, prevDownBorder, prevRightBorder, prevDownBorder));
                     } else {
                         crossLeftOrRigh = false; // cannot cross any more then (x, y)
                     }
                 } else if (actualSpaceToPrevRightBorder.CompareTo(0) < 0) { // maybe cross right
-                    crossLeftOrRigh |= EuclideanSpaceUtils.FindIntersenction(directrix, new Segment(prevRightBorder, prevUpBorder, prevRightBorder, prevDownBorder));
+                    crossLeftOrRigh |= EuclideanSpaceUtils.FindIntersection(directrix, new Segment(prevRightBorder, prevUpBorder, prevRightBorder, prevDownBorder));
                     // can cross also up or down (throught corner)
                     if (actualSpaceToPrevUpBorder.CompareTo(0) < 0) { // maybe cross up
-                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersenction(directrix, new Segment(prevLeftBorder, prevUpBorder, prevRightBorder, prevUpBorder));
+                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersection(directrix, new Segment(prevLeftBorder, prevUpBorder, prevRightBorder, prevUpBorder));
                     } else if (actualSpaceToPrevDownBorder.CompareTo(0) < 0) { // maybe cross down
-                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersenction(directrix,
+                        crossUpOrDown |= EuclideanSpaceUtils.FindIntersection(directrix,
                             new Segment(prevLeftBorder, prevDownBorder, prevRightBorder, prevDownBorder));
                     } else {
                         crossLeftOrRigh = false; // cannot cross any more then (x, y)
