@@ -1,11 +1,21 @@
 ﻿using System;
 
 namespace BaseLibrary.equip {
-    public class RepairTool : ClassEquipment {
+    public class RepairTool : IClassEquipment {
+        /// <inheritdoc />
         public int ID { get; private set; }
+
+        /// <inheritdoc />
         public int COST { get; private set; }
+
+        /// <summary>
+        /// How many times per lap can be this robot tool used.
+        /// </summary>
         public int MAX_USAGES { get; private set; }
 
+        /// <summary>
+        /// Effect of reparation. Their hit point gain and range of effect.
+        /// </summary>
         public Zone[] ZONES { get; private set; }
 
         public RepairTool(int ID, int COST, int maxUsages, Zone[] ZONES) {

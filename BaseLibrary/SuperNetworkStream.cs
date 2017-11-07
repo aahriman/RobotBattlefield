@@ -88,7 +88,6 @@ namespace BaseLibrary {
 
             string serializedCommand = PROTOCOL.GetSendableCommand(command);
 
-            Console.WriteLine(serializedCommand);
             await WriteLineAsync(serializedCommand);
 		}
 

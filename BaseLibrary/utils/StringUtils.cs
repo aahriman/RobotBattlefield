@@ -12,9 +12,8 @@ namespace BaseLibrary.utils {
             }
         }
 
-        public static bool GetRestOfStringSplited(string str, string start, string end, out string [] rest, params char[] separator) {
-            string restStr;
-            if (GetRestOfString(str, start, end, out restStr)) {
+        public static bool GetRestOfStringSplitted(string str, string start, string end, out string [] rest, params char[] separator) {
+            if (GetRestOfString(str, start, end, out string restStr)) {
 				rest = restStr.Split(separator, StringSplitOptions.None);
                 return true;
             } else {
@@ -23,9 +22,8 @@ namespace BaseLibrary.utils {
             }
         }
 
-		public static bool GetRestOfStringSplited(string str, string start, string end, out string[] rest, params string[] separator) {
-			string restStr;
-			if (GetRestOfString(str, start, end, out restStr)) {
+		public static bool GetRestOfStringSplitted(string str, string start, string end, out string[] rest, params string[] separator) {
+		    if (GetRestOfString(str, start, end, out string restStr)) {
 				rest = restStr.Split(separator, StringSplitOptions.None);
 				return true;
 			} else {

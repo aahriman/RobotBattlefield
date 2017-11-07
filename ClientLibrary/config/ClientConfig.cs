@@ -7,16 +7,22 @@ using BaseLibrary.protocol;
 
 namespace ClientLibrary.config {
     public static class ClientConfig {
-        public static readonly string[] SUPPERTED_PROTOCOLS;
-        public static readonly ProtocolFactory PROTOCOL_FACTORY = new ProtocolFactory();
+        /// <summary>
+        /// Protocol witch is supported by client.
+        /// </summary>
+        public static readonly string[] SUPPORTED_PROTOCOLS;
 
+        /// <summary>
+        /// Protocol factory for making instance protocol by given protocol string.
+        /// </summary>
+        public static readonly ProtocolFactory PROTOCOL_FACTORY = new ProtocolFactory();
         
         static ClientConfig() {
             int index = 0;
             KeyValuePair<string, AProtocol>[] supportedProtocols = getSupportedProcotols();
-            SUPPERTED_PROTOCOLS = new string[supportedProtocols.Length];
+            SUPPORTED_PROTOCOLS = new string[supportedProtocols.Length];
             foreach (var pair in supportedProtocols) {
-                SUPPERTED_PROTOCOLS[index++] = pair.Key;
+                SUPPORTED_PROTOCOLS[index++] = pair.Key;
                 PROTOCOL_FACTORY.RegisterProtocol(pair.Key, pair.Value);
             }
         }

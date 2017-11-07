@@ -469,14 +469,14 @@ namespace BattlefieldLibrary.battlefield {
             foreach (BattlefieldRobot r in robots) {
                 if (r.HitPoints > 0) {
                     if (r.Power > r.WantedPower) {
-                        r.Power = Math.Max(r.Power - r.Motor.SPEED_DOWN, r.WantedPower);
+                        r.Power = Math.Max(r.Power - r.Motor.DECELERATION, r.WantedPower);
                     } else {
-                        r.Power = Math.Max(r.Power, Math.Min(r.Motor.SPEED_UP_TO, r.WantedPower));
-                        r.Power = Math.Min(r.Power + r.Motor.SPEED_UP, r.WantedPower);
+                        r.Power = Math.Max(r.Power, Math.Min(r.Motor.MAX_INITIAL_POWER, r.WantedPower));
+                        r.Power = Math.Min(r.Power + r.Motor.ACCELERATION, r.WantedPower);
                     }
                 }
 
-                obtacleManager.MoveChange(r, Turn, r.X, r.Y, r.X + RobotUtils.getSpeedX(r), r.Y + RobotUtils.getSpeedY(r));
+                obtacleManager.MoveChange(r, Turn, r.X, r.Y, r.X + RobotUtils.GetSpeedX(r), r.Y + RobotUtils.GetSpeedY(r));
                 if (r.X < 0 || r.X >= 1000 || r.Y < 0 || r.Y >= 1000) {
                     r.HitPoints -= (int)Math.Max(1, 5 * r.Power / 100.0);
                     r.Power = 0;

@@ -8,7 +8,13 @@ using BaseLibrary.command.repairman;
 using BaseLibrary.equip;
 
 namespace ClientLibrary.robot {
+    /// <summary>
+    /// Instances represent robot who can repair other robots.
+    /// </summary>
     public class Repairman : ClientRobot {
+        /// <summary>
+        /// Repair tool witch robot has.
+        /// </summary>
         public RepairTool REPAIR_TOOL { get; private set; }
 
         public Repairman(String name, String teamName) : base(name, teamName) { }
@@ -34,6 +40,11 @@ namespace ClientLibrary.robot {
             return answer;
         }
 
+        /// <summary>
+        /// Repair robots in max range. And send it to server asynchronously.
+        /// </summary>
+        /// <param name="destination">Where to fill answer data.</param>
+        /// <returns></returns>
         private async Task<RepairAnswerCommand> RepairAsync(RepairAnswerCommand destination) {
             await sendCommandAsync(new RepairCommand());
             RepairAnswerCommand answer = await receiveCommandAsync<RepairAnswerCommand>();
@@ -41,6 +52,13 @@ namespace ClientLibrary.robot {
             return answer;
         }
 
+
+        /// <summary>
+        /// Repair robots closer then <code>maxDistance</code>. And send it to server asynchronously.
+        /// </summary>
+        /// <param name="destination">Where to fill answer data.</param>
+        /// <param name="maxDistance">How far can be robots witch will be repaired.</param>
+        /// <returns></returns>
         private async Task<RepairAnswerCommand> RepairAsync(RepairAnswerCommand destination, int maxDistance) {
             await sendCommandAsync(new RepairCommand(maxDistance));
             RepairAnswerCommand answer = await receiveCommandAsync<RepairAnswerCommand>();
@@ -48,15 +66,18 @@ namespace ClientLibrary.robot {
             return answer;
         }
 
+        /// <inheritdoc />
         public override RobotType GetRobotType() {
             return RobotType.REPAIRMAN;
         }
 
+        /// <inheritdoc />
         protected override void SetClassEquip(int id) {
             REPAIR_TOOL = REPAIR_TOOLS_BY_ID[id];
         }
 
-        protected override ClassEquipment GetClassEquip() {
+        /// <inheritdoc />
+        protected override IClassEquipment GetClassEquip() {
             return REPAIR_TOOL;
         }
     }

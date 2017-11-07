@@ -183,7 +183,26 @@ namespace BattlefieldLibrary.battlefield {
                     r.NAME = visitor.NAME;
                     r.ROBOT_TYPE = visitor.ROBOT_TYPE;
                     BATTLEFIELD.robots.Remove(r);
-                    ClassEquipment classEquipment = null;
+                    IClassEquipment classEquipment = null;
+
+                    int teamId;
+                    if (!BATTLEFIELD.robotTeamIdByTeamName.TryGetValue(visitor.TEAM_NAME, out teamId)) {
+                        if (BATTLEFIELD.robotTeamIdByTeamName.Count < BATTLEFIELD.TEAMS) {
+                            teamId = this.teamId++;
+                            BATTLEFIELD.robotsByTeamId[teamId] = new List<BattlefieldRobot> { r };
+                            BATTLEFIELD.robotTeamIdByTeamName.Add(visitor.TEAM_NAME, teamId);
+                        } else {
+                            return new ErrorCommand("Too many teams.");
+                        }
+                    } else {
+                        if (BATTLEFIELD.robotsByTeamId[teamId].Count >= BATTLEFIELD.ROBOTS_IN_TEAM) {
+                            return new ErrorCommand("Too many robots in one team.");
+                        } else {
+                            BATTLEFIELD.robotsByTeamId[teamId].Add(r);
+                        }
+                    }
+                    r.TEAM_ID = teamId;
+
                     switch (r.ROBOT_TYPE) {
                         case RobotType.MINER:
                             var miner = new Miner(r);
@@ -211,23 +230,7 @@ namespace BattlefieldLibrary.battlefield {
                             break;
                     }
 
-                    int teamId;
-                    if (!BATTLEFIELD.robotTeamIdByTeamName.TryGetValue(visitor.TEAM_NAME, out teamId)) {
-                        if (BATTLEFIELD.robotTeamIdByTeamName.Count < BATTLEFIELD.TEAMS) {
-                            teamId = this.teamId++;
-                            BATTLEFIELD.robotsByTeamId[teamId] = new List<BattlefieldRobot> {r};
-                            BATTLEFIELD.robotTeamIdByTeamName.Add(visitor.TEAM_NAME, teamId);
-                        } else {
-                            return new ErrorCommand("Too many teams.");
-                        }
-                    } else {
-                        if (BATTLEFIELD.robotsByTeamId[teamId].Count >= BATTLEFIELD.ROBOTS_IN_TEAM) {
-                            return new ErrorCommand("Too many robots in one team.");
-                        } else {
-                            BATTLEFIELD.robotsByTeamId[teamId].Add(r);
-                        }
-                    }
-                    r.TEAM_ID = teamId;
+                    
                     if (classEquipment == null) {
                         return new ErrorCommand("Unsupported RobotType (" + r.ROBOT_TYPE + ") support only" + RobotType.MINER + ", " + RobotType.TANK + ", " + RobotType.REPAIRMAN);
                     } else {
@@ -292,7 +295,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected class TankFightVisitor : FinghtVisitor {
 
-            public const int LOAD_TIME = 20;
+            public const int RELOAD_TIME = 20;
 
             public TankFightVisitor(Battlefield battlefield) : base(battlefield) {}
 
@@ -314,7 +317,7 @@ namespace BattlefieldLibrary.battlefield {
                             BATTLEFIELD.heapBullet.Add(toLap, bulletList);
                         }
                         bulletList.Add(new Bullet(BATTLEFIELD.Turn, toLap, toX, toY, tank));
-                        int loadAtTurn = BATTLEFIELD.Turn + LOAD_TIME;
+                        int loadAtTurn = BATTLEFIELD.Turn + RELOAD_TIME;
                         List<Tank> list;
                         if (!BATTLEFIELD.gunLoaded.TryGetValue(loadAtTurn, out list)) {
                             list = new List<Tank>();

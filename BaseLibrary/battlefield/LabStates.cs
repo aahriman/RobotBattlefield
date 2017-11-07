@@ -1,5 +1,22 @@
 ﻿namespace BaseLibrary.battlefield {
+    /// <summary>
+    /// Indicate lap states.
+    /// </summary>
 	public enum LapState {
-		WIN, NONE, LAP_OUT
+
+        /// <summary>
+        /// Nothing happens.
+        /// </summary>
+        NONE,
+
+        /// <summary>
+        /// Someone win the battle.
+        /// </summary>
+		WIN,
+
+        /// <summary>
+        /// Out of turns in lap.
+        /// </summary>
+        TURN_OUT
 	};
 }

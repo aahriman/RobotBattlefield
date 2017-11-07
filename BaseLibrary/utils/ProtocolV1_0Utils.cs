@@ -128,7 +128,7 @@ namespace BaseLibrary.utils {
 		}
 
 		public static bool GetParams(string orig, string commandName, Deep deep, out string[] rest) {
-			return StringUtils.GetRestOfStringSplited(orig, commandName + "(", ")", out rest, deep.SEPARATOR);
+			return StringUtils.GetRestOfStringSplitted(orig, commandName + "(", ")", out rest, deep.SEPARATOR);
 		}
 
 		// =========== ARRAY ========
@@ -164,12 +164,12 @@ namespace BaseLibrary.utils {
 		}
 
 		public static bool Deserialize(string s, out string[] array, Deep deep) {
-			return StringUtils.GetRestOfStringSplited(s, "[", "]", out array, deep.SEPARATOR);
+			return StringUtils.GetRestOfStringSplitted(s, "[", "]", out array, deep.SEPARATOR);
 		}
 
 		public static bool Deserialize(string s, out double[] array, Deep deep) {
 			string[] rest;
-			if (StringUtils.GetRestOfStringSplited(s, "[", "]", out rest, deep.SEPARATOR)) {
+			if (StringUtils.GetRestOfStringSplitted(s, "[", "]", out rest, deep.SEPARATOR)) {
 				array = new double[rest.Length];
 				for (int i = 0; i < rest.Length; i++) {
 					if (!double.TryParse(rest[i], out array[i])) {
@@ -185,7 +185,7 @@ namespace BaseLibrary.utils {
 
 		public static bool Deserialize(string s, out int[] array, Deep deep) {
 			string[] rest;
-			if (StringUtils.GetRestOfStringSplited(s, "[", "]", out rest, deep.SEPARATOR)) {
+			if (StringUtils.GetRestOfStringSplitted(s, "[", "]", out rest, deep.SEPARATOR)) {
 				array = new int[rest.Length];
 				for (int i = 0; i < rest.Length; i++) {
 					if (!int.TryParse(rest[i], out array[i])) {
@@ -214,7 +214,7 @@ namespace BaseLibrary.utils {
 				dict = new KeyValuePair<string, string>[rest.Length];
 				string[] keyValue;
 				for (int i = 0; i < dict.Length; i++) {
-					if (StringUtils.GetRestOfStringSplited(rest[i], string.Empty, string.Empty, out keyValue, DICTIONARY_KEY_VALUE_SEPARATOR)) {
+					if (StringUtils.GetRestOfStringSplitted(rest[i], string.Empty, string.Empty, out keyValue, DICTIONARY_KEY_VALUE_SEPARATOR)) {
 						if (keyValue.Length == 2) {
 							dict[i] = new KeyValuePair<string, string>(keyValue[0], keyValue[1]);
 						} else {

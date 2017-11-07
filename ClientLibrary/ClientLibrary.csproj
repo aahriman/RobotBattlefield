@@ -43,11 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AClientRobot.cs" />
+    <Compile Include="ConnectionUtil.cs" />
     <Compile Include="config\ClientConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="protocol\HandShakeProtocol.cs" />
-    <Compile Include="robot\Miner.cs" />
+    <Compile Include="robot\MineLayer.cs" />
     <Compile Include="robot\Repairman.cs" />
     <Compile Include="robot\ClientRobot.cs" />
     <Compile Include="robot\Tank.cs" />
