@@ -27,9 +27,9 @@ namespace ClientLibrary.robot {
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="range">how far this robot wants to shot</param>
-        public ShotAnswerCommand Shot(double angle, double range) {
+        public ShotAnswerCommand Shoot(double angle, double range) {
             ShotAnswerCommand answer = new ShotAnswerCommand();
-            addRobotTask(ShotAsync(answer, angle, range));
+            addRobotTask(ShootAsync(answer, angle, range));
             return answer;
         }
 
@@ -39,7 +39,7 @@ namespace ClientLibrary.robot {
         /// <param name="destination">Where to fill answer data.</param>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="range">how far this robot wants to shot</param>
-        private async Task<ShotAnswerCommand> ShotAsync(ShotAnswerCommand destination, double angle, double range) {
+        private async Task<ShotAnswerCommand> ShootAsync(ShotAnswerCommand destination, double angle, double range) {
             await sendCommandAsync(new ShotCommand(range, angle));
             ShotAnswerCommand answer = receiveCommand<ShotAnswerCommand>();
             destination.FillData(answer);

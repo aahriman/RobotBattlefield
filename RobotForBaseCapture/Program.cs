@@ -25,12 +25,12 @@ namespace MinerForBaseCapture {
 
         static Base capturedBase = null;
                 
-        static MyMiner miner = new MyMiner("mines", TEAM_ID);
+        static MyMineLayer _mineLayer = new MyMineLayer("mines", TEAM_ID);
         static Repairman repairman = new Repairman("repairman", TEAM_ID);
 
-        class MyMiner : MineLayer {
+        class MyMineLayer : MineLayer {
 
-            public MyMiner(String name, String teamName) : base(name, teamName) {}
+            public MyMineLayer(String name, String teamName) : base(name, teamName) {}
 
             public int previousHitpoints = 0;
 
@@ -39,7 +39,7 @@ namespace MinerForBaseCapture {
                 bases = BaseCapture.GetBases(state);
 
                 foreach (var @base in bases) {
-                    if (@base.TeamId != miner.TEAM_ID) {
+                    if (@base.TeamId != _mineLayer.TEAM_ID) {
                         capturedBase = @base;
                         break;
                     }
@@ -94,7 +94,7 @@ namespace MinerForBaseCapture {
         }
 
         private static bool ScanSeeEnemy(ScanAnswerCommand scan) {
-            return scan != null && scan.ENEMY_ID != miner.ID && scan.ENEMY_ID != repairman.ID;
+            return scan != null && scan.ENEMY_ID != _mineLayer.ID && scan.ENEMY_ID != repairman.ID;
         }
 
         private static RepairmenState getRepairmenState() {
@@ -103,8 +103,8 @@ namespace MinerForBaseCapture {
                                              new Point(capturedBase.X, capturedBase.Y)) >
                 BaseCapture.BASE_SIZE / 2.0) {
                 return RepairmenState.GO_TO_BASE;
-            } else if (miner.HitPoints < 100 &&
-                       EuclideanSpaceUtils.Distance(repairman.X, repairman.Y, miner.X, miner.Y) <
+            } else if (_mineLayer.HitPoints < 100 &&
+                       EuclideanSpaceUtils.Distance(repairman.X, repairman.Y, _mineLayer.X, _mineLayer.Y) <
                        repairman.REPAIR_TOOL.ZONES[0].DISTANCE) {
                 return RepairmenState.REPAIR;
             } else {
@@ -113,12 +113,12 @@ namespace MinerForBaseCapture {
         }
 
         private static MinerState getMinerState() {
-            if (EuclideanSpaceUtils.Distance(new Point(miner.X, miner.Y), new Point(capturedBase.X, capturedBase.Y)) >
+            if (EuclideanSpaceUtils.Distance(new Point(_mineLayer.X, _mineLayer.Y), new Point(capturedBase.X, capturedBase.Y)) >
                 BaseCapture.BASE_SIZE) {
                 return MinerState.GO_TO_BASE;
-            } else if (miner.PuttedMines < miner.MINE_GUN.MAX_MINES) {
+            } else if (_mineLayer.PuttedMines < _mineLayer.MINE_GUN.MAX_MINES) {
                 return MinerState.PUT_MINE;
-            } else if (miner.HitPoints < miner.previousHitpoints) {
+            } else if (_mineLayer.HitPoints < _mineLayer.previousHitpoints) {
                 return MinerState.GO_TO_REPAIRMAN;
             } else if (ScanSeeEnemy(scan1) || ScanSeeEnemy(scan2)) {
                 return MinerState.DETONATE;
@@ -129,6 +129,7 @@ namespace MinerForBaseCapture {
 
 
         public static void Main(string[] args) {
+            ClientRobot.Connect(args);
             while (true) {
 
                 RepairmenState repairmenState = getRepairmenState();
@@ -144,28 +145,28 @@ namespace MinerForBaseCapture {
                 
                 switch (minetState) {
                     case MinerState.DETONATE:
-                        minerDetonate = miner.DetonateMine(miner.PuttedMinesList[0].ID);
+                        minerDetonate = _mineLayer.DetonateMine(_mineLayer.PuttedMinesList[0].ID);
                         
                         break;
                     case MinerState.PUT_MINE:
-                        minerPut = miner.PutMine();
+                        minerPut = _mineLayer.PutMine();
                         break;
                     case MinerState.GO_TO_REPAIRMAN:
                         minerDrive =
-                            miner.Drive(AngleUtils.AngleDegree(miner.X, miner.Y, repairman.X, repairman.Y),
-                                             miner.Motor.ROTATE_IN);
+                            _mineLayer.Drive(AngleUtils.AngleDegree(_mineLayer.X, _mineLayer.Y, repairman.X, repairman.Y),
+                                             _mineLayer.Motor.ROTATE_IN);
                         break;
                     case MinerState.GO_TO_BASE:
-                        minerDrive = robotDriveToBase(miner);
+                        minerDrive = robotDriveToBase(_mineLayer);
                         break;
                     case MinerState.GO_AROUND:
-                        if (EuclideanSpaceUtils.Distance(miner.X, miner.Y, capturedBase.X, capturedBase.Y) < BaseCapture.BASE_SIZE  * 3.0 / 4.0) {
+                        if (EuclideanSpaceUtils.Distance(_mineLayer.X, _mineLayer.Y, capturedBase.X, capturedBase.Y) < BaseCapture.BASE_SIZE  * 3.0 / 4.0) {
                             minerSubState = SubState.SCAN;
-                            minerScan = miner.Scan(AngleUtils.AngleDegree(miner.X, miner.Y, capturedBase.X, capturedBase.Y), 10);
+                            minerScan = _mineLayer.Scan(AngleUtils.AngleDegree(_mineLayer.X, _mineLayer.Y, capturedBase.X, capturedBase.Y), 10);
                         } else {
 
                             minerSubState = SubState.DRIVE;
-                            minerDrive = robotDriveAround(miner);
+                            minerDrive = robotDriveAround(_mineLayer);
                         }
                         break;
                 }
@@ -176,12 +177,12 @@ namespace MinerForBaseCapture {
 
                 switch (repairmenState) {
                     case RepairmenState.GO_AROUND:
-                        if (EuclideanSpaceUtils.Distance(miner.X, miner.Y, capturedBase.X, capturedBase.Y) <
+                        if (EuclideanSpaceUtils.Distance(_mineLayer.X, _mineLayer.Y, capturedBase.X, capturedBase.Y) <
                             BaseCapture.BASE_SIZE * 3.0 / 4.0) {
                             repairmenSubState = SubState.SCAN;
                             repairmenScan =
                                 repairman.Scan(
-                                                    AngleUtils.AngleDegree(miner.X, miner.Y, capturedBase.X,
+                                                    AngleUtils.AngleDegree(_mineLayer.X, _mineLayer.Y, capturedBase.X,
                                                                            capturedBase.Y), 10);
                         } else {
 
@@ -197,8 +198,8 @@ namespace MinerForBaseCapture {
 
                     case RepairmenState.REPAIR:
                         repairmenRepair =
-                            repairman.Repair((int)EuclideanSpaceUtils.Distance(repairman.X, repairman.Y, miner.X,
-                                                                               miner.Y) + 1);
+                            repairman.Repair((int)EuclideanSpaceUtils.Distance(repairman.X, repairman.Y, _mineLayer.X,
+                                                                               _mineLayer.Y) + 1);
                         break;
                 }
                 
@@ -223,7 +224,7 @@ namespace MinerForBaseCapture {
 
                 switch (repairmenState) {
                     case RepairmenState.REPAIR:
-                        miner.previousHitpoints = miner.HitPoints;
+                        _mineLayer.previousHitpoints = _mineLayer.HitPoints;
                         break;
                     case RepairmenState.GO_TO_BASE:
                         break;

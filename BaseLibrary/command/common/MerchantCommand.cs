@@ -2,6 +2,9 @@
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
+    /// <summary>
+    /// Command for specific what robot want to buy.
+    /// </summary>
     public class MerchantCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
@@ -12,9 +15,24 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        /// <summary>
+        /// What motor want to robot buy.
+        /// </summary>
         public int MOTOR_ID {get; private set;}
+
+        /// <summary>
+        /// What class equipment want to robot buy.
+        /// </summary>
         public int CLASS_EQUIPMENT_ID { get; private set; }
+
+        /// <summary>
+        /// What armor want to robot buy.
+        /// </summary>
         public int ARMOR_ID { get; private set; }
+
+        /// <summary>
+        /// How many HP want robot to fix.
+        /// </summary>
         public int REPAIR_HP { get; private set; }
 
         public MerchantCommand(int motorId, int armorId, int classEquipmentId, int repairHp) {

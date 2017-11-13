@@ -31,7 +31,7 @@ namespace Spot {
                     for (int angle = 0; angle < 360; angle += 30) {
                         ScanAnswerCommand scanAnswer;
                         if ((scanAnswer = spot.Scan(angle, 10)).ENEMY_ID != spot.ID) {
-                            spot.Shot(angle, scanAnswer.RANGE);
+                            spot.Shoot(angle, scanAnswer.RANGE);
                         }
                     }
                 }

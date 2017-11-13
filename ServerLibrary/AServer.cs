@@ -22,6 +22,8 @@ namespace BattlefieldLibrary {
             
             myBindSocket(socketIPv4, IPAddress.Any, port);
             myBindSocket(socketIPv6, IPAddress.IPv6Any, port);
+
+            Console.WriteLine("Arena runs on " + String.Join(", ", (IEnumerable<IPAddress>)Dns.GetHostAddresses(Dns.GetHostName())) + " with port " + port);
         }
 
 

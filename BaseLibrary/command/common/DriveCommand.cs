@@ -17,7 +17,14 @@ namespace BaseLibrary.command.common {
         public static DriveCommand GetInstance(ProtocolDouble speed, ProtocolDouble angle) {
             return new DriveCommand(speed, angle);
         }
+        /// <summary>
+        /// How fast robot wants to go.
+        /// </summary>
         public double POWER { get; private set; }
+
+        /// <summary>
+        /// In witch direction robot wants to go.
+        /// </summary>
         public double ANGLE { get; private set; }
 
         public DriveCommand(double power, double angle) {

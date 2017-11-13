@@ -234,9 +234,12 @@ namespace ClientLibrary.robot {
         /// <returns></returns>
         private async Task<InitAnswerCommand> InitAsync(InitAnswerCommand destination, String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
-            var answerCommand = await receiveCommandAsync<InitAnswerCommand>();
+            InitAnswerCommand answerCommand = (InitAnswerCommand) await sns.RecieveCommandAsync();
             ProcessInit(answerCommand);
             destination.FillData(answerCommand);
+
+            RobotStateCommand robotState = (RobotStateCommand)await sns.RecieveCommandAsync();
+            ProcessState(robotState);
             return answerCommand;
         }
 

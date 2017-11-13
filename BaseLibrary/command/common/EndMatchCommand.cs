@@ -2,6 +2,9 @@
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
+    /// <summary>
+    /// Command at the end of match.
+    /// </summary>
     public class EndMatchCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
@@ -12,6 +15,9 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        /// <summary>
+        /// Where can be downloaded file with information about battle.
+        /// </summary>
         public string FILE_URL { get; private set; }
 
         public EndMatchCommand(string fileUrl) {

@@ -55,7 +55,7 @@ namespace RobotForFlagCapture {
             for (int angle = 0; angle < 360; angle += 30) {
                 ScanAnswerCommand scanAnswer = tank.Scan(angle, 10);
                 if (scanAnswer.ENEMY_ID != tank.ID) {
-                    tank.Shot(angle, scanAnswer.RANGE);
+                    tank.Shoot(angle, scanAnswer.RANGE);
                 }
             }
         }

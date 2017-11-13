@@ -13,13 +13,42 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        /// <summary>
+        /// X-coordinate of robot position.
+        /// </summary>
         public double X { get; private set; }
+
+        /// <summary>
+        /// Y-coordinate of robot position.
+        /// </summary>
         public double Y { get; private set; }
+        /// <summary>
+        /// Heal of robot.
+        /// </summary>
         public int HIT_POINTS { get; private set; }
+        /// <summary>
+        /// Actual robot power.
+        /// </summary>
         public double POWER { get; private set; }
+
+        /// <summary>
+        /// Actual turn.
+        /// </summary>
         public int TURN { get; private set; }
+
+        /// <summary>
+        /// Max turns in lap.
+        /// </summary>
         public int MAX_TURN { get; private set; }
+
+        /// <summary>
+        /// How many robot are life. 
+        /// </summary>
         public int COUNT_OF_LIFE_ROBOTS { get; private set; }
+
+        /// <summary>
+        /// Ids of lives robot.
+        /// </summary>
         public int[] ARRAY_IDS_OF_LIFE_ROBOTS { get; private set; }
 
         public EndLapCommand END_LAP_COMMAND { get; private set; }

@@ -3,6 +3,9 @@ using BaseLibrary.battlefield;
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
+    /// <summary>
+    /// Command at the end of lap. This is sub command to RobotStateCommand
+    /// </summary>
     public class EndLapCommand : ACommonCommand {
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
@@ -13,8 +16,19 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        /// <summary>
+        /// Why lap end.
+        /// </summary>
         public LapState STATE { get; private set; }
+
+        /// <summary>
+        /// How many gold robot has.
+        /// </summary>
         public int GOLD { get; private set; }
+
+        /// <summary>
+        /// What robot score is.
+        /// </summary>
         public int SCORE { get; private set; }
 
         public EndLapCommand(LapState state, int gold, int score) {

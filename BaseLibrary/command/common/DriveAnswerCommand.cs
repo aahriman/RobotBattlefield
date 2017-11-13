@@ -2,6 +2,9 @@
 using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
+    /// <summary>
+    /// Answer for drive command.
+    /// </summary>
     public class DriveAnswerCommand : ACommonCommand {
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -11,11 +14,9 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
-
-        public static DriveAnswerCommand GetInstance(bool succes) {
-            return new DriveAnswerCommand(succes);
-        }
-
+        /// <summary>
+        /// True if robot change direction.
+        /// </summary>
         public bool SUCCESS { get; private set; }
 
         public DriveAnswerCommand() {}
