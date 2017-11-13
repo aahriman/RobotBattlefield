@@ -99,7 +99,7 @@ namespace BaseLibrary.battlefield {
         /// <param name="other">Compared robot with this robot.</param>
         /// <returns></returns>
         protected bool Equals(Robot other) {
-            return ID == other.ID;
+            return ID != default(int) && ID == other.ID;
         }
 
         /// <inheritdoc />

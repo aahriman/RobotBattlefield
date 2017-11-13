@@ -253,9 +253,9 @@ namespace BattlefieldLibrary.battlefield {
                         }
                         r.WantedPower = Math.Min(visitor.POWER, 100);
                         r.WantedPower = Math.Max(r.WantedPower, 0);
-                        return DriveAnswerCommand.GetInstance(r.AngleDrive.DEquals(visitor.ANGLE));
+                        return new DriveAnswerCommand(r.AngleDrive.DEquals(visitor.ANGLE));
                     } else {
-                        return DriveAnswerCommand.GetInstance(r.AngleDrive.DEquals(visitor.ANGLE));
+                        return new DriveAnswerCommand(r.AngleDrive.DEquals(visitor.ANGLE));
                     }
                 }
             }
