@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command {
     public static class ACommandExtensions {
-        public static async Task SendAsync(this ACommand.Sendable instance, SuperNetworkStream s) {
+        public static async Task SendAsync(this ACommand.Sendable instance, NetworkStream s) {
             if (instance == null) {
                 throw new ArgumentNullException("Instance can not be null.");
             }
@@ -29,17 +29,19 @@ namespace BaseLibrary.command {
             string Serialize();
         }
 
+        /// <summary>
+        /// true if request do not have valid data.
+        /// </summary>
         protected bool pending = true;
 
+        /// <summary>
+        /// For send mod extensions.
+        /// </summary>
         public Object[] MORE { get; protected set; }
 
-        protected ACommand() {}
-
-        public abstract void accept(ICommandVisitor accepter);
-
-        public abstract Output accept<Output>(ICommandVisitor<Output> accepter);
-
-        public abstract Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input);
+        protected ACommand() {
+            
+        }
 
         public override string ToString() {
             ACommand.Sendable sendable = this as ACommand.Sendable;

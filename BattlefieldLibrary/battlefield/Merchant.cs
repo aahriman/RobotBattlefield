@@ -108,14 +108,14 @@ namespace BattlefieldLibrary.battlefield {
             }
 
             {
-                Miner miner = r as Miner;
-                if (miner != null) {
-                    classEquipment = miner.MineGun;
+                MineLayer mineLayer = r as MineLayer;
+                if (mineLayer != null) {
+                    classEquipment = mineLayer.MineGun;
                     MineGun wantedBuy;
                     if (mineGunsById.TryGetValue(classEquipmentId, out wantedBuy) && !wantedBuy.Equals(classEquipment)) {
                         if (r.Gold >= wantedBuy.COST) {
                             r.Gold -= wantedBuy.COST;
-                            miner.MineGun = wantedBuy;
+                            mineLayer.MineGun = wantedBuy;
                         }
                     }
                 }

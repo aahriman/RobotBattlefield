@@ -6,13 +6,13 @@ namespace BattlefieldLibrary.battlefield {
         public int ID { get; private set; }
         public double X { get; private set; }
         public double Y { get; private set; }
-        public Miner MINER { get; private set; }
+        public MineLayer MineLayer { get; private set; }
 
-        public Mine(int id, double x, double y, Miner miner) {
+        public Mine(int id, double x, double y, MineLayer mineLayer) {
             ID = id;
             X = x;
             Y = y;
-            MINER = miner;
+            MineLayer = mineLayer;
         }
 
         public Point GetPosition() {

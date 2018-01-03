@@ -15,7 +15,7 @@ namespace BaseLibrary.protocol {
 
         public TResult Deserialize(string transferString) {
             foreach (IFactory<TResult, TTransfer> commandFactory in commandFactories) {
-                if (commandFactory.IsDeserializable(transferString)) {
+                if (commandFactory.IsDeserializeable(transferString)) {
                     return commandFactory.Deserialize(transferString);
                 }
             }

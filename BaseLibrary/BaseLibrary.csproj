@@ -33,6 +33,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +48,7 @@
     <Compile Include="battlefield\LabStates.cs" />
     <Compile Include="battlefield\Robot.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="command\CommandProcessor.cs" />
     <Compile Include="command\common\ACommonCommand.cs" />
     <Compile Include="command\handshake\AckCommand.cs" />
     <Compile Include="command\ACommand.cs" />
@@ -63,14 +67,14 @@
     <Compile Include="command\common\DriveCommand.cs" />
     <Compile Include="command\common\EndLapCommand.cs" />
     <Compile Include="command\common\EndMatchCommand.cs" />
-    <Compile Include="command\equipment\GetMineGunAnswerCommand.cs" />
-    <Compile Include="command\equipment\GetMineGunCommand.cs" />
+    <Compile Include="command\equipment\GetMineGunsAnswerCommand.cs" />
+    <Compile Include="command\equipment\GetMineGunsCommand.cs" />
     <Compile Include="command\handshake\ErrorCommand.cs" />
     <Compile Include="command\handshake\GameTypeCommand.cs" />
     <Compile Include="command\equipment\GetArmorsAnswerCommand.cs" />
     <Compile Include="command\equipment\GetArmorsCommand.cs" />
-    <Compile Include="command\equipment\GetRepairToolAnswerCommand.cs" />
-    <Compile Include="command\equipment\GetRepairToolCommand.cs" />
+    <Compile Include="command\equipment\GetRepairToolsAnswerCommand.cs" />
+    <Compile Include="command\equipment\GetRepairToolsCommand.cs" />
     <Compile Include="command\ISubCommandFactory.cs" />
     <Compile Include="command\miner\AMinerCommand.cs" />
     <Compile Include="command\miner\DetonateMineCommand.cs" />
@@ -95,17 +99,17 @@
     <Compile Include="command\common\RobotStateCommand.cs" />
     <Compile Include="command\common\ScanAnswerCommand.cs" />
     <Compile Include="command\common\ScanCommand.cs" />
-    <Compile Include="command\tank\ShotAnswerCommand.cs" />
-    <Compile Include="command\tank\ShotCommand.cs" />
+    <Compile Include="command\tank\ShootAnswerCommand.cs" />
+    <Compile Include="command\tank\ShootCommand.cs" />
     <Compile Include="command\v1.0\equipment\ArmorV1_0.cs" />
     <Compile Include="command\v1.0\DriveAnswerCommandV1_0.cs" />
     <Compile Include="command\v1.0\DriveCommandV1_0.cs" />
     <Compile Include="command\v1.0\EndLapCommandV1_0.cs" />
     <Compile Include="command\v1.0\EndMatchCommandV1_0.cs" />
-    <Compile Include="command\v1.0\equipment\GetMineGunAnswerCommandV1_0.cs" />
-    <Compile Include="command\v1.0\equipment\GetMineGunCommandV1_0.cs" />
-    <Compile Include="command\v1.0\equipment\GetRepairToolAnswerCommandV1_0.cs" />
-    <Compile Include="command\v1.0\equipment\GetRepairToolCommandV1_0.cs" />
+    <Compile Include="command\v1.0\equipment\GetMineGunsAnswerCommandV10.cs" />
+    <Compile Include="command\v1.0\equipment\GetMineGunsCommandV10.cs" />
+    <Compile Include="command\v1.0\equipment\GetRepairToolsAnswerCommandV10.cs" />
+    <Compile Include="command\v1.0\equipment\GetRepairToolsCommandV10.cs" />
     <Compile Include="command\v1.0\GameTypeCommandV1_0.cs" />
     <Compile Include="command\v1.0\equipment\GetArmorsAnwerCommandV1_0.cs" />
     <Compile Include="command\v1.0\equipment\GetArmorsCommandV1_0.cs" />
@@ -124,8 +128,8 @@
     <Compile Include="command\v1.0\RobotStateCommandV1_0.cs" />
     <Compile Include="command\v1.0\ScanAnswerCommandV1_0.cs" />
     <Compile Include="command\v1.0\ScanCommandV1_0.cs" />
-    <Compile Include="command\v1.0\tank\ShotAnswerCommandV1_0.cs" />
-    <Compile Include="command\v1.0\tank\ShotCommandV1_0.cs" />
+    <Compile Include="command\v1.0\tank\ShootAnswerCommandV10.cs" />
+    <Compile Include="command\v1.0\tank\ShootCommandV10.cs" />
     <Compile Include="command\v1.0\WaitCommandV1_0.cs" />
     <Compile Include="command\v1.0\equipment\ZoneV1_0.cs" />
     <Compile Include="command\common\WaitCommand.cs" />
@@ -138,14 +142,13 @@
     <Compile Include="equip\Motor.cs" />
     <Compile Include="equip\RepairTool.cs" />
     <Compile Include="equip\Zone.cs" />
-    <Compile Include="IListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="protocol\ProtocolDouble.cs" />
     <Compile Include="protocol\ProtocolFactory.cs" />
     <Compile Include="protocol\AProtocol.cs" />
     <Compile Include="protocol\ProtocolDescription.cs" />
     <Compile Include="protocol\ProtocolV1_0.cs" />
-    <Compile Include="SuperNetworkStream.cs" />
+    <Compile Include="NetworkStream.cs" />
     <Compile Include="utils\AngleUtils.cs" />
     <Compile Include="utils\ArrayUtils.cs" />
     <Compile Include="utils\EuclideanSpaceUtils.cs" />
@@ -157,12 +160,10 @@
     <Compile Include="utils\RobotUtils.cs" />
     <Compile Include="utils\StringUtils.cs" />
     <Compile Include="utils\Utils.cs" />
-    <Compile Include="visitors\IMinerVisitor.cs" />
-    <Compile Include="visitors\IRepairmanVisitor.cs" />
-    <Compile Include="visitors\ITankVisitor.cs" />
-    <Compile Include="visitors\ICommandVisitor.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

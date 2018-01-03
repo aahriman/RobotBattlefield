@@ -5,7 +5,6 @@ using BaseLibrary.command.tank;
 using BaseLibrary.command.v1._0.tank;
 using BaseLibrary.protocol;
 using BaseLibrary.utils;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.miner {
     public class DetonateMineCommandV1_0 : DetonateMineCommand, ACommand.Sendable {
@@ -15,7 +14,7 @@ namespace BaseLibrary.command.miner {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, out rest) && rest.Length == 1) {
                     int mineId;

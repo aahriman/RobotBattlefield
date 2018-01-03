@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.repairman {
     public class RepairCommand : ARepairmanCommand {
@@ -12,25 +12,25 @@ namespace BaseLibrary.command.repairman {
             return position;
         }
 
-        public int MAX_DISTANCE { get; private set; }
+        private int _maxDistance;
+        /// <summary>
+        /// Distance how far repair.
+        /// </summary>
+        public int MAX_DISTANCE {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _maxDistance;
+            }
+            private set => _maxDistance = value;
+        }
 
         public RepairCommand() : this(10000) {
         }
 
         public RepairCommand(int maxDistance) {
             this.MAX_DISTANCE = maxDistance;
-        }
-
-        public override void accept(IRepairmanVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public override Output accept<Output>(IRepairmanVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public override Output accept<Output, Input>(IRepairmanVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
+            pending = false;
         }
     }
 }

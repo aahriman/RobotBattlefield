@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.equip;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
     public class GetGunsAnswerCommand : AEquipmentCommand {
@@ -13,23 +12,15 @@ namespace BaseLibrary.command.equipment {
             return position;
         }
 
+        /// <summary>
+        /// Available guns to buy.
+        /// </summary>
+        /// <seealso cref="Gun"/>
         public Gun[] GUNS { get; private set; }
 
         public GetGunsAnswerCommand(Gun[] guns)
             : base() {
 				GUNS = guns;
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.handshake {
 
@@ -19,7 +18,7 @@ namespace BaseLibrary.command.handshake {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 s = s.Trim();
                 if (s.Equals("ACK")) {
                     cache.Cached(s, new AckCommand());
@@ -41,18 +40,6 @@ namespace BaseLibrary.command.handshake {
 
         string Sendable.Serialize() {
             return "ACK";
-        }
-
-        public override void accept(ICommandVisitor accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            throw new NotImplementedException();
         }
     }
 }

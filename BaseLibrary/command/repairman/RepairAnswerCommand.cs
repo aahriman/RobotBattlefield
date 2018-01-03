@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.repairman {
     public class RepairAnswerCommand : ARepairmanCommand {
@@ -12,30 +12,44 @@ namespace BaseLibrary.command.repairman {
             return position;
         }
 
-        public bool SUCCESS { get; private set; }
+        private bool _success;
+        /// <summary>
+        /// <list type="bullet">
+        ///   <item>
+        ///      <description>true - robot use repair tool to repair robots in range.</description>
+        ///   </item>
+        ///   <item>
+        ///      <description>false - robot do not use repair tool to repair. Robot use repair tool too many times.</description>
+        ///   </item>
+        /// </list>
+        /// </summary>
+        public bool SUCCESS {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _success;
+            } private set => _success = value; }
 
+        /// <summary>
+        /// Using for create pending command.
+        /// </summary>
         public RepairAnswerCommand() { }
 
-        public RepairAnswerCommand(bool succes) {
-            SUCCESS = succes;
+        /// <summary>
+        /// Using for create command fulled with data.
+        /// </summary>
+        public RepairAnswerCommand(bool success) {
+            SUCCESS = success;
             pending = false;
         }
 
+        /// <summary>
+        /// Fill command by data from another command (use full for filling pending command by command with data).
+        /// </summary>
+        /// <param name="source"></param>
         public void FillData(RepairAnswerCommand source) {
             SUCCESS = source.SUCCESS;
             pending = false;
-        }
-
-        public override void accept(IRepairmanVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public override Output accept<Output>(IRepairmanVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public override Output accept<Output, Input>(IRepairmanVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

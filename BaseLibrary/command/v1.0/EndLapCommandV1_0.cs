@@ -30,7 +30,7 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 s = s.Trim();
                 string[] rest;
                 if (StringUtils.GetRestOfStringSplitted(s, "END_LAP(", ")", out rest, ';')) {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BaseLibrary.command.miner;
 using BaseLibrary.protocol;
 using BaseLibrary.utils;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.repairman {
     public class RepairAnswerCommandV1_0 : RepairAnswerCommand, ACommand.Sendable {
@@ -13,7 +12,7 @@ namespace BaseLibrary.command.repairman {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, out rest) && rest.Length == 1) {
                     if (rest[0].Equals("0") || rest[0].Equals("1")) {
@@ -36,7 +35,7 @@ namespace BaseLibrary.command.repairman {
 
 
         
-        public RepairAnswerCommandV1_0(bool succes) : base(succes){
+        public RepairAnswerCommandV1_0(bool success) : base(success){
         }
 
         public string Serialize() {

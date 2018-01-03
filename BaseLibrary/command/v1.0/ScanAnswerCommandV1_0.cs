@@ -10,12 +10,12 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 s = s.Trim();
 				if (s.StartsWith(NAME+"(") && s.EndsWith(")")) {
 					var rest = s.Substring(NAME.Length+1, s.Length - 2 - NAME.Length).Trim().Split(';');
-                    ProtocolDouble range; int enemyId;
-                    if (ProtocolDouble.TryParse(rest[0], out range) && int.TryParse(rest[1], out enemyId)) {
+                    double range; int enemyId;
+                    if (double.TryParse(rest[0], out range) && int.TryParse(rest[1], out enemyId)) {
                         cache.Cached(s, new ScanAnswerCommandV1_0(range, enemyId));
                         return true;
                     }
@@ -33,11 +33,11 @@ namespace BaseLibrary.command.v1._0 {
             }
         }
 
-        public ScanAnswerCommandV1_0(ProtocolDouble range, int enemyID)
+        public ScanAnswerCommandV1_0(double range, int enemyID)
             : base(range, enemyID) { }
 
         public string Serialize() {
-            return ProtocolV1_0Utils.SerializeParams("SCAN_ANSWER", RANGE, ENEMY_ID);
+            return ProtocolV1_0Utils.SerializeParams("SCAN_ANSWER", (ProtocolDouble) RANGE, ENEMY_ID);
         }
     }
 }

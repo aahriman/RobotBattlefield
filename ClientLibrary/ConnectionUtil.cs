@@ -11,6 +11,7 @@ using BaseLibrary.command.handshake;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
 using ClientLibrary.protocol;
+using NetworkStream = BaseLibrary.NetworkStream;
 
 namespace ClientLibrary {
     /// <summary>
@@ -26,7 +27,7 @@ namespace ClientLibrary {
         /// <summary>
         /// Instance for communication with server.
         /// </summary>
-        public SuperNetworkStream COMMUNICATION { get; private set; }
+        public NetworkStream COMMUNICATION { get; private set; }
         
         public ConnectionUtil() { }
 
@@ -63,7 +64,7 @@ namespace ClientLibrary {
                     throw new Exception("Cannot connect to server. Is server running?");
                 }
                 try {
-                    COMMUNICATION = new SuperNetworkStream(socket);
+                    COMMUNICATION = new NetworkStream(socket);
                 } catch (TypeInitializationException e) {
                     throw e.InnerException;
                 }
@@ -71,7 +72,7 @@ namespace ClientLibrary {
                 waitHandle.Set();
             }, socket);
             waitHandle.WaitOne();
-            return (GameTypeCommand) await COMMUNICATION.RecieveCommandAsync();
+            return (GameTypeCommand) await COMMUNICATION.ReceiveCommandAsync();
         }
 
         /// <summary>

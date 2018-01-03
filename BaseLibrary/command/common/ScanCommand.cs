@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
     public class ScanCommand : ACommonCommand {
-        private static readonly double MAX_SCAN_PRECISION = 10.0;
+        /// <summary>
+        /// Max precision of scanner.
+        /// </summary>
+        /// <seealso cref="PRECISION"/>
+        public const double MAX_SCAN_PRECISION = 10.0;
 
         private static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
@@ -15,26 +18,39 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
-        public double PRECISION { get; private set; }
-        public double ANGLE {get; private set;}
+        private double _precision;
+        /// <summary>
+        /// How wide is scan cone.
+        /// </summary>
+        public double PRECISION {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _precision;
+            }
+            private set => _precision = value;
+        }
+
+
+        private double _angle;
+        /// <summary>
+        /// Direction to scan (0 to right, 90 down, 180 left, 270 up).
+        /// </summary>
+        public double ANGLE {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _angle;
+            }
+            private set => _angle = value;
+        }
 
         public ScanCommand(double precision, double angle) : base() {
             ANGLE = angle;
             precision = Math.Max(0, precision);
             precision = Math.Min(MAX_SCAN_PRECISION, precision);
             PRECISION = precision;
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
+            pending = false;
         }
     }
 }

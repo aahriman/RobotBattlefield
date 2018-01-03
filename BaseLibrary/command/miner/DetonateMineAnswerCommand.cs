@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
+using BaseLibrary.utils;
 
 namespace BaseLibrary.command.miner {
     public class DetonateMineAnswerCommand : AMinerCommand {
@@ -12,30 +13,44 @@ namespace BaseLibrary.command.miner {
             return position;
         }
 
-        public bool SUCCESS { get; private set; }
+        private bool _success;
+        /// <summary>
+        /// <list type="bullet">
+        /// <item>
+        ///     <description>true - mine was detonated.</description>
+        /// </item>
+        /// <item>
+        ///     <description>false - mine was not detonated. Mine was not putted.</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        public bool SUCCESS {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _success;
+            } private set => _success = value; }
 
+        /// <summary>
+        /// Using for create pending command.
+        /// </summary>
         public DetonateMineAnswerCommand() { }
 
+        /// <summary>
+        /// Using for create command fulled with data.
+        /// </summary>
         public DetonateMineAnswerCommand(bool success) {
             SUCCESS = success;
             pending = false;
         }
 
+        /// <summary>
+        /// Fill command by data from another command (use full for filling pending command by command with data).
+        /// </summary>
+        /// <param name="source"></param
         public void FillData(DetonateMineAnswerCommand source) {
             SUCCESS = source.SUCCESS;
             pending = false;
-        }
-
-        public override void accept(IMinerVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public override Output accept<Output>(IMinerVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public override Output accept<Output, Input>(IMinerVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

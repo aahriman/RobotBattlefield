@@ -4,14 +4,15 @@ using BaseLibrary.battlefield;
 using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
+using JetBrains.Annotations;
 
 namespace BattlefieldLibrary.battlefield.robot {
     public abstract class BattlefieldRobot : Robot{
         
-        public abstract double WantedPower { get; set; }
-        public abstract int OldScore {get; set; }
+        public double WantedPower { get; set; }
+        public int OldScore {get; set; }
         public string NAME {
-            get { return _name; }
+            get => _name;
             set {
                 if (_name == null) {
                     this._name = value;
@@ -22,7 +23,7 @@ namespace BattlefieldLibrary.battlefield.robot {
         }
 
         public RobotType ROBOT_TYPE {
-            get { return _robotType; }
+            get => _robotType;
             set {
                 if (_robotType != RobotType.NONE) {
                     throw new NotSupportedException("Robot type can be set only once.");
@@ -31,28 +32,17 @@ namespace BattlefieldLibrary.battlefield.robot {
             }
         }
 
-        public SuperNetworkStream SuperNetworkStream {get; private set;}
-        public abstract DateTime LastRequestAt { get; set; }
+        public NetworkStream NETWORK_STREAM {get;}
+        public DateTime LastRequestAt { get; set; }
 
 
         private string _name;
         private RobotType _robotType = RobotType.NONE;
-
-        protected BattlefieldRobot(int id, SuperNetworkStream superNetworkStream) {
-            if (superNetworkStream == null) {
-                throw new ArgumentNullException("SuperNetworkStream can not be null");
-            }
-            ID = id;
-            this.SuperNetworkStream = superNetworkStream;
-        }
-
-        protected BattlefieldRobot(int teamId, int id, SuperNetworkStream superNetworkStream) {
-            if(superNetworkStream == null){
-                throw new ArgumentNullException("SuperNetworkStream can not be null");
-            }
+        
+        protected BattlefieldRobot(int teamId, int id, [NotNull] NetworkStream networkStream) {
             ID = id;
             TEAM_ID = teamId;
-            this.SuperNetworkStream = superNetworkStream;
+            NETWORK_STREAM = networkStream ?? throw new ArgumentNullException("NETWORK_STREAM can not be null");
         }
 
         

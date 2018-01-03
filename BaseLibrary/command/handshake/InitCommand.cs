@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BaseLibrary.command.common;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.handshake {
     public class InitCommand : AHandShakeCommand {
@@ -40,23 +39,10 @@ namespace BaseLibrary.command.handshake {
             ROBOT_TYPE = robotType;
         }
 
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter,
-            Input input) {
-            return accepter.visit(this, input);
-        }
     }
 
     public enum RobotType {
-        REPAIRMAN, TANK, MINER, NONE // none is not defined type
+        REPAIRMAN, TANK, MINE_LAYER, NONE // none is not defined type
     }
 
 }

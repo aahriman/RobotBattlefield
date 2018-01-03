@@ -8,11 +8,9 @@ namespace BaseLibrary.command.v1._0 {
 	    private const string NAME = "SCAN";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
-            public override bool IsDeserializable(string s) {
-	            string[] rest;
-				if (ProtocolV1_0Utils.GetParams(s, NAME, out rest)) {
-                    ProtocolDouble[] param;
-					if (Parser.TryParse(rest, out param)) {
+            public override bool IsDeserializeable(string s) {
+                if (ProtocolV1_0Utils.GetParams(s, NAME, out string[] rest)) {
+                    if (Parser.TryParse(rest, out ProtocolDouble[] param)) {
                         cache.Cached(s, new ScanCommandV1_0(param[0], param[1]));
                         return true;
                     }
@@ -21,8 +19,7 @@ namespace BaseLibrary.command.v1._0 {
             }
             
             public override bool IsTransferable(ACommand c) {
-				ScanCommand command = c as ScanCommand;
-	            if (command != null) {
+                if (c is ScanCommand command) {
 		            cache.Cached(c, new ScanCommandV1_0(command.PRECISION, command.ANGLE));
 		            return true;
 	            }

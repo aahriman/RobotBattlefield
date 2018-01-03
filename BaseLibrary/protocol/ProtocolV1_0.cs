@@ -5,6 +5,9 @@ using BaseLibrary.command.v1._0.equipment;
 using BaseLibrary.command.v1._0.tank;
 
 namespace BaseLibrary.protocol {
+    /// <summary>
+    /// Implementation of Protocol v1.0 (commands class are in command/v1_0
+    /// </summary>
     [ProtocolDescription("v1.0")]
     public class ProtocolV1_0 : AProtocol{
         
@@ -31,11 +34,11 @@ namespace BaseLibrary.protocol {
             comandsFactory.RegisterCommand(GetGunsCommandV1_0.FACTORY);
             comandsFactory.RegisterCommand(GetGunsAnswerCommandV1_0.FACTORY);
 
-            comandsFactory.RegisterCommand(GetMineGunCommandV1_0.FACTORY);
-            comandsFactory.RegisterCommand(GetMineGunAnswerCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(GetMineGunsCommandV10.FACTORY);
+            comandsFactory.RegisterCommand(GetMineGunsAnswerCommandV10.FACTORY);
 
-            comandsFactory.RegisterCommand(GetRepairToolCommandV1_0.FACTORY);
-            comandsFactory.RegisterCommand(GetRepairToolAnswerCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(GetRepairToolsCommandV10.FACTORY);
+            comandsFactory.RegisterCommand(GetRepairToolsAnswerCommandV10.FACTORY);
 
             comandsFactory.RegisterCommand(GetArmorsCommandV1_0.FACTORY);
             comandsFactory.RegisterCommand(GetArmorsAnswerCommandV10.FACTORY);
@@ -49,10 +52,10 @@ namespace BaseLibrary.protocol {
 
             // TANK COMMANDS
 
-            comandsFactory.RegisterCommand(ShotCommandV1_0.FACTORY);
-            comandsFactory.RegisterCommand(ShotAnswerCommandV1_0.FACTORY);
+            comandsFactory.RegisterCommand(ShootCommandV10.FACTORY);
+            comandsFactory.RegisterCommand(ShootAnswerCommandV10.FACTORY);
 
-            // MINER COMMANDS
+            // MINE_LAYER COMMANDS
             comandsFactory.RegisterCommand(PutMineCommandV1_0.FACTORY);
             comandsFactory.RegisterCommand(PutMineAnswerCommandV1_0.FACTORY);
 

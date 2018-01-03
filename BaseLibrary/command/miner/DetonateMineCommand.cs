@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.miner {
     public class DetonateMineCommand : AMinerCommand {
@@ -12,22 +12,19 @@ namespace BaseLibrary.command.miner {
             return position;
         }
 
-        public int MINE_ID { get; private set; }
+        private int _mineID;
+        /// <summary>
+        /// ID of mine which want to detonate.
+        /// </summary>
+        public int MINE_ID {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _mineID;
+            } private set => _mineID = value; }
 
         public DetonateMineCommand(int mineId) {
             MINE_ID = mineId;
-        }
-
-        public override void accept(IMinerVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public override Output accept<Output>(IMinerVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public override Output accept<Output, Input>(IMinerVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

@@ -10,20 +10,16 @@ using BaseLibrary.command.handshake;
 using BaseLibrary.protocol;
 using BattlefieldLibrary.battlefield;
 using ServerLibrary.protocol;
+using NetworkStream = BaseLibrary.NetworkStream;
 
 namespace BattlefieldLibrary {
     public abstract class AServer {
-	    private readonly List<SuperNetworkStream> networkStreamPool = new List<SuperNetworkStream>();
+	    private readonly List<NetworkStream> networkStreamPool = new List<NetworkStream>();
 	    protected Battlefield Battlefield;
+        protected int port;
         
         public AServer(int port) {
-            Socket socketIPv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-            Socket socketIPv4 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            
-            myBindSocket(socketIPv4, IPAddress.Any, port);
-            myBindSocket(socketIPv6, IPAddress.IPv6Any, port);
-
-            Console.WriteLine("Arena runs on " + String.Join(", ", (IEnumerable<IPAddress>)Dns.GetHostAddresses(Dns.GetHostName())) + " with port " + port);
+            this.port = port;
         }
 
 
@@ -46,7 +42,7 @@ namespace BattlefieldLibrary {
             await Task.Yield();
             socket.BeginAccept((ar) => {
                 Socket s = socket.EndAccept(ar);
-                SuperNetworkStream sns = new SuperNetworkStream(s);
+                NetworkStream sns = new NetworkStream(s);
                 lock (networkStreamPool) {
                     networkStreamPool.Add(sns);
                 }
@@ -55,7 +51,7 @@ namespace BattlefieldLibrary {
             }, socket);
         }
 
-        protected async void handshake(SuperNetworkStream sns) {
+        protected async void handshake(NetworkStream sns) {
             HandShakeProtocol handshakeProtocol = new HandShakeProtocol();
             await Task.Yield();
             AProtocol protocol = await handshakeProtocol.HandShakeServer(sns);
@@ -71,7 +67,7 @@ namespace BattlefieldLibrary {
             }
         }
 
-        protected async void disconnect(SuperNetworkStream n, string message) {
+        protected async void disconnect(NetworkStream n, string message) {
             lock (networkStreamPool) {
                 networkStreamPool.Remove(n);
             }
@@ -83,6 +79,15 @@ namespace BattlefieldLibrary {
 
         public Battlefield GetBattlefield(BattlefieldConfig battlefielConfig) {
             Battlefield = NewBattlefield(battlefielConfig);
+
+            Socket socketIPv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+            Socket socketIPv4 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            myBindSocket(socketIPv4, IPAddress.Any, port);
+            myBindSocket(socketIPv6, IPAddress.IPv6Any, port);
+
+            Console.WriteLine("Arena runs on " + String.Join(", ", (IEnumerable<IPAddress>)Dns.GetHostAddresses(Dns.GetHostName())) + " with port " + port);
+
             return Battlefield;
         }
 

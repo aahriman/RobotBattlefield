@@ -22,7 +22,7 @@ namespace ServerLibrary.protocol {
         /// </summary>
         /// <param name="serverSocket"> Socket from client side to server side</param>
         /// <returns>null if handShake fail otherwise retur instance of AProtocol</returns>
-        public async Task<AProtocol> HandShakeServer(SuperNetworkStream serverSocket) {
+        public async Task<AProtocol> HandShakeServer(NetworkStream serverSocket) {
             ACommand shoudBeHELLO = GetCommand(await serverSocket.ReadLineAsync());
 
             if (shoudBeHELLO is HelloCommand) {
@@ -44,7 +44,7 @@ namespace ServerLibrary.protocol {
             return null;
         }
 
-        private void printIfErrorElseSendMessage(ACommand command, string message, SuperNetworkStream socket) {
+        private void printIfErrorElseSendMessage(ACommand command, string message, NetworkStream socket) {
             if (command is ErrorCommand) {
                 Console.Out.WriteLine("ERROR: " + ((ErrorCommand)command).MESSAGE);
             } else {

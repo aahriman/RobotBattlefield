@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
     public class GetArmorsCommand : AEquipmentCommand {
@@ -13,17 +12,5 @@ namespace BaseLibrary.command.equipment {
         }
 
         public GetArmorsCommand() : base() { }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
-        }
     }
 }

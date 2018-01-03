@@ -8,7 +8,7 @@ namespace BaseLibrary.command.v1._0 {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 s = s.Trim();
                 if (s.StartsWith("WAIT()")) {
                     cache.Cached(s, new WaitCommandV1_0());

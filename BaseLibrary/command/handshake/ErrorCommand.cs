@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.handshake {
     public class ErrorCommand : AHandShakeCommand, ACommand.Sendable {
@@ -19,7 +18,7 @@ namespace BaseLibrary.command.handshake {
 
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 if (s.StartsWith("ERROR")) {
                     var message = s.Substring(("ERROR").Length).Trim();
                     cache.Cached(s, new ErrorCommand(message));
@@ -48,18 +47,5 @@ namespace BaseLibrary.command.handshake {
         public string Serialize() {
             return "ERROR "+ MESSAGE;
         }
-
-        public override void accept(ICommandVisitor accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            throw new NotImplementedException();
-        }
-
     }
 }

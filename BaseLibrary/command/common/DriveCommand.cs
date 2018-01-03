@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
     public class DriveCommand : ACommonCommand {
@@ -17,33 +16,40 @@ namespace BaseLibrary.command.common {
         public static DriveCommand GetInstance(ProtocolDouble speed, ProtocolDouble angle) {
             return new DriveCommand(speed, angle);
         }
+
+        private double _power;
         /// <summary>
         /// How fast robot wants to go.
         /// </summary>
-        public double POWER { get; private set; }
+        public double POWER {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _power;
+            }
+            private set => _power = value;
+        }
 
+
+        private double _angle;
         /// <summary>
         /// In witch direction robot wants to go.
         /// </summary>
-        public double ANGLE { get; private set; }
+        public double ANGLE {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _angle;
+            }
+            private set => _angle = value;
+        }
 
         public DriveCommand(double power, double angle) {
             power = Math.Max(0, power);
             power = Math.Min(100.0, power);
             POWER = power;
             ANGLE = angle;
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
+            pending = false;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace BaseLibrary.command.v1._0 {
 	internal class MerchantAnswerCommandV1_0 : MerchantAnswerCommand, ACommand.Sendable {
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 s = s.Trim();
                 string[] rest;
                 if (StringUtils.GetRestOfStringSplitted(s, "MERCHANT_ASNWER(", ")", out rest, ';')) {

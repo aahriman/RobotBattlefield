@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.common {
     /// <summary>
@@ -15,20 +15,44 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        private int _motorIdBought;
         /// <summary>
         /// What motor after buying robot has.
         /// </summary>
-        public int MOTOR_ID_BOUGHT { get; private set; }
+        public int MOTOR_ID_BOUGHT {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _motorIdBought;
+            }
+            private set => _motorIdBought = value;
+        }
 
+        private int _classEquipmentIdBought;
         /// <summary>
         /// What class equipment after buying robot has.
         /// </summary>
-        public int CLASS_EQUIPMENT_ID_BOUGHT { get; private set; }
+        public int CLASS_EQUIPMENT_ID_BOUGHT {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _classEquipmentIdBought;
+            }
+            private set => _classEquipmentIdBought = value;
+        }
 
+        private int _armorIdBought;
         /// <summary>
         /// What armor after buying robot has.
         /// </summary>
-        public int ARMOR_ID_BOUGHT { get; private set; }
+        public int ARMOR_ID_BOUGHT {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _armorIdBought;
+            }
+            private set => _armorIdBought = value;
+        }
 
         public MerchantAnswerCommand() {
         }
@@ -45,18 +69,6 @@ namespace BaseLibrary.command.common {
             MOTOR_ID_BOUGHT = source.MOTOR_ID_BOUGHT;
             ARMOR_ID_BOUGHT = source.ARMOR_ID_BOUGHT;
             CLASS_EQUIPMENT_ID_BOUGHT = source.CLASS_EQUIPMENT_ID_BOUGHT;
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseLibrary.equip;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
     public class GetMotorsAnswerCommand : AEquipmentCommand {
@@ -13,23 +13,17 @@ namespace BaseLibrary.command.equipment {
             return position;
         }
 
+        /// <summary>
+        /// Available motors to buy.
+        /// </summary>
+        /// <seealso cref="Motor"/>
         public Motor[] MOTORS { get; private set; }
 
 		public GetMotorsAnswerCommand(Motor[] motors)
 			: base() {
 				MOTORS = motors;
-        }
+		}
 
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
 
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
-        }
     }
 }

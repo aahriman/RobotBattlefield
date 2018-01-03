@@ -2,7 +2,7 @@
 using System.Linq;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
+
 
 namespace BaseLibrary.command.handshake {
     public class OllehCommand : AHandShakeCommand, ACommand.Sendable {
@@ -10,7 +10,7 @@ namespace BaseLibrary.command.handshake {
         private sealed class OllehCommandFactory : ACommandFactory {
             internal OllehCommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 if (s.StartsWith("OLLEH "+ GameProperties.APP_NAME)) {
                     var protocol = s.Substring(("OLLEH "+GameProperties.APP_NAME).Length).Trim();
                     if (!protocol.Contains(' ')) {
@@ -44,18 +44,6 @@ namespace BaseLibrary.command.handshake {
 
         public string Serialize() {
             return "OLLEH " + GameProperties.APP_NAME + PROTOCOL;
-        }
-
-        public override void accept(ICommandVisitor accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            throw new NotImplementedException();
         }
     }
 }

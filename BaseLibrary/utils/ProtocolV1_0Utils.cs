@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using BaseLibrary.protocol;
 using BaseLibrary.utils.protocolV1_0Utils;
 
 namespace BaseLibrary.utils {
@@ -394,27 +395,22 @@ namespace BaseLibrary.utils {
 			}
 		}
 
-		private static string serialize(object o, Deep d) {
-			IDictionary dictionary = o as IDictionary;
-			IEnumerable enumerable = o as IEnumerable;
-            string asString = o as string;
-            InnerSerializerV1_0 innerSerializable = o as InnerSerializerV1_0;
-		    if (o is bool) {
-		        return ((bool) o) ? "1" : "0";
-		    } else if (innerSerializable != null) {
-				return innerSerializable.Serialize(d.NEXT);
-			} else if (dictionary != null) {
-				return Serialize(dictionary, d.NEXT);
-			} else if (enumerable != null) {
-			    if (asString != null) {
-			        return asString;
-			    } else {
-			        return Serialize(enumerable, d.NEXT);
-			    }
-			} else {
-			    if (o == null) {
+		private static string serialize(object o, Deep deep) {
+			if (o is String s) {
+		        return s;
+		    }else if (o is bool b) {
+		        return b ? "1" : "0";
+		    } else if (o is InnerSerializerV1_0 innerSerializable) {
+				return innerSerializable.Serialize(deep.NEXT);
+			} else if (o is IDictionary dictionary) {
+				return Serialize(dictionary, deep.NEXT);
+			} else if (o is IEnumerable enumerable) {
+		        return Serialize(enumerable, deep.NEXT);
+		    } else if (o is double @double) {
+			    return ((ProtocolDouble) @double).ToString();
+			} else if (o == null) {
 			        return string.Empty;
-			    }
+			    } else { 
 				return o.ToString();
 			}
 		}

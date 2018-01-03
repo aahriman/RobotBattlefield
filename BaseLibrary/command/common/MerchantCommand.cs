@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.common {
     /// <summary>
@@ -15,20 +15,44 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        private int _motorId;
         /// <summary>
         /// What motor want to robot buy.
         /// </summary>
-        public int MOTOR_ID {get; private set;}
+        public int MOTOR_ID {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _motorId;
+            }
+            private set => _motorId = value;
+        }
 
+        private int _classEquipmentId;
         /// <summary>
         /// What class equipment want to robot buy.
         /// </summary>
-        public int CLASS_EQUIPMENT_ID { get; private set; }
+        public int CLASS_EQUIPMENT_ID {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _classEquipmentId;
+            }
+            private set => _classEquipmentId = value;
+        }
 
+        private int _armorID;
         /// <summary>
         /// What armor want to robot buy.
         /// </summary>
-        public int ARMOR_ID { get; private set; }
+        public int ARMOR_ID {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _armorID;
+            }
+            private set => _armorID = value;
+        }
 
         /// <summary>
         /// How many HP want robot to fix.
@@ -40,18 +64,7 @@ namespace BaseLibrary.command.common {
             CLASS_EQUIPMENT_ID = classEquipmentId;
             ARMOR_ID = armorId;
             REPAIR_HP = repairHp;
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
+            pending = false;
         }
     }
 }

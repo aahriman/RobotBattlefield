@@ -12,7 +12,7 @@ namespace ObstacleMod.obstacle {
         public static readonly IFactory<IObstacle, IObstacle> FACTORY = new ObtacleFactory();
         private sealed class ObtacleFactory : AObstacleFactory {
             internal ObtacleFactory() {}
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {
                     if (rest.Length == 2) {

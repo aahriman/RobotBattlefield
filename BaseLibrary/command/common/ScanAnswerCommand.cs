@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.common {
     public class ScanAnswerCommand : ACommonCommand{
@@ -13,16 +13,35 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
-        public static ScanAnswerCommand GetInstance(ProtocolDouble range, int enemyID) {
-            return new ScanAnswerCommand(range, enemyID);
+        private double _range;
+        /// <summary>
+        /// Distance to robot which was scanned.
+        /// </summary>
+        public double RANGE {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _range;
+            }
+            private set => _range = value;
         }
 
-        public ProtocolDouble RANGE {get; private set;}
-        public int ENEMY_ID { get; private set; }
+        private int _enemyId;
+        /// <summary>
+        /// Robot's which was scanned id.
+        /// </summary>
+        public int ENEMY_ID {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _enemyId;
+            }
+            private set => _enemyId = value;
+        }
 
         public ScanAnswerCommand() { }
 
-        public ScanAnswerCommand(ProtocolDouble range, int enemyID)
+        public ScanAnswerCommand(double range, int enemyID)
             : base() {
                 ENEMY_ID = enemyID;
                 RANGE = range;
@@ -34,17 +53,5 @@ namespace BaseLibrary.command.common {
             RANGE = source.RANGE;
             pending = false;
         }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
-        }
-    }
+   }
 }

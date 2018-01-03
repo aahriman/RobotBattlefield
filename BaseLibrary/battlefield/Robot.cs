@@ -36,49 +36,49 @@ namespace BaseLibrary.battlefield {
         /// <summary>
         /// HitPoints which robot has.
         /// </summary>
-        public abstract int HitPoints { get; set; }
+        public int HitPoints { get; set; }
 
         /// <summary>
         /// Score which robot has.
         /// </summary>
-        public abstract int Score { get; set; }
+        public int Score { get; set; }
 
         /// <summary>
         /// Gold which robot has.
         /// </summary>
-        public abstract int Gold { get; set; }
+        public int Gold { get; set; }
 
         /// <summary>
         /// X-coordinate of robot.
         /// </summary>
-        public abstract double X { get; set; }
+        public double X { get; set; }
 
         /// <summary>
         /// Y-coordinate of robot.
         /// </summary>
-        public abstract double Y { get; set; }
+        public double Y { get; set; }
 
         /// <summary>
         /// Power which robot's motor currently use.
         /// </summary>
-        public abstract double Power { get; set; }
+        public double Power { get; set; }
 
         /// <summary>
         /// Angle where robot goes.
         /// </summary>
-        public abstract double AngleDrive { get; set; }
+        public double AngleDrive { get; set; }
 
         /// <summary>
         /// What motor do robot has.
         /// </summary>
         /// <seealso cref="Motor"/>
-        public abstract Motor Motor { get; set; }
+        public Motor Motor { get; set; }
 
         /// <summary>
         /// What armor do robot has.
         /// </summary>
         /// <seealso cref="Armor"/>
-        public abstract Armor Armor { get; set; }
+        public Armor Armor { get; set; }
 
         /// <summary>
         /// Get robot position (useful for <code>Utils</code>)

@@ -2,7 +2,6 @@
 using System.Text;
 using BaseLibrary.config;
 using BaseLibrary.protocol;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.handshake {
     public class HelloCommand : AHandShakeCommand, ACommand.Sendable {
@@ -10,7 +9,7 @@ namespace BaseLibrary.command.handshake {
         private sealed class HelloCommandFactory : ACommandFactory {
             internal HelloCommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 if (s.StartsWith("HELLO "+GameProperties.APP_NAME)) {
                     var protocols = s.Substring(("HELLO "+GameProperties.APP_NAME).Length).Split(' ');
                     if (protocols.Length > 0) {
@@ -45,18 +44,6 @@ namespace BaseLibrary.command.handshake {
             : base() {
             Array.Sort(supportedProtocols);
             SUPPORTED_PROTOCOLS = supportedProtocols;
-        }
-
-        public override void accept(ICommandVisitor accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            throw new NotImplementedException();
-        }
-
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            throw new NotImplementedException();
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.common {
     /// <summary>
@@ -14,10 +14,19 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        private bool _success;
+
         /// <summary>
         /// True if robot change direction.
         /// </summary>
-        public bool SUCCESS { get; private set; }
+        public bool SUCCESS {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _success;
+            }
+            private set => _success = value;
+        }
 
         public DriveAnswerCommand() {}
 
@@ -29,18 +38,6 @@ namespace BaseLibrary.command.common {
         public void FillData(DriveAnswerCommand source) {
             SUCCESS = source.SUCCESS;
             pending = false;
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

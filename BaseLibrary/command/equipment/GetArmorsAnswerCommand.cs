@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseLibrary.equip;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.equipment {
     public class GetArmorsAnswerCommand : AEquipmentCommand {
@@ -13,30 +13,28 @@ namespace BaseLibrary.command.equipment {
             return position;
         }
 
-        public static GetArmorsAnswerCommand GetInstance(Armor[] armors) {
-            return new GetArmorsAnswerCommand(armors);
+        private Armor[] _armors;
+
+        /// <summary>
+        /// Available armors to buy.
+        /// </summary>
+        public Armor[] ARMORS {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _armors;
+            }
+            private set => _armors = value;
         }
 
-        public Armor[] ARMORS { get; private set; }
 
         public GetArmorsAnswerCommand(Armor[] armors)
             : base() {
+            pending = false;
             ARMORS = new Armor[armors.Length];
-            for (int i = 0; i < ARMORS.Length; i++) {
+            for (int i = 0; i < armors.Length; i++) {
                 ARMORS[i] = armors[i];
             }
-        }
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }

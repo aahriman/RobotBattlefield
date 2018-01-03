@@ -125,7 +125,7 @@ namespace ClientLibrary.robot {
 
         /// <inheritdoc />
         public override RobotType GetRobotType() {
-            return RobotType.MINER;
+            return RobotType.MINE_LAYER;
         }
 
         /// <inheritdoc />

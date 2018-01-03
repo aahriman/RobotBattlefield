@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.handshake {
     public class GameTypeCommand : AHandShakeCommand {
@@ -18,18 +17,6 @@ namespace BaseLibrary.command.handshake {
         public GameTypeCommand(int ROBOTS_IN_ONE_TEAM, GameType GAME_TYPE) {
             this.ROBOTS_IN_ONE_TEAM = ROBOTS_IN_ONE_TEAM;
             this.GAME_TYPE = GAME_TYPE;
-        }
-
-        public override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 

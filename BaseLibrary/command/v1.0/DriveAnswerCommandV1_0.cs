@@ -9,7 +9,7 @@ namespace BaseLibrary.command.v1._0 {
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
 	            string rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, out rest)) {
                     if (rest.Equals("1") || rest.Equals("0")) {

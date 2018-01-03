@@ -28,7 +28,7 @@ namespace DeadmatchBattlefield {
             if (args.Length >= 2) {
                 battlefieldConfig = BattlefieldConfig.DeserializeFromFile<BattlefieldConfig>(args[1]);
             } else {
-                battlefieldConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 1, ROBOTS_IN_TEAM: 2, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: false, MATCH_SAVE_FILE: "arena_match" + port +".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, more: new object[0]);
+                battlefieldConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 2, ROBOTS_IN_TEAM: 1, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: false, MATCH_SAVE_FILE: "arena_match" + port +".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, more: new object[0]);
             }
 
             Battlefield arena = server.GetBattlefield(battlefieldConfig);

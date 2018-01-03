@@ -17,7 +17,7 @@ namespace ObstacleMod.obstacle {
         private static readonly AObstacleFactory FACTORY = new ObtacleFactory();
         private class ObtacleFactory : AObstacleFactory {
             internal ObtacleFactory() {}
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {
                     int x, y;
@@ -88,7 +88,7 @@ namespace ObstacleMod.obstacle {
             PointF leftUpCorner = new PointF(X * xScale, Y * yScale);
             PointF scale = new PointF(xScale, yScale);
             Image drawingIcon;
-            if (!CACHE.GetCached(scale, out drawingIcon)) {
+            if (!CACHE.TryGetCached(scale, out drawingIcon)) {
                 Image icon = drawIcon();
                 drawingIcon = new Bitmap(icon, new Size((int)xScale, (int)yScale));
                 CACHE.Cached(scale, drawingIcon);

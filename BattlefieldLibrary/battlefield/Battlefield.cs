@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -32,37 +33,141 @@ namespace BattlefieldLibrary.battlefield {
             ModUtils.LoadMods();
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ObstaclesAroundRobot).TypeHandle);
         }
+
+	    public struct RobotAndBattlefield {
+	        public readonly BattlefieldRobot ROBOT;
+	        public readonly Battlefield BATTLEFIELD;
+
+	        public RobotAndBattlefield(BattlefieldRobot robot, Battlefield battlefield) {
+	            ROBOT = robot;
+	            BATTLEFIELD = battlefield;
+	        }
+        }
+
+	    public struct NetworkStreamAndBattlefield {
+	        public readonly NetworkStream NETWORK_STREAM;
+	        public readonly Battlefield BATTLEFIELD;
+
+	        public NetworkStreamAndBattlefield(NetworkStream networkStream, Battlefield battlefield) {
+	            NETWORK_STREAM = networkStream;
+	            BATTLEFIELD = battlefield;
+	        }
+	    }
+
+        /// <summary>
+        /// Max size of arena. Arena is from [0, 0] to [ARENA_MAX_SIZE, ARENA_MAX_SIZE].
+        /// </summary>
         public const int ARENA_MAX_SIZE = 1000;
 
 
-        enum BattlefieldState {
-	        GET_COMMAND, FIGHT, MERCHANT
+        /// <summary>
+        /// Battlefield states.
+        /// </summary>
+        public enum BattlefieldState {
+            /// <summary>
+            /// For inicialization. Get equipments commands and init command.
+            /// </summary>
+	        GET_COMMAND,
+            /// <summary>
+            /// One lap is running. Robots are moving and shooting and so on.
+            /// </summary>
+            FIGHT,
+            /// <summary>
+            /// Time to buy equipment and repair.
+            /// </summary>
+            MERCHANT
 	    }
 
-		protected int lap = 0;
-	    //protected LapState LapState;
+        /// <summary>
+        /// For store more data.
+        /// </summary>
+	    public Dictionary<String, Object> MORE_VARIABLES = new Dictionary<string, object>();
 
+        /// <summary>
+        /// Actual lap number.
+        /// </summary>
+		protected int lap = 0;
+	    
+        /// <summary>
+        /// Motor equipment available for this battle.
+        /// </summary>
 		public Motor[] Motors { get; private set; }
+
+	    /// <summary>
+	    /// Gun equipment available for this battle.
+	    /// </summary>
 		public Gun[] Guns { get; private set; }
+
+	    /// <summary>
+	    /// Armor equipment available for this battle.
+	    /// </summary>
 		public Armor[] Armors { get; private set; }
+
+	    /// <summary>
+	    /// Mine gun equipment available for this battle.
+	    /// </summary>
         public MineGun[] MineGuns { get; private set; }
+
+	    /// <summary>
+	    /// Repairs tools equipment available for this battle.
+	    /// </summary>
         public RepairTool[] RepairTools { get; private set; }
 
+        /// <summary>
+        /// List of robots witch participate in battle.
+        /// </summary>
         protected List<BattlefieldRobot> robots = new List<BattlefieldRobot>();
-	    protected Dictionary<int, BattlefieldRobot> robotsById = new Dictionary<int, BattlefieldRobot>();
-        protected Dictionary<string, int> robotTeamIdByTeamName = new Dictionary<string, int>();
-        protected Dictionary<int, List<BattlefieldRobot>> robotsByTeamId = new Dictionary<int, List<BattlefieldRobot>>();
-        protected List<BattlefieldRobot> pendingRobots = new List<BattlefieldRobot>();
-        protected ObstacleManager obtacleManager;
 
+        /// <summary>
+        /// Robots split by its id.
+        /// </summary>
+	    protected Dictionary<int, BattlefieldRobot> robotsById = new Dictionary<int, BattlefieldRobot>();
+
+        /// <summary>
+        /// Team ids split by its names.
+        /// </summary>
+        protected Dictionary<string, int> robotTeamIdByTeamName = new Dictionary<string, int>();
+
+        /// <summary>
+        /// List of robot in one team by team id.
+        /// </summary>
+        protected Dictionary<int, List<BattlefieldRobot>> robotsByTeamId = new Dictionary<int, List<BattlefieldRobot>>();
+
+        /// <summary>
+        /// Manager for obstacles.
+        /// </summary>
+        protected ObstacleManager obstacleManager;
+
+        /// <summary>
+        /// Counter for generate id.
+        /// </summary>
         private int idForRobot = 1;
+
+	    /// <summary>
+	    /// Counter for generate id for team.
+	    /// </summary>
+	    private int idForTeam = 1;
+
+        /// <summary>
+        /// How many robot is active (sends command).
+        /// </summary>
 		private int activeRobots = 0;
 
-	    private readonly bool RESPAWN_ALLOWED;
+	    /// <summary>
+        /// How long wait between turn (negative is forever) in millisecond.
+        /// </summary>
 	    private readonly int WAITING_TIME_BETWEEN_TURNS;
+
+        /// <summary>
+        /// How long robot can miss communication (<code>8*WAITING_TIME_BETWEEN_TURNS</code>)
+        /// </summary>
 	    private readonly TimeSpan MAX_WAITING_TIME;
 
         protected bool _run = false;
+
+        /// <summary>
+        /// Is battle running or set battle to run.
+        /// </summary>
 		public bool RUN {
 			get => _run;
 		    set => setRun(value);
@@ -74,45 +179,124 @@ namespace BattlefieldLibrary.battlefield {
         public readonly ManualResetEvent RunEvent = new ManualResetEvent(false);
 
         /// <summary>
-        /// This thread is only for waint until simulation will end. It start when all robots are connected.
+        /// This thread is only for wait until simulation will end. It start when all robots are connected.
         /// </summary>
         public readonly Thread RunThread;
 
-        
+        /// <summary
+        /// Commands splits by robot.
+        /// </summary>
 		private readonly Dictionary<BattlefieldRobot, ACommand> receivedCommands = new Dictionary<BattlefieldRobot, ACommand>();
-		private readonly IDictionary<int, List<Bullet>> heapBullet = new SortedDictionary<int, List<Bullet>>();
-        private readonly IDictionary<int, List<Tank>> gunLoaded = new SortedDictionary<int, List<Tank>>();
+
+        /// <summary>
+        /// List of bullet with explode by turn when explode.
+        /// </summary>
+		private readonly IDictionary<int, List<Bullet>> heapBullet = new Dictionary<int, List<Bullet>>();
+
+	    /// <summary>
+	    /// List of tanks witch reload gun bu turn when reloaded.
+	    /// </summary>
+        private readonly IDictionary<int, List<Tank>> gunLoaded = new Dictionary<int, List<Tank>>();
+
+        /// <summary>
+        /// List of mines witch detonate in actual turn.
+        /// </summary>
         private readonly IList<Mine> detonatedMines = new List<Mine>();
 
+        /// <summary>
+        /// TaskCompletion for async waiting. It is finish when every robot send command.
+        /// </summary>
 		private TaskCompletionSource<bool> allSendCommand = new TaskCompletionSource<bool>();
 
+        /// <summary>
+        /// Instance of merchant for buying equipment.
+        /// </summary>
 		protected Merchant Merchant;
+
+        /// <summary>
+        /// Actual turn.
+        /// </summary>
 		protected int Turn { get; private set; }
 
+        /// <summary>
+        /// How many teams will play this battle.
+        /// </summary>
 	    public readonly int TEAMS;
+
+        /// <summary>
+        /// How many robots in one team in this battle.
+        /// </summary>
 	    public readonly int ROBOTS_IN_TEAM;
+
+        /// <summary>
+        /// How many turn at max in one lap.
+        /// </summary>
 	    public readonly int MAX_TURN;
+
+        /// <summary>
+        /// How many laps per battle.
+        /// </summary>
 	    public readonly int MAX_LAP;
+
+        /// <summary>
+        /// How long it takes to respawn robot.
+        /// </summary>
 	    public readonly int RESPAWN_TIMEOUT = 0;
 
-        protected BattlefieldTurn battlefieldTurn;
-        private readonly JSONSerializer SERIALIZER = new JSONSerializer();
-	    private StreamWriter writer;
+        /// <summary>
+        /// Is re-spawning allowed.
+        /// </summary>
+	    private readonly bool RESPAWN_ALLOWED;
 
-        private readonly Cache<int, List<BattlefieldRobot>> cache = new Cache<int, List<BattlefieldRobot>>(true);
+        /// <summary>
+        /// Instance for storing what happen in this turn.
+        /// </summary>
+        /// <seealso cref="SERIALIZER"/>
+        protected BattlefieldTurn battlefieldTurn;
+
+        /// <summary>
+        /// Turn serializator, after every turn match is serialized to file for later record.
+        /// </summary>
+        private readonly JSONSerializer SERIALIZER = new JSONSerializer();
+
+        /// <summary>
+        /// Cache for alive robots in turn.
+        /// </summary>
+        private readonly Cache<int?, List<BattlefieldRobot>> cache = new Cache<int?, List<BattlefieldRobot>>(true);
+
+        /// <summary>
+        /// Actual battle state
+        /// </summary>
         BattlefieldState _battlefieldState = BattlefieldState.GET_COMMAND;
 
-        private MerchantVisitor merchantVisitor;
-	    private GetVisitor getVisitor;
-	    private TankFightVisitor tankFightVisitor;
-	    private MinerFightVisitor minerFightVisitor;
-	    private RepairmanFightVisitor repairmanFightVisitor;
+	    /// <summary>
+	    /// Processor for commands
+	    /// </summary>
+	    public CommandProcessor<ACommand, NetworkStreamAndBattlefield> commandProcessorBeforeInitRobot;
+        /// <summary>
+        /// Processor for commands
+        /// </summary>
+        public CommandProcessor<ACommand, RobotAndBattlefield> commandProcessor;
+
+	    private StreamWriter writer;
 
         private readonly Dictionary<int, List<BattlefieldRobot>> RESPAWN_ROBOT_AT_TURN = new Dictionary<int, List<BattlefieldRobot>>();
 
+        /// <summary>
+        /// Data model for drawing battle on-line.
+        /// </summary>
 	    private readonly SerialTurnDataModel TURN_DATA_MODEL;
 
-       protected Battlefield(BattlefieldConfig battlefieldConfig) {
+
+        private readonly Dictionary<NetworkStream, BattlefieldRobot> robotsByStream = new Dictionary<NetworkStream, BattlefieldRobot>();
+
+	    public static void addDamagingMethod(DealDamage dealDamageMethod) {
+	        dealDamageMethods.Add(dealDamageMethod);
+	    }
+
+	    private static readonly List<DealDamage> dealDamageMethods = new List<DealDamage>();
+
+        protected Battlefield(BattlefieldConfig battlefieldConfig) {
             ROBOTS_IN_TEAM = battlefieldConfig.ROBOTS_IN_TEAM;
             TEAMS = battlefieldConfig.TEAMS;
             MAX_LAP = battlefieldConfig.MAX_LAP;
@@ -139,12 +323,16 @@ namespace BattlefieldLibrary.battlefield {
 	            ServerConfig.SetDefaultEquipment();
 	        }
             IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObtaclesFromFile(battlefieldConfig.OBTACLE_CONFIG_FILE) : new IObstacle[0];
-	        obtacleManager = new ObstacleManager(obstacles);
+	        obstacleManager = new ObstacleManager(obstacles);
 	       
 	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS, battlefieldConfig.MATCH_SAVE_FILE);
 
             RunThread = new Thread(new ThreadStart(this.running));
-        }
+
+           commandProcessorBeforeInitRobot = new CommandProcessor<ACommand, NetworkStreamAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
+           commandProcessor = new CommandProcessor<ACommand, RobotAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
+           addProcess();
+       }
 
         private void battlefieldSetting(Motor[] motors, Gun[] guns, Armor[] armors, RepairTool[] repairTools, MineGun[] mineGuns, string filename) {
             this.Motors = motors;
@@ -161,35 +349,7 @@ namespace BattlefieldLibrary.battlefield {
             }
 
             writer = new StreamWriter(File.OpenWrite(filename)) {AutoFlush = true};
-
-            merchantVisitor = new MerchantVisitor(this);
-            getVisitor = new GetVisitor(this);
-            tankFightVisitor = new TankFightVisitor(this);
-            minerFightVisitor = new MinerFightVisitor(this);
-            repairmanFightVisitor = new RepairmanFightVisitor(this);
         }
-
-	    protected ArenaVisitor GetActualArenaCommandVisitor(BattlefieldRobot r) {
-	        switch (_battlefieldState) {
-	            case BattlefieldState.GET_COMMAND:
-	                return getVisitor;
-	            case BattlefieldState.FIGHT:
-	                switch (r.ROBOT_TYPE) {
-	                    case RobotType.MINER:
-	                        return minerFightVisitor;
-	                    case RobotType.TANK:
-	                        return tankFightVisitor;
-	                    case RobotType.REPAIRMAN:
-	                        return repairmanFightVisitor;
-	                    default:
-	                        throw new NotSupportedException("Unsupported robot type");
-	                }
-                case BattlefieldState.MERCHANT:
-	                return merchantVisitor;
-                default:
-                    throw new NotSupportedException("Unsupported arenaState");
-            }
-	    }
 
 	    private bool _end = false;
         public bool End() {
@@ -200,72 +360,70 @@ namespace BattlefieldLibrary.battlefield {
 			setRun(true);
 		}
 
-        protected readonly HashSet<BattlefieldRobot> robotsSendCommand = new HashSet<BattlefieldRobot>();
-        protected readonly HashSet<BattlefieldRobot> robotsWaitingForReborn = new HashSet<BattlefieldRobot>();
-
-        protected async void listen(BattlefieldRobot r) {
+        protected async void listen(NetworkStream sns) {
 			await Task.Yield();
             try {
-                ACommand command = await r.SuperNetworkStream.RecieveCommandAsync();
+                ACommand command = await sns.ReceiveCommandAsync();
 
-                if (command is AEquipmentCommand) {
-                    r.SuperNetworkStream.SendCommand(command.accept(GetActualArenaCommandVisitor(r), r));
-                    listen(r);
-                } else {
-                    if (command is InitCommand) {
-                        lock (pendingRobots) {
-                            activeRobots++;
-                            pendingRobots.Remove(r);
+                switch (command) {
+                    case AEquipmentCommand _:
+                        await sns.SendCommandAsync(commandProcessorBeforeInitRobot.Process(command, new NetworkStreamAndBattlefield(sns, this)));
+                        listen(sns);
+                        break;
+                    case InitCommand _:
+                        ACommand answerCommand = commandProcessorBeforeInitRobot.Process(command, new NetworkStreamAndBattlefield(sns, this));
+                        await sns.SendCommandAsync(answerCommand);
+                        if (!(answerCommand is ErrorCommand)) {
+                            lock (robots) {
+
+                                if (robots.Count == TEAMS * ROBOTS_IN_TEAM) {
+                                    setRun(true);
+                                }
+                            }
+
+                            listen(sns);
                         }
-
-                        lock (robots) {
-                            robots.Add(r);
-
-                            if (robots.Count == TEAMS*ROBOTS_IN_TEAM) {
-                                setRun(true);
+                        break;
+                    default:
+                        lock (receivedCommands) {
+                            receivedCommands.Add(robotsByStream[sns], command);
+                            lock (robots) {
+                                if (_run && robots.Count == receivedCommands.Count) {
+                                    allSendCommand.SetResult(true);
+                                }
                             }
                         }
-                    }
-                    lock (receivedCommands) {
-                        receivedCommands.Add(r, command);
-                        robotsSendCommand.Remove(r);
-                        lock (robots) {
-                            if (_run && 0 == robotsSendCommand.Count) {
-                                allSendCommand.SetResult(true);
-                            }
-                        }
-                    }
+                        break;
                 }
-
             } catch (IOException) {
                 // client was disconnected
                 lock (robots) {
-                    robots.Remove(r);
+                    if (robotsByStream.ContainsKey(sns)) {
+                        robots.Remove(robotsByStream[sns]);
+                    }
                 }
             } catch (ObjectDisposedException) {
                 // server disconnect client
                 lock (robots) {
-                    robots.Remove(r);
+                    robots.Remove(robotsByStream[sns]);
                 }
             } catch (ArgumentException e) {
                 lock (robots) {
-                    robots.Remove(r);
-                    Console.WriteLine(e.Message);
+                    BattlefieldRobot robot = robotsByStream[sns];
+                    robots.Remove(robotsByStream[sns]);
+                    Console.WriteLine("Disconnected robot " + robot.NAME + " because " + e.Message);
                 }
             }
 		}
 
-		public bool AddRobot(SuperNetworkStream n) {
+		public bool AddRobot(NetworkStream n) {
 			bool ret = false;
-		    lock (pendingRobots) {
-		        if (!RUN && (TEAMS * ROBOTS_IN_TEAM <= 0 || activeRobots + pendingRobots.Count < TEAMS * ROBOTS_IN_TEAM)) {
-		            BattlefieldRobot r = new DefaultRobot(idForRobot++, n);
-		            pendingRobots.Add(r);
-		            robotsSendCommand.Add(r);
-                    listen(r);
-		            ret = true;
-		        }
+		    
+		    if (!RUN && (TEAMS * ROBOTS_IN_TEAM <= 0 || robots.Count < TEAMS * ROBOTS_IN_TEAM)) {
+                listen(n);
+		        ret = true;
 		    }
+		    
 		    return ret;
 		}
 
@@ -289,36 +447,13 @@ namespace BattlefieldLibrary.battlefield {
 			return RUN;
 		}
 
-		protected virtual void initEquip() {
-			foreach (BattlefieldRobot r in robots) {
-				r.Motor = Motors[0];
-                r.Armor = Armors[0];
-
-                Tank tank = r as Tank;
-                if (tank != null) {
-                    tank.GunsToLoad = 0;
-                }
-
-                Miner miner = r as Miner;
-                if (miner != null) {
-                    miner.MinesNow = 0;
-                    miner.MINES_BY_ID.Clear();
-                }
-
-                Repairman repairman = r as Repairman;
-                if (repairman != null) {
-                    repairman.RepairToolUsed = 0;
-                }
-            }
-		}
-
         protected void newBattle() {
 			Turn = 0;
 		    lap++;
 			foreach (BattlefieldRobot r in robots) {
 				r.Power = 0;
 				r.WantedPower = 0;
-			    Point position = obtacleManager.StartRobotPosition(ARENA_MAX_SIZE, ARENA_MAX_SIZE);
+			    Point position = obstacleManager.StartRobotPosition(ARENA_MAX_SIZE, ARENA_MAX_SIZE);
 
                 r.X = position.X;
 				r.Y = position.Y;
@@ -328,10 +463,10 @@ namespace BattlefieldLibrary.battlefield {
                     tank.GunsToLoad = 0;
                 }
 
-                Miner miner = r as Miner;
-                if (miner != null) {
-                    miner.MinesNow = 0;
-                    miner.MINES_BY_ID.Clear();
+                MineLayer mineLayer = r as MineLayer;
+                if (mineLayer != null) {
+                    mineLayer.MinesNow = 0;
+                    mineLayer.MINES_BY_ID.Clear();
                 }
 
                 Repairman repairman = r as Repairman;
@@ -345,14 +480,8 @@ namespace BattlefieldLibrary.battlefield {
 
 		protected virtual void firstBattle() {
             Console.WriteLine("Battle start");
-            initEquip();
-            newBattle();
-			foreach (BattlefieldRobot r in robots) {
-				r.HitPoints = r.Armor.MAX_HP;
-			}
-			foreach (BattlefieldRobot r in pendingRobots) {
-				r.SuperNetworkStream.Close();
-			}
+
+		    sendRobotStateCommand(LapState.NONE, robots);
 		}
 
 		protected List<BattlefieldRobot> getAliveRobots() {
@@ -392,8 +521,8 @@ namespace BattlefieldLibrary.battlefield {
 
                 foreach (var robot in robots) { // add not detonated mines
                     switch (robot.ROBOT_TYPE) {
-                        case RobotType.MINER:
-                            Miner m = (Miner) robot;
+                        case RobotType.MINE_LAYER:
+                            MineLayer m = (MineLayer) robot;
                             foreach (var mine in m.MINES_BY_ID.Values) {
                                 battlefieldTurn.AddMine(new ViewerLibrary.Mine(mine.X, mine.Y, false));
                             }
@@ -416,38 +545,25 @@ namespace BattlefieldLibrary.battlefield {
 	        TURN_DATA_MODEL?.Add(turn, last);
         }
 
-        private void processCommands() {
+        private HashSet<BattlefieldRobot> processCommands() {
             battlefieldTurn = new BattlefieldTurn(Turn);
-            robotsSendCommand.Clear();
             List<Task> tasks = new List<Task>();
-
+            HashSet<BattlefieldRobot> robotsSendCommand = new HashSet<BattlefieldRobot>();
             foreach (KeyValuePair<BattlefieldRobot, ACommand> pair in receivedCommands) {
                 BattlefieldRobot robot = pair.Key;
                 ACommand command = pair.Value;
-                ACommand answerCommand = command.accept(GetActualArenaCommandVisitor(robot), robot);
-                if (answerCommand != null) {
-                    Task t = robot.SuperNetworkStream.SendCommandAsync(answerCommand);
-                    tasks.Add(t);
-                }
-                if (command is InitCommand) {
-                    switch (pair.Key.ROBOT_TYPE) {
-                        case RobotType.MINER:
-                            robot = new Miner(robot);
-                            ((Miner) robot).MineGun = MineGuns[0];
-                            break;
-                        case RobotType.REPAIRMAN:
-                            robot = new Repairman(robot);
-                            ((Repairman)robot).RepairTool = RepairTools[0];
-                            break;
-                        case RobotType.TANK:
-                            robot = new Tank(robot);
-                            ((Tank)robot).Gun = Guns[0];
-                            break;
+                if (command != null) {
+                    ACommand answerCommand = commandProcessor.Process(command, new RobotAndBattlefield(robot, this));
+                    if (answerCommand != null) {
+                        Task t = robot.NETWORK_STREAM.SendCommandAsync(answerCommand);
+                        tasks.Add(t);
                     }
+
                 }
                 robotsSendCommand.Add(robot);
             }
             Task.WaitAll(tasks.ToArray());
+            return robotsSendCommand;
         }
 
 
@@ -476,7 +592,7 @@ namespace BattlefieldLibrary.battlefield {
                     }
                 }
 
-                obtacleManager.MoveChange(r, Turn, r.X, r.Y, r.X + RobotUtils.GetSpeedX(r), r.Y + RobotUtils.GetSpeedY(r));
+                obstacleManager.MoveChange(r, Turn, r.X, r.Y, r.X + RobotUtils.GetSpeedX(r), r.Y + RobotUtils.GetSpeedY(r));
                 if (r.X < 0 || r.X >= 1000 || r.Y < 0 || r.Y >= 1000) {
                     r.HitPoints -= (int)Math.Max(1, 5 * r.Power / 100.0);
                     r.Power = 0;
@@ -487,6 +603,16 @@ namespace BattlefieldLibrary.battlefield {
                 }
             }
         }
+
+	    public delegate void DealDamage();
+
+	    protected void damaging() {
+            shooting();
+	        detonatingMines();
+	        foreach (var dealDamageMethod in dealDamageMethods) {
+	            dealDamageMethod();
+	        }
+	    }
 
         protected void shooting() {
             if (heapBullet.TryGetValue(Turn, out List<Bullet> bulletList)) {
@@ -514,14 +640,14 @@ namespace BattlefieldLibrary.battlefield {
 
         protected void detonatingMines() {
             foreach (Mine mine in detonatedMines) {
-                mine.MINER.MinesNow--;
+                mine.MineLayer.MinesNow--;
                 foreach (BattlefieldRobot r in robots) {
                     if (r.HitPoints > 0) {
                         double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), mine.GetPosition());
-                        Zone zone = Zone.GetZoneByDistance(mine.MINER.MineGun.ZONES, distance);
+                        Zone zone = Zone.GetZoneByDistance(mine.MineLayer.MineGun.ZONES, distance);
                         r.HitPoints -= zone.EFFECT;
-                        if (mine.MINER != r) {
-                            mine.MINER.Score += zone.EFFECT;
+                        if (mine.MineLayer != r) {
+                            mine.MineLayer.Score += zone.EFFECT;
                         }
                         r.HitPoints = Math.Max(0, r.HitPoints);
                     }
@@ -535,7 +661,7 @@ namespace BattlefieldLibrary.battlefield {
             if (RESPAWN_ROBOT_AT_TURN.TryGetValue(Turn, out List<BattlefieldRobot> respawnedRobots)) {
                 foreach (BattlefieldRobot respawnedRobot in respawnedRobots) {
                     respawnedRobot.HitPoints = respawnedRobot.Armor.MAX_HP;
-                    Point position = obtacleManager.StartRobotPosition(ARENA_MAX_SIZE, ARENA_MAX_SIZE);
+                    Point position = obstacleManager.StartRobotPosition(ARENA_MAX_SIZE, ARENA_MAX_SIZE);
                     respawnedRobot.X = position.X;
                     respawnedRobot.Y = position.Y;
                 }
@@ -548,26 +674,13 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
-	    private DateTime sendRobotStateCommand(LapState lapState) {
+	    private DateTime sendRobotStateCommand(LapState lapState, IEnumerable<BattlefieldRobot> robotsSendCommand) {
             List<BattlefieldRobot> aliveRobots = getAliveRobots();
             int[] aliveRobotsIds = new int[aliveRobots.Count];
             for (int i = 0; i < aliveRobotsIds.Length; i++) {
                 aliveRobotsIds[i] = aliveRobots[i].ID;
             }
             DateTime NOW = DateTime.Now;
-
-            foreach (var waitingRobot in robotsWaitingForReborn) {
-                if (waitingRobot.HitPoints > 0) {
-                    robotsSendCommand.Add(waitingRobot);
-                    robotsWaitingForReborn.Remove(waitingRobot);
-                }
-            }
-
-            if (lapState != LapState.NONE) {
-                foreach (var waitingRobot in robotsWaitingForReborn) {
-                    robotsSendCommand.Add(waitingRobot);
-                }
-            }
 
             List<Task> robotStatesTaskList = new List<Task>();
             foreach (BattlefieldRobot r in robotsSendCommand) {
@@ -578,7 +691,7 @@ namespace BattlefieldLibrary.battlefield {
                 }
                 RobotStateCommand command = AddToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, Turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
                 AddObtacleInSight(command, r);
-                robotStatesTaskList.Add(r.SuperNetworkStream.SendCommandAsync(command));
+                robotStatesTaskList.Add(r.NETWORK_STREAM.SendCommandAsync(command));
                 r.LastRequestAt = NOW;
             }
 
@@ -588,7 +701,7 @@ namespace BattlefieldLibrary.battlefield {
 	    }
 
         /// <summary>
-        ///
+        /// Robots witch do not send command in time will be disconnected.
         /// </summary>
         /// <param name="NOW">Datetime witch is set in sendRobotStateCommand</param>
 	    protected void disconnectTimeoutedAliveRobots(DateTime NOW) {
@@ -602,14 +715,18 @@ namespace BattlefieldLibrary.battlefield {
             }
 	    }
 
+        /// <summary>
+        /// Make single turn simulation
+        /// </summary>
 	    protected void singleTurnCycle() {
 	        lock (receivedCommands) {
 	            Turn++;
                 Console.WriteLine("Turn: " + Turn);
-                processCommands();
+                HashSet<BattlefieldRobot> robotsSendCommand = processCommands();
                 afterProcessCommand();
 	            changeBattlefieldState();
 	            moving();
+	            damaging();
 	            shooting();
 	            detonatingMines();
 	            afterMovingAndDamaging();
@@ -619,7 +736,7 @@ namespace BattlefieldLibrary.battlefield {
 	                healAllRobots();
 	            }
                 
-	            DateTime now = sendRobotStateCommand(lapState);
+	            DateTime now = sendRobotStateCommand(lapState, robotsSendCommand);
 	            disconnectTimeoutedAliveRobots(now);
 	            handleEndTurn(lapState != LapState.NONE && MAX_LAP == lap);
 	            foreach (var robot in robots) {
@@ -641,7 +758,7 @@ namespace BattlefieldLibrary.battlefield {
 
                 receivedCommands.Clear();
                 foreach (BattlefieldRobot r in robotsSendCommand) {
-                    listen(r);
+                    listen(r.NETWORK_STREAM);
                 }
             }
 	    }
@@ -666,14 +783,14 @@ namespace BattlefieldLibrary.battlefield {
 
         protected async void disconnect(BattlefieldRobot r) {
             r.HitPoints = 0;
-            await r.SuperNetworkStream.SendCommandAsync(new ErrorCommand("Too long without command. You are disconnected"));
-            r.SuperNetworkStream.Close();
+            await r.NETWORK_STREAM.SendCommandAsync(new ErrorCommand("Too long without command. You are disconnected"));
+            r.NETWORK_STREAM.Close();
         }
 
 
 	    protected void AddObtacleInSight(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        Point[] points = generateSignPoints(r);
-            ObstaclesAroundRobot obtaclesInSight = new ObstaclesAroundRobot(obtacleManager.GetObtaclesInPoints(points));
+            ObstaclesAroundRobot obtaclesInSight = new ObstaclesAroundRobot(obstacleManager.GetObtaclesInPoints(points));
             obtaclesInSight.AddToRobotStateCommand(robotStateCommand);
 	    }
 

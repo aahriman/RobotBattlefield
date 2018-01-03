@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using BaseLibrary.protocol;
 using BaseLibrary.utils;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.repairman {
     public class RepairCommandV1_0 : RepairCommand, ACommand.Sendable {
@@ -12,7 +11,7 @@ namespace BaseLibrary.command.repairman {
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }
 
-            public override bool IsDeserializable(string s) {
+            public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, NAME, out rest) && rest.Length == 1) {
                     int maxDistance;

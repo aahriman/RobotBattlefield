@@ -151,7 +151,7 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Communication with server.
         /// </summary>
-        private SuperNetworkStream sns;
+        private NetworkStream sns;
 
         /// <summary>
         /// Robot's name.
@@ -234,11 +234,11 @@ namespace ClientLibrary.robot {
         /// <returns></returns>
         private async Task<InitAnswerCommand> InitAsync(InitAnswerCommand destination, String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
-            InitAnswerCommand answerCommand = (InitAnswerCommand) await sns.RecieveCommandAsync();
+            InitAnswerCommand answerCommand = (InitAnswerCommand) await sns.ReceiveCommandAsync();
             ProcessInit(answerCommand);
             destination.FillData(answerCommand);
 
-            RobotStateCommand robotState = (RobotStateCommand)await sns.RecieveCommandAsync();
+            RobotStateCommand robotState = (RobotStateCommand)await sns.ReceiveCommandAsync();
             ProcessState(robotState);
             return answerCommand;
         }
@@ -257,15 +257,15 @@ namespace ClientLibrary.robot {
             lock (EQUIP_LOCK) {
                 if (MOTORS_BY_ID.Count == 0) {
                     sendCommandAsync(new GetMotorsCommand()).Wait();
-                    GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) sns.RecieveCommand();
+                    GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) sns.ReceiveCommand();
                     sendCommandAsync(new GetArmorsCommand()).Wait();
-                    GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand) sns.RecieveCommand();
+                    GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand) sns.ReceiveCommand();
                     sendCommandAsync(new GetGunsCommand()).Wait();
-                    GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) sns.RecieveCommand(); ;
-                    sendCommandAsync(new GetRepairToolCommand()).Wait();
-                    GetRepairToolAnswerCommand repairToolAnswer = (GetRepairToolAnswerCommand) sns.RecieveCommand();
-                    sendCommandAsync(new GetMineGunCommand()).Wait();
-                    GetMineGunAnswerCommand mineGunAnswer = (GetMineGunAnswerCommand) sns.RecieveCommand(); ;
+                    GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) sns.ReceiveCommand(); ;
+                    sendCommandAsync(new GetRepairToolsCommand()).Wait();
+                    GetRepairToolsAnswerCommand repairToolsAnswer = (GetRepairToolsAnswerCommand) sns.ReceiveCommand();
+                    sendCommandAsync(new GetMineGunsCommand()).Wait();
+                    GetMineGunsAnswerCommand mineGunsAnswer = (GetMineGunsAnswerCommand) sns.ReceiveCommand(); ;
 
                     foreach (Motor motor in motorAnswer.MOTORS) {
                         MOTORS_BY_ID.Add(motor.ID, motor);
@@ -279,11 +279,11 @@ namespace ClientLibrary.robot {
                         GUNS_BY_ID.Add(gun.ID, gun);
                     }
 
-                    foreach (RepairTool repairTool in repairToolAnswer.REPAIR_TOOLS) {
+                    foreach (RepairTool repairTool in repairToolsAnswer.REPAIR_TOOLS) {
                         REPAIR_TOOLS_BY_ID.Add(repairTool.ID, repairTool);
                     }
 
-                    foreach (MineGun mineGun in mineGunAnswer.MINE_GUNS) {
+                    foreach (MineGun mineGun in mineGunsAnswer.MINE_GUNS) {
                         MINE_GUNS_BY_ID.Add(mineGun.ID, mineGun);
                     }
 
@@ -464,8 +464,8 @@ namespace ClientLibrary.robot {
         /// </summary>
         /// <returns>Command</returns>
         protected async Task<T> receiveCommandAsync<T>() where T : ACommand{
-            T command = (T) await sns.RecieveCommandAsync();
-            ProcessState((RobotStateCommand) await sns.RecieveCommandAsync());
+            T command = (T) await sns.ReceiveCommandAsync();
+            ProcessState((RobotStateCommand) await sns.ReceiveCommandAsync());
             return command;
         }
 

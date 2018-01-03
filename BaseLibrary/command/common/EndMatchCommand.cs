@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BaseLibrary.visitors;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.command.common {
     /// <summary>
@@ -15,25 +15,22 @@ namespace BaseLibrary.command.common {
             return position;
         }
 
+        private string _fileUrl;
         /// <summary>
         /// Where can be downloaded file with information about battle.
         /// </summary>
-        public string FILE_URL { get; private set; }
+        public string FILE_URL {
+            get {
+                if (pending)
+                    throw new NotSupportedException("Cannot access to property of pending request.");
+                return _fileUrl;
+            }
+            private set => _fileUrl = value;
+        }
 
         public EndMatchCommand(string fileUrl) {
             FILE_URL = fileUrl;
-        }
-
-        public override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
+            pending = false;
         }
     }
 }

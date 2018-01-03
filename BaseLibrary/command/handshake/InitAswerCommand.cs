@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.command.common;
-using BaseLibrary.visitors;
 
 namespace BaseLibrary.command.handshake {
     public class InitAnswerCommand : AHandShakeCommand {
@@ -51,18 +50,6 @@ namespace BaseLibrary.command.handshake {
 
             MORE = source.MORE;
             pending = false;
-        } 
-
-        public sealed override void accept(ICommandVisitor accepter) {
-            accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output>(ICommandVisitor<Output> accepter) {
-            return accepter.visit(this);
-        }
-
-        public sealed override Output accept<Output, Input>(ICommandVisitor<Output, Input> accepter, Input input) {
-            return accepter.visit(this, input);
         }
     }
 }
