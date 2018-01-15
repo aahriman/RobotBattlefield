@@ -33,7 +33,7 @@ namespace BattlefieldLibrary.battlefield {
             ModUtils.LoadMods();
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ObstaclesAroundRobot).TypeHandle);
         }
-
+        
 	    public struct RobotAndBattlefield {
 	        public readonly BattlefieldRobot ROBOT;
 	        public readonly Battlefield BATTLEFIELD;
@@ -53,6 +53,11 @@ namespace BattlefieldLibrary.battlefield {
 	            BATTLEFIELD = battlefield;
 	        }
 	    }
+
+        /// <summary>
+        /// Config for this battlefield.
+        /// </summary>
+	    public readonly BattlefieldConfig CONFIG;
 
         /// <summary>
         /// Max size of arena. Arena is from [0, 0] to [ARENA_MAX_SIZE, ARENA_MAX_SIZE].
@@ -118,6 +123,11 @@ namespace BattlefieldLibrary.battlefield {
         /// </summary>
         protected List<BattlefieldRobot> robots = new List<BattlefieldRobot>();
 
+	    /// <summary>
+	    /// List of robots witch was killed in actual turn.
+	    /// </summary>
+	    protected List<BattlefieldRobot> killedRobots = new List<BattlefieldRobot>();
+
         /// <summary>
         /// Robots split by its id.
         /// </summary>
@@ -147,11 +157,6 @@ namespace BattlefieldLibrary.battlefield {
 	    /// Counter for generate id for team.
 	    /// </summary>
 	    private int idForTeam = 1;
-
-        /// <summary>
-        /// How many robot is active (sends command).
-        /// </summary>
-		private int activeRobots = 0;
 
 	    /// <summary>
         /// How long wait between turn (negative is forever) in millisecond.
@@ -290,11 +295,11 @@ namespace BattlefieldLibrary.battlefield {
 
         private readonly Dictionary<NetworkStream, BattlefieldRobot> robotsByStream = new Dictionary<NetworkStream, BattlefieldRobot>();
 
-	    public static void addDamagingMethod(DealDamage dealDamageMethod) {
-	        dealDamageMethods.Add(dealDamageMethod);
+	    public static void addDamagingMethod(DamageDealing damageDealing) {
+	        damageDealingMethods.Add(damageDealing);
 	    }
 
-	    private static readonly List<DealDamage> dealDamageMethods = new List<DealDamage>();
+	    private static readonly List<DamageDealing> damageDealingMethods = new List<DamageDealing>();
 
         protected Battlefield(BattlefieldConfig battlefieldConfig) {
             ROBOTS_IN_TEAM = battlefieldConfig.ROBOTS_IN_TEAM;
@@ -305,6 +310,7 @@ namespace BattlefieldLibrary.battlefield {
             RESPAWN_ALLOWED = battlefieldConfig.RESPAWN_ALLOWED;
             WAITING_TIME_BETWEEN_TURNS = battlefieldConfig.WAITING_TIME_BETWEEN_TURNS;
             MAX_WAITING_TIME = new TimeSpan(0, 0, 0, 0, 8 * WAITING_TIME_BETWEEN_TURNS); //How long wait for receive command before disconnect
+            CONFIG = battlefieldConfig;
 
             if (battlefieldConfig.GUI) {
                 TURN_DATA_MODEL = new SerialTurnDataModel();
@@ -323,7 +329,7 @@ namespace BattlefieldLibrary.battlefield {
 	            ServerConfig.SetDefaultEquipment();
 	        }
             IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObtaclesFromFile(battlefieldConfig.OBTACLE_CONFIG_FILE) : new IObstacle[0];
-	        obstacleManager = new ObstacleManager(obstacles);
+	        obstacleManager = new ObstacleManager(obstacles, battlefieldConfig.RANDOM_SEED);
 	       
 	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS, battlefieldConfig.MATCH_SAVE_FILE);
 
@@ -332,7 +338,9 @@ namespace BattlefieldLibrary.battlefield {
            commandProcessorBeforeInitRobot = new CommandProcessor<ACommand, NetworkStreamAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
            commandProcessor = new CommandProcessor<ACommand, RobotAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
            addProcess();
-       }
+
+            
+        }
 
         private void battlefieldSetting(Motor[] motors, Gun[] guns, Armor[] armors, RepairTool[] repairTools, MineGun[] mineGuns, string filename) {
             this.Motors = motors;
@@ -604,15 +612,24 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
-	    public delegate void DealDamage();
+	    public delegate void DamageDealing(Battlefield battlefield);
 
 	    protected void damaging() {
             shooting();
 	        detonatingMines();
-	        foreach (var dealDamageMethod in dealDamageMethods) {
-	            dealDamageMethod();
+	        foreach (var dealDamageMethod in damageDealingMethods) {
+	            dealDamageMethod(this);
 	        }
 	    }
+
+	    public void dealDamage(BattlefieldRobot robot, int damage) {
+	        robot.HitPoints -= damage;
+	        if (robot.HitPoints <= 0) {
+	            killedRobots.Add(robot);
+	        }
+	        robot.HitPoints = Math.Max(0, robot.HitPoints);
+
+        }
 
         protected void shooting() {
             if (heapBullet.TryGetValue(Turn, out List<Bullet> bulletList)) {
@@ -621,7 +638,8 @@ namespace BattlefieldLibrary.battlefield {
                         if (r.HitPoints > 0) {
                             double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), bullet.GetToPosition());
                             Zone zone = Zone.GetZoneByDistance(bullet.TANK.Gun.ZONES, distance);
-                            r.HitPoints -= zone.EFFECT;
+                            dealDamage(r, zone.EFFECT);
+                            
                             if (bullet.TANK != r) {
                                 bullet.TANK.Score += zone.EFFECT;
                             }
@@ -645,11 +663,10 @@ namespace BattlefieldLibrary.battlefield {
                     if (r.HitPoints > 0) {
                         double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), mine.GetPosition());
                         Zone zone = Zone.GetZoneByDistance(mine.MineLayer.MineGun.ZONES, distance);
-                        r.HitPoints -= zone.EFFECT;
+                        dealDamage(r, zone.EFFECT);
                         if (mine.MineLayer != r) {
                             mine.MineLayer.Score += zone.EFFECT;
                         }
-                        r.HitPoints = Math.Max(0, r.HitPoints);
                     }
                 }
             }
@@ -739,18 +756,19 @@ namespace BattlefieldLibrary.battlefield {
 	            DateTime now = sendRobotStateCommand(lapState, robotsSendCommand);
 	            disconnectTimeoutedAliveRobots(now);
 	            handleEndTurn(lapState != LapState.NONE && MAX_LAP == lap);
-	            foreach (var robot in robots) {
-                    if (robot.HitPoints <= 0) {
-                        int respawnTurn = Turn + RESPAWN_TIMEOUT;
-                        if (!RESPAWN_ROBOT_AT_TURN.TryGetValue(respawnTurn, out List<BattlefieldRobot> respawnedRobots)) {
-                            respawnedRobots = new List<BattlefieldRobot>();
-                            RESPAWN_ROBOT_AT_TURN.Add(respawnTurn, respawnedRobots);
-                        }
-                        respawnedRobots.Add(robot);
-                    }
-                }
+	            if (RESPAWN_ALLOWED) {
+	                foreach (var robot in killedRobots) {
+	                    int respawnTurn = Turn + RESPAWN_TIMEOUT;
+	                    if (!RESPAWN_ROBOT_AT_TURN.TryGetValue(respawnTurn, out List<BattlefieldRobot> respawnedRobots)) {
+	                        respawnedRobots = new List<BattlefieldRobot>();
+	                        RESPAWN_ROBOT_AT_TURN.Add(respawnTurn, respawnedRobots);
+	                    }
+	                    respawnedRobots.Add(robot);
+	                }
+	            }
+                killedRobots.Clear();
 
-                allSendCommand = new TaskCompletionSource<bool>();
+	            allSendCommand = new TaskCompletionSource<bool>();
                 if (lapState != LapState.NONE) {
                     newBattle();
                     _battlefieldState = BattlefieldState.MERCHANT;

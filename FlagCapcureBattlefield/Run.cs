@@ -24,7 +24,7 @@ namespace FlagCapcureBattlefield {
             if (args.Length >= 2) {
                 battlefieldConfig = BattlefieldConfig.DeserializeFromFile<FlagCaptureBattlefieldConfig>(args[1]);
             } else {
-                battlefieldConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 2, ROBOTS_IN_TEAM: 1, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: true, MATCH_SAVE_FILE: "arena_match" + port + ".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, more: new [] { new FlagPlace(500, 200, 1), new FlagPlace(500, 800, 2)});
+                battlefieldConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 2, ROBOTS_IN_TEAM: 1, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: true, MATCH_SAVE_FILE: "arena_match" + port + ".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, RANDOM_SEED: null, more: new[] {new FlagPlace(500, 200, 1), new FlagPlace(500, 800, 2)});
             }
             Battlefield arena = server.GetBattlefield(battlefieldConfig);
 

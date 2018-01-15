@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 
 namespace BattlefieldLibrary.battlefield.robot {
     public abstract class BattlefieldRobot : Robot{
-        
+
         public double WantedPower { get; set; }
         public int OldScore {get; set; }
         public string NAME {

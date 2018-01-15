@@ -6,6 +6,29 @@ namespace BaseLibrary.battlefield {
     public abstract class Robot {
 
         /// <summary>
+        /// Operator equal for robots.
+        /// </summary>
+        /// <param name="r1"></param>
+        /// <param name="r2"></param>
+        /// <returns></returns>
+        public static bool operator ==(Robot r1, Robot r2) {
+            if (ReferenceEquals(null, r1)) {
+                return (ReferenceEquals(null, r2) || r2.Equals(null));
+            }
+            return r1.Equals(r2);
+        }
+
+        /// <summary>
+        /// Operator not equal for robots.
+        /// </summary>
+        /// <param name="r1"></param>
+        /// <param name="r2"></param>
+        /// <returns></returns>
+        public static bool operator !=(Robot r1, Robot r2) {
+            return !(r1 == r2);
+        }
+
+        /// <summary>
         /// Robot id.
         /// </summary>
         public int ID { get; protected set; }

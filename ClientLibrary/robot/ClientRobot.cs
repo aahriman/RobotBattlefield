@@ -119,35 +119,7 @@ namespace ClientLibrary.robot {
         /// Number of actual turn.
         /// </summary>
         public int TURN { get; private set; }
-
-        /// <inheritdoc />
-        public override int HitPoints { get; set; }
-
-        /// <inheritdoc />
-        public override int Score { get; set; }
-
-        /// <inheritdoc />
-        public override int Gold { get; set; }
-
-        /// <inheritdoc />
-        public override double X { get; set; }
-
-        /// <inheritdoc />
-        public override double Y { get; set; }
-
-        /// <inheritdoc />
-        public override double Power { get; set; }
-
-        /// <inheritdoc />
-        public override double AngleDrive { get; set; }
-
-        /// <inheritdoc />
-        public override Motor Motor { get; set; }
-
-        /// <inheritdoc />
-        public override Armor Armor { get; set; }
-
-
+        
         /// <summary>
         /// Communication with server.
         /// </summary>

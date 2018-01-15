@@ -23,10 +23,12 @@ namespace BattlefieldLibrary.battlefield {
         public readonly int WAITING_TIME_BETWEEN_TURNS;
         public readonly bool GUI;
 
+        public readonly int? RANDOM_SEED;
+
         public readonly object[] MORE;
 
         public BattlefieldConfig(int MAX_TURN, int MAX_LAP, int TEAMS, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
-                                 bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE, int WAITING_TIME_BETWEEN_TURNS, bool GUI,
+                                 bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string OBTACLE_CONFIG_FILE, int WAITING_TIME_BETWEEN_TURNS, bool GUI, int? RANDOM_SEED,
                                  object[] more) {
             this.TEAMS = TEAMS;
             this.MAX_TURN = MAX_TURN;
@@ -39,6 +41,7 @@ namespace BattlefieldLibrary.battlefield {
             this.MATCH_SAVE_FILE = MATCH_SAVE_FILE;
             this.WAITING_TIME_BETWEEN_TURNS = WAITING_TIME_BETWEEN_TURNS;
             this.GUI = GUI;
+            this.RANDOM_SEED = RANDOM_SEED;
             MORE = more;
         }
 

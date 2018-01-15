@@ -60,7 +60,7 @@
             Handshake protocol for client side.
             </summary>
         </member>
-        <member name="M:ClientLibrary.protocol.HandShakeProtocol.HandShakeClient(BaseLibrary.SuperNetworkStream)">
+        <member name="M:ClientLibrary.protocol.HandShakeProtocol.HandShakeClient(BaseLibrary.NetworkStream)">
             <summary>
             Do handshake for client side.
             </summary>
@@ -244,33 +244,6 @@
             Number of actual turn.
             </summary>
         </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.HitPoints">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.Score">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.Gold">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.X">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.Y">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.Power">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.AngleDrive">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.Motor">
-            <inheritdoc />
-        </member>
-        <member name="P:ClientLibrary.robot.ClientRobot.Armor">
-            <inheritdoc />
-        </member>
         <member name="F:ClientLibrary.robot.ClientRobot.sns">
             <summary>
             Communication with server.
@@ -365,7 +338,7 @@
             </summary>
             <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
             <param name="power">percentage from 0 to 100.</param>
-            <seealso cref="P:ClientLibrary.robot.ClientRobot.AngleDrive"/>
+            <seealso cref="!:AngleDrive"/>
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:ClientLibrary.robot.ClientRobot.DriveAsync(BaseLibrary.command.common.DriveAnswerCommand,System.Double,System.Double)" -->
@@ -468,7 +441,7 @@
             <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
             <param name="range">how far this robot wants to shot</param>
         </member>
-        <member name="M:ClientLibrary.robot.Tank.ShootAsync(BaseLibrary.command.tank.ShotAnswerCommand,System.Double,System.Double)">
+        <member name="M:ClientLibrary.robot.Tank.ShootAsync(BaseLibrary.command.tank.ShootAnswerCommand,System.Double,System.Double)">
             <summary>
             Shoot bullet. And sent it to server asynchronously.
             </summary>

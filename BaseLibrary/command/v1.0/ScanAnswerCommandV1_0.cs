@@ -14,8 +14,8 @@ namespace BaseLibrary.command.v1._0 {
                 s = s.Trim();
 				if (s.StartsWith(NAME+"(") && s.EndsWith(")")) {
 					var rest = s.Substring(NAME.Length+1, s.Length - 2 - NAME.Length).Trim().Split(';');
-                    double range; int enemyId;
-                    if (double.TryParse(rest[0], out range) && int.TryParse(rest[1], out enemyId)) {
+                    ProtocolDouble range; int enemyId;
+                    if (ProtocolDouble.TryParse(rest[0], out range) && int.TryParse(rest[1], out enemyId)) {
                         cache.Cached(s, new ScanAnswerCommandV1_0(range, enemyId));
                         return true;
                     }

@@ -22,7 +22,7 @@ namespace BaseCapcureBattlefield {
             if (args.Length >= 2) {
                 battlefielConfig = BattlefieldConfig.DeserializeFromFile<BattlefieldConfig>(args[1]);
             } else {
-                battlefielConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 2, ROBOTS_IN_TEAM: 2, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: true, MATCH_SAVE_FILE: "arena_match" + port + ".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, more: new [] {new Base(500, 100, 30), new Base(500, 900, 30) });
+                battlefielConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 2, ROBOTS_IN_TEAM: 2, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: true, MATCH_SAVE_FILE: "arena_match" + port + ".txt", EQUIPMENT_CONFIG_FILE: null, OBTACLE_CONFIG_FILE: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, RANDOM_SEED: null, more: new [] {new Base(500, 100, 30), new Base(500, 900, 30) });
             }
 
             Battlefield arena = server.GetBattlefield(battlefielConfig);

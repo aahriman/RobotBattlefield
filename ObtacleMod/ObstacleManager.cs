@@ -48,13 +48,13 @@ namespace ObstacleMod {
             return obtacles;
         }
 
-        private readonly Random random = new Random();
+        private readonly Random random;
 
         private Dictionary<Point, IMoveInfluence> movementObtacles = new Dictionary<Point, IMoveInfluence>();
         private Dictionary<Point, IShotInfluence> shotObtacles = new Dictionary<Point, IShotInfluence>();
         private Dictionary<Point, IScanInfluence> scanObtacles = new Dictionary<Point, IScanInfluence>();
 
-        public ObstacleManager(IEnumerable<IObstacle> obtacles ) {
+        public ObstacleManager(IEnumerable<IObstacle> obtacles, int? randomSeed ) {
             IEnumerable<IMoveInfluence> movementObtacles = from o in obtacles
                                                            where o is IMoveInfluence
                                                            select o as IMoveInfluence;
@@ -76,6 +76,12 @@ namespace ObstacleMod {
 
             foreach (var obtacle in scanObtacles) {
                 this.scanObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+            }
+
+            if (randomSeed == null) {
+                random = new Random();
+            } else {
+                random = new Random((int)randomSeed);
             }
         }
 
