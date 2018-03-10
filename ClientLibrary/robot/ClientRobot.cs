@@ -36,13 +36,23 @@ namespace ClientLibrary.robot {
             ModUtils.LoadMods();
         }
 
-        private static readonly object EQUIP_LOCK = new object();
 
         public static readonly Dictionary<int, Motor> MOTORS_BY_ID = new Dictionary<int, Motor>();
+        public static Dictionary<int, Motor>.ValueCollection MOTORS => MOTORS_BY_ID.Values;
+
+
         public static readonly Dictionary<int, Armor> ARMORS_BY_ID = new Dictionary<int, Armor>();
+        public static Dictionary<int, Armor>.ValueCollection ARMORS => ARMORS_BY_ID.Values;
+
         public static readonly Dictionary<int, Gun> GUNS_BY_ID = new Dictionary<int, Gun>();
+        public static Dictionary<int, Gun>.ValueCollection GUNS => GUNS_BY_ID.Values;
+
         public static readonly Dictionary<int, RepairTool> REPAIR_TOOLS_BY_ID = new Dictionary<int, RepairTool>();
+        public static Dictionary<int, RepairTool>.ValueCollection REPAIR_TOOLS => REPAIR_TOOLS_BY_ID.Values;
+
         public static readonly Dictionary<int, MineGun> MINE_GUNS_BY_ID = new Dictionary<int, MineGun>();
+        public static Dictionary<int, MineGun>.ValueCollection MINE_GUNS => MINE_GUNS_BY_ID.Values;
+
 
         /// <summary>
         /// Do connection to server.
@@ -62,29 +72,47 @@ namespace ClientLibrary.robot {
         /// </param>
         /// <returns>Game type</returns>
         public static GameTypeCommand Connect(String[] args) {
-            ip = ConnectionUtil.LOCAL_ADDRESS;
-            port = GameProperties.DEFAULT_PORT;
-            if (args.Length >= 1) {
-                ip = args[0];
-            }
-
-            if (args.Length >= 2) {
-                port = int.Parse(args[1]);
-            }
-
             GameTypeCommand gameTypeCommand = null;
             lock (ROBOT_COLLECTION) {
-                foreach (var robot in ROBOT_COLLECTION) {
-                    if (!robot.connected) {
-                        gameTypeCommand = robot.Connect(ip, port);
-                    }
+                ip = ConnectionUtil.LOCAL_ADDRESS;
+                port = GameProperties.DEFAULT_PORT;
+                if (args.Length >= 1) {
+                    ip = args[0];
+                }
+
+                if (args.Length >= 2) {
+                    port = int.Parse(args[1]);
                 }
             }
+
+            gameTypeCommand = GetGameTypeAndLoadEquip();
+            connectAllUnconnectedRobots();
+            
             return gameTypeCommand;
         }
 
+        private static GameTypeCommand GetGameTypeAndLoadEquip() {
+            ConnectionUtil connection = new ConnectionUtil();
 
-        /// <summary>
+            GameTypeCommand gameTypeCommand = connection.ConnectAsync(ip, port).Result;
+            LoadEquip(connection.COMMUNICATION);
+            return gameTypeCommand;
+        }
+
+        private static void connectAllUnconnectedRobots() {
+            lock (ROBOT_COLLECTION) {
+                Task[] tasks = new Task[ROBOT_COLLECTION.Count];
+                int i = 0;
+                foreach (var robot in ROBOT_COLLECTION) {
+                    if (!robot.connected) {
+                        tasks[i++] = robot.ConnectAsync(ip, port);
+                    }
+                }
+                Task.WaitAll(tasks);
+            }
+        }
+
+    /// <summary>
         /// End turn - every robots who do not send command will send command <code>Wait</code>.
         /// </summary>
         /// <seealso cref="Wait"/>
@@ -153,17 +181,18 @@ namespace ClientLibrary.robot {
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team</param>
         protected ClientRobot(String name, String teamName) {
+            LAP = 1;
+            this.name = name;
+            this.teamName = teamName;
+
             lock (ROBOT_COLLECTION) {
-                LAP = 1;
-                this.name = name;
-                this.teamName = teamName;
+                ROBOT_COLLECTION.Add(this);
 
                 if (ip != null) {
-                    Connect(ip, port);
+                    ConnectAsync(ip, port).Wait();
                 }
-
-                ROBOT_COLLECTION.Add(this);
             }
+
         }
 
         /// <summary>
@@ -172,30 +201,16 @@ namespace ClientLibrary.robot {
         /// <param name="ip"></param>
         /// <param name="port"></param>
         /// <returns></returns>
-        private GameTypeCommand Connect(String ip, int port) {
-            GameTypeCommand gameTypeCommand = null;
+        private async Task ConnectAsync(String ip, int port) {
             if (!connected) {
                 ConnectionUtil connection = new ConnectionUtil();
 
-                gameTypeCommand = connection.ConnectAsync(ip, port).Result;
+                connection.ConnectAsync(ip, port).Wait();
                 sns = connection.COMMUNICATION;
                 afterConnect();
                 this.connected = true;
-                Init(name, teamName);
+                await InitAsync(name, teamName);
             }
-            return gameTypeCommand;
-        }
-
-        /// <summary>
-        /// Set robot name and team name.
-        /// </summary>
-        /// <param name="name"> name of this robot</param>
-        /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
-        /// <returns></returns>
-        private InitAnswerCommand Init(String name, String teamName) {
-            InitAnswerCommand answer = new InitAnswerCommand();
-            addRobotTask(InitAsync(answer, name, teamName));
-            return answer;
         }
 
         /// <summary>
@@ -204,11 +219,10 @@ namespace ClientLibrary.robot {
         /// <param name="name"> name of this robot</param>
         /// <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
         /// <returns></returns>
-        private async Task<InitAnswerCommand> InitAsync(InitAnswerCommand destination, String name, String teamName) {
+        private async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
             InitAnswerCommand answerCommand = (InitAnswerCommand) await sns.ReceiveCommandAsync();
             ProcessInit(answerCommand);
-            destination.FillData(answerCommand);
 
             RobotStateCommand robotState = (RobotStateCommand)await sns.ReceiveCommandAsync();
             ProcessState(robotState);
@@ -225,18 +239,18 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Get equipment from server.
         /// </summary>
-        public void LoadEquip() {
-            lock (EQUIP_LOCK) {
+        public static void LoadEquip(NetworkStream sns) {
+            lock (MOTORS_BY_ID) {
                 if (MOTORS_BY_ID.Count == 0) {
-                    sendCommandAsync(new GetMotorsCommand()).Wait();
+                    sns.SendCommandAsync(new GetMotorsCommand()).Wait();
                     GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) sns.ReceiveCommand();
-                    sendCommandAsync(new GetArmorsCommand()).Wait();
+                    sns.SendCommandAsync(new GetArmorsCommand()).Wait();
                     GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand) sns.ReceiveCommand();
-                    sendCommandAsync(new GetGunsCommand()).Wait();
+                    sns.SendCommandAsync(new GetGunsCommand()).Wait();
                     GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) sns.ReceiveCommand(); ;
-                    sendCommandAsync(new GetRepairToolsCommand()).Wait();
+                    sns.SendCommandAsync(new GetRepairToolsCommand()).Wait();
                     GetRepairToolsAnswerCommand repairToolsAnswer = (GetRepairToolsAnswerCommand) sns.ReceiveCommand();
-                    sendCommandAsync(new GetMineGunsCommand()).Wait();
+                    sns.SendCommandAsync(new GetMineGunsCommand()).Wait();
                     GetMineGunsAnswerCommand mineGunsAnswer = (GetMineGunsAnswerCommand) sns.ReceiveCommand(); ;
 
                     foreach (Motor motor in motorAnswer.MOTORS) {
@@ -364,7 +378,7 @@ namespace ClientLibrary.robot {
         }
 
         /// <summary>
-        /// Robot will do nothing for this turn. He still move.
+        /// Robot will do nothing for this turn, but still move.
         /// </summary>
         public void Wait() {
             addRobotTask(WaitAsync());
@@ -454,7 +468,10 @@ namespace ClientLibrary.robot {
             if (!connected) {
                 throw new NotSupportedException("Robots have to be connected. Use ClientRobot.Connect(args) first.");
             }
-            lock (ROBOTS_TASK_COMMANDS) {
+            if (ROBOTS_TASK_COMMANDS.ContainsKey(this)) {
+                throw new NotSupportedException("Robot can not send more then one command during same turn.");
+            }
+        lock (ROBOTS_TASK_COMMANDS) {
                 ROBOTS_TASK_COMMANDS.Add(this, t);
                 lock (ROBOT_COLLECTION) {
                     if (ROBOTS_TASK_COMMANDS.Count == ROBOT_COLLECTION.Count) {
@@ -469,7 +486,7 @@ namespace ClientLibrary.robot {
         /// Specify what to do at the end of Connection.
         /// </summary>
         protected void afterConnect() {
-            LoadEquip();
+            
         }
     }
 }

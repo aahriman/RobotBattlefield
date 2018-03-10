@@ -12,10 +12,14 @@ namespace BaseLibrary.battlefield {
         /// <param name="r2"></param>
         /// <returns></returns>
         public static bool operator ==(Robot r1, Robot r2) {
-            if (ReferenceEquals(null, r1)) {
-                return (ReferenceEquals(null, r2) || r2.Equals(null));
+            if (!ReferenceEquals(null, r1)) {
+                return r1.Equals((object) r2);
+            } else if (ReferenceEquals(null, r2)) {
+                return true;
+            } else { 
+                return false;
             }
-            return r1.Equals(r2);
+            
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using BaseLibrary.equip;
 using BaseLibrary.protocol;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 
 namespace BattlefieldLibrary.config {
 
@@ -31,7 +33,7 @@ namespace BattlefieldLibrary.config {
             foreach (var pair in supportedProtocols) {
                 SUPPORTED_PROTOCOLS[index++] = pair.Key;
                 PROTOCOL_FACTORY.RegisterProtocol(pair.Key, pair.Value);
-            }
+            }           
         }
 
         private static KeyValuePair<string, AProtocol>[] getSupportedProcotols() {
@@ -56,15 +58,15 @@ namespace BattlefieldLibrary.config {
         public static void SetEquipmentFromFile(string filepath) {
             JObject jObject = JObject.Load(new JsonTextReader(File.OpenText(filepath)));
             MOTORS = jObject["motors"].Select(json => JsonConvert.DeserializeObject<Motor>(json.ToString())).ToArray();
-            GUNS = jObject["guns"].Select(json => JsonConvert.DeserializeObject<Gun>(json.ToString())).ToArray();
             ARMORS = jObject["armors"].Select(json => JsonConvert.DeserializeObject<Armor>(json.ToString())).ToArray();
-            REPAIR_TOOLS = jObject["reparTools"].Select(json => JsonConvert.DeserializeObject<RepairTool>(json.ToString())).ToArray();
+            GUNS = jObject["guns"].Select(json => JsonConvert.DeserializeObject<Gun>(json.ToString())).ToArray();
+            REPAIR_TOOLS = jObject["repairTools"].Select(json => JsonConvert.DeserializeObject<RepairTool>(json.ToString())).ToArray();
             MINE_GUNS = jObject["mineGuns"].Select(json => JsonConvert.DeserializeObject<MineGun>(json.ToString())).ToArray();
         }
 
         public static void SetDefaultEquipment() {
             MOTORS = new Motor[] {
-                new Motor(4, 50, 12, 6, 50, 0, 1),
+                new Motor(MAX_SPEED: 4, ROTATE_IN: 50,ACCELERATION: 10, DECELERATION: 5, MAX_INITIAL_POWER: 50, COST: 0, ID: 1),
                 new Motor(5, 55, 12, 6, 50, 50, 2),
                 new Motor(6, 60, 13, 5, 50, 100, 3)
             };
@@ -113,6 +115,7 @@ namespace BattlefieldLibrary.config {
                 new MineGun(4, 200, 10,
                     new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)})
             };
+
         }
     }
 }

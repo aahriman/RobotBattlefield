@@ -20,6 +20,8 @@ namespace ClientLibrary.robot {
         /// </summary>
         public Gun GUN { get; private set; }
 
+        public Tank(String name) : base(name) { }
+
         public Tank(String name, String teamName) : base(name, teamName) {}
 
         /// <summary>

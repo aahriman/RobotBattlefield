@@ -80,7 +80,7 @@ namespace BattlefieldLibrary {
         public Battlefield GetBattlefield(BattlefieldConfig battlefielConfig) {
             if (battlefielConfig.RANDOM_SEED == null) {
                 int RANDOM_SEED = new Random().Next();
-                battlefielConfig = new BattlefieldConfig(battlefielConfig.MAX_TURN, battlefielConfig.MAX_LAP, battlefielConfig.TEAMS, battlefielConfig.ROBOTS_IN_TEAM, battlefielConfig.RESPAWN_TIMEOUT, battlefielConfig.RESPAWN_ALLOWED, battlefielConfig.MATCH_SAVE_FILE, battlefielConfig.EQUIPMENT_CONFIG_FILE, battlefielConfig.OBTACLE_CONFIG_FILE, battlefielConfig.WAITING_TIME_BETWEEN_TURNS, battlefielConfig.GUI, RANDOM_SEED, battlefielConfig.MORE);
+                battlefielConfig = new BattlefieldConfig(battlefielConfig.MAX_TURN, battlefielConfig.MAX_LAP, battlefielConfig.TEAMS, battlefielConfig.ROBOTS_IN_TEAM, battlefielConfig.RESPAWN_TIMEOUT, battlefielConfig.RESPAWN_ALLOWED, battlefielConfig.MATCH_SAVE_FILE, battlefielConfig.EQUIPMENT_CONFIG_FILE, battlefielConfig.OBSTACLE_CONFIG_FILE, battlefielConfig.WAITING_TIME_BETWEEN_TURNS, battlefielConfig.GUI, RANDOM_SEED, battlefielConfig.MORE);
                 Console.WriteLine("Using random seed: " + RANDOM_SEED);
             }
             Battlefield = NewBattlefield(battlefielConfig);

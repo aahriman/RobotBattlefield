@@ -51,6 +51,18 @@ namespace ClientLibrary.robot {
         /// </summary>
         public readonly List<Mine> PuttedMinesList = new List<Mine>();
 
+        /// <summary>
+        /// Create new mineLayer with name.
+        /// </summary>
+        /// <param name="name"></param>
+        public MineLayer(String name)
+            : base(name) { }
+
+        /// <summary>
+        /// Create new mineLayer with name and into team specified by teamName
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="teamName"></param>
         public MineLayer(String name, String teamName)
             : base(name, teamName) {}
 

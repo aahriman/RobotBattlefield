@@ -159,13 +159,15 @@ namespace ViewerLibrary.gui {
             return robotPen[id];
         }
 
-        private void drawRobot(Robot robot, Graphics g) { 
-            Pen pen = GetRobotPen(robot);
-            drawRobotBody(robot, pen, g);
+        private void drawRobot(Robot robot, Graphics g) {
+            if (robot.HIT_POINTS > 0) {
+                Pen pen = GetRobotPen(robot);
+                drawRobotBody(robot, pen, g);
 
-            Font drawFont = new Font("Arial", 10);
-            string drawString = $"{robot.NAME} ({robot.HIT_POINTS})";
-            g.DrawString(drawString, drawFont, pen.Brush, DrawerUtils.Translate(robot.GetPosition(), name));
+                Font drawFont = new Font("Arial", 10);
+                string drawString = $"{robot.NAME} ({robot.HIT_POINTS})";
+                g.DrawString(drawString, drawFont, pen.Brush, DrawerUtils.Translate(robot.GetPosition(), name));
+            }
         }
 
         public void drawBullet(Bullet info, Graphics g) {
@@ -214,7 +216,7 @@ namespace ViewerLibrary.gui {
                 if (x == null || y == null) {
                     throw new InvalidOperationException("RobotComparer cannot compare null references.");
                 } 
-                return x.SCORE - y.SCORE;
+                return y.SCORE - x.SCORE;
             }
 
             /// <inheritdoc />

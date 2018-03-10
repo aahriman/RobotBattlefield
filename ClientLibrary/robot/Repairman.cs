@@ -17,6 +17,8 @@ namespace ClientLibrary.robot {
         /// </summary>
         public RepairTool REPAIR_TOOL { get; private set; }
 
+        public Repairman(String name) : base(name) { }
+
         public Repairman(String name, String teamName) : base(name, teamName) { }
 
         /// <summary>

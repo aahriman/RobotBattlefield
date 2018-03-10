@@ -104,6 +104,10 @@ namespace BattlefieldLibrary.battlefield {
             }
             robot.NAME = command.NAME;
 
+            battlefieldTurn.AddRobot(new Robot(robot.TEAM_ID, robot.Score, robot.Gold, robot.HitPoints, robot.X, robot.Y,
+                robot.AngleDrive, robot.NAME));
+            TURN_DATA_MODEL?.Add(battlefieldTurn.ConvertToTurn(), false);
+
             return battlefield.AddToInitAnswereCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
                 robot.ID, robot.TEAM_ID, classEquipment.ID, robot.Armor.ID, robot.Motor.ID));
         }
@@ -145,7 +149,6 @@ namespace BattlefieldLibrary.battlefield {
 
             robot.X = position.X;
             robot.Y = position.Y;
-
         }
 
 

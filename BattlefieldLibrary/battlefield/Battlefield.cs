@@ -257,7 +257,7 @@ namespace BattlefieldLibrary.battlefield {
         /// Instance for storing what happen in this turn.
         /// </summary>
         /// <seealso cref="SERIALIZER"/>
-        protected BattlefieldTurn battlefieldTurn;
+        protected BattlefieldTurn battlefieldTurn = new BattlefieldTurn(0);
 
         /// <summary>
         /// Turn serializator, after every turn match is serialized to file for later record.
@@ -328,7 +328,7 @@ namespace BattlefieldLibrary.battlefield {
 	        } else {
 	            ServerConfig.SetDefaultEquipment();
 	        }
-            IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObtaclesFromFile(battlefieldConfig.OBTACLE_CONFIG_FILE) : new IObstacle[0];
+            IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBSTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObtaclesFromFile(battlefieldConfig.OBSTACLE_CONFIG_FILE) : new IObstacle[0];
 	        obstacleManager = new ObstacleManager(obstacles, battlefieldConfig.RANDOM_SEED);
 	       
 	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS, battlefieldConfig.MATCH_SAVE_FILE);
@@ -337,9 +337,7 @@ namespace BattlefieldLibrary.battlefield {
 
            commandProcessorBeforeInitRobot = new CommandProcessor<ACommand, NetworkStreamAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
            commandProcessor = new CommandProcessor<ACommand, RobotAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
-           addProcess();
-
-            
+           addProcess();     
         }
 
         private void battlefieldSetting(Motor[] motors, Gun[] guns, Armor[] armors, RepairTool[] repairTools, MineGun[] mineGuns, string filename) {
@@ -510,10 +508,8 @@ namespace BattlefieldLibrary.battlefield {
 	        Turn turn;
             lock (writer) {
 	            foreach (BattlefieldRobot r in robots) {
-	                if (r.HitPoints > 0) {
-	                    battlefieldTurn.AddRobot(new ViewerLibrary.Robot(r.TEAM_ID, r.Score, r.Gold, r.HitPoints, r.X, r.Y,
+	                battlefieldTurn.AddRobot(new ViewerLibrary.Robot(r.TEAM_ID, r.Score, r.Gold, r.HitPoints, r.X, r.Y,
 	                                                                     r.AngleDrive, r.NAME));
-	                }
 	            }
 
                 foreach (var pairValueKeyBullets in heapBullet) { // add bullets
@@ -640,7 +636,7 @@ namespace BattlefieldLibrary.battlefield {
                             Zone zone = Zone.GetZoneByDistance(bullet.TANK.Gun.ZONES, distance);
                             dealDamage(r, zone.EFFECT);
                             
-                            if (bullet.TANK != r) {
+                            if (!bullet.TANK.Equals(r)) {
                                 bullet.TANK.Score += zone.EFFECT;
                             }
                             r.HitPoints = Math.Max(0, r.HitPoints);
@@ -664,7 +660,7 @@ namespace BattlefieldLibrary.battlefield {
                         double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), mine.GetPosition());
                         Zone zone = Zone.GetZoneByDistance(mine.MineLayer.MineGun.ZONES, distance);
                         dealDamage(r, zone.EFFECT);
-                        if (mine.MineLayer != r) {
+                        if (!mine.MineLayer.Equals(r)) {
                             mine.MineLayer.Score += zone.EFFECT;
                         }
                     }
