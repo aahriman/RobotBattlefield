@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadmatchBattlefield", "Dea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseCaptureBattlefield", "BaseCaptureBattlefield\BaseCaptureBattlefield.csproj", "{FCAA9EE1-44AD-4F53-8C42-F47590BE775D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlagCapcureBattlefield", "FlagCapcureBattlefield\FlagCapcureBattlefield.csproj", "{2EB59B9F-585E-4BC9-B422-C9EA88C6FED6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlagCaptureBattlefield", "FlagCaptureBattlefield\FlagCaptureBattlefield.csproj", "{2EB59B9F-585E-4BC9-B422-C9EA88C6FED6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattlefieldLibrary", "BattlefieldLibrary\BattlefieldLibrary.csproj", "{73808A0B-4126-4780-8FEC-69872F6C5BAC}"
 EndProject

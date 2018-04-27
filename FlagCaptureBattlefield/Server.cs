@@ -1,9 +1,9 @@
 ﻿using BaseLibrary.command.handshake;
 using BattlefieldLibrary;
 using BattlefieldLibrary.battlefield;
-using FlagCapcureBattlefield.battlefield;
+using FlagCaptureBattlefield.battlefield;
 
-namespace FlagCapcureBattlefield {
+namespace FlagCaptureBattlefield {
     public class Server : AServer{
         public Server(int port) : base(port) {
         }
@@ -13,7 +13,7 @@ namespace FlagCapcureBattlefield {
         }
 
         protected override Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig) {
-            return new FlagCaptureBattlefield(FlagCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
+            return new battlefield.FlagCaptureBattlefield(FlagCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
         }
     }
 }

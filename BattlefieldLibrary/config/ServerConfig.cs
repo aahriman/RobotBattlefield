@@ -66,14 +66,14 @@ namespace BattlefieldLibrary.config {
 
         public static void SetDefaultEquipment() {
             MOTORS = new Motor[] {
-                new Motor(MAX_SPEED: 4, ROTATE_IN: 50,ACCELERATION: 10, DECELERATION: 5, MAX_INITIAL_POWER: 50, COST: 0, ID: 1),
-                new Motor(5, 55, 12, 6, 50, 50, 2),
+                new Motor(MAX_SPEED: 4, ROTATE_IN: 50,ACCELERATION: 10, DECELERATION: 5, MAX_INITIAL_POWER: 30, COST: 0, ID: 1),
+                new Motor(5, 55, 12, 6, 40, 50, 2),
                 new Motor(6, 60, 13, 5, 50, 100, 3)
             };
 
             GUNS = new Gun[] {
-                new Gun(1, 0, 2, 700, 16,
-                    new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
+                new Gun(ID: 1, COST: 0, MAX_BULLETS: 2, MAX_RANGE: 700, SHOT_SPEED: 15,
+                    ZONES: new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
                 new Gun(2, 80, 2, 800, 24,
                     new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
                 new Gun(3, 150, 2, 500, 16,
@@ -85,13 +85,13 @@ namespace BattlefieldLibrary.config {
             };
 
             ARMORS = new Armor[] {
-                new Armor(100, 0, 1),
-                new Armor(150, 50, 2),
-                new Armor(200, 50, 3)
+                new Armor(ID: 1, COST: 0, MAX_HP: 100),
+                new Armor(2, 25, 150),
+                new Armor(3, 50, 200)
             };
 
             REPAIR_TOOLS = new RepairTool[] {
-                new RepairTool(1, 0, 5, new Zone[] {
+                new RepairTool(ID: 1, COST: 0, MAX_USAGES: 5, ZONES: new Zone[] {
                     new Zone(5, 100), new Zone(10, 50), new Zone(20, 25), new Zone(30, 15)
                 }),
                 new RepairTool(2, 60, 10,
@@ -105,8 +105,8 @@ namespace BattlefieldLibrary.config {
             };
 
             MINE_GUNS = new MineGun[] {
-                new MineGun(1, 0, 4,
-                    new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
+                new MineGun(ID: 1, COST: 0, MAX_MINES: 4,
+                    ZONES: new Zone[] {new Zone(distance: 5, effect: 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
                 new MineGun(2, 80, 8,
                     new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
                 new MineGun(3, 150, 6, new Zone[] {

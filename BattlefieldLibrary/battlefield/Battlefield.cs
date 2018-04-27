@@ -632,7 +632,7 @@ namespace BattlefieldLibrary.battlefield {
                 foreach (Bullet bullet in bulletList) {
                     foreach (BattlefieldRobot r in robots) {
                         if (r.HitPoints > 0) {
-                            double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), bullet.GetToPosition());
+                            double distance = EuclideanSpaceUtils.Distance(r.Position, bullet.GetToPosition());
                             Zone zone = Zone.GetZoneByDistance(bullet.TANK.Gun.ZONES, distance);
                             dealDamage(r, zone.EFFECT);
                             
@@ -657,7 +657,7 @@ namespace BattlefieldLibrary.battlefield {
                 mine.MineLayer.MinesNow--;
                 foreach (BattlefieldRobot r in robots) {
                     if (r.HitPoints > 0) {
-                        double distance = EuclideanSpaceUtils.Distance(r.GetPosition(), mine.GetPosition());
+                        double distance = EuclideanSpaceUtils.Distance(r.Position, mine.GetPosition());
                         Zone zone = Zone.GetZoneByDistance(mine.MineLayer.MineGun.ZONES, distance);
                         dealDamage(r, zone.EFFECT);
                         if (!mine.MineLayer.Equals(r)) {

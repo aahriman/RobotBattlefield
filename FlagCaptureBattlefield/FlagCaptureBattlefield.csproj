@@ -7,8 +7,8 @@
     <ProjectGuid>{2EB59B9F-585E-4BC9-B422-C9EA88C6FED6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FlagCapcureBattlefield</RootNamespace>
-    <AssemblyName>FlagCapcureBattlefield</AssemblyName>
+    <RootNamespace>FlagCaptureBattlefield</RootNamespace>
+    <AssemblyName>FlagCaptureBattlefield</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

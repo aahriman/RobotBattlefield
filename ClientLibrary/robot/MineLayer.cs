@@ -8,6 +8,7 @@ using BaseLibrary.command.handshake;
 using BaseLibrary.command.miner;
 using BaseLibrary.command.tank;
 using BaseLibrary.equip;
+using BaseLibrary.utils.euclidianSpaceStruct;
 
 namespace ClientLibrary.robot {
 
@@ -33,7 +34,15 @@ namespace ClientLibrary.robot {
             /// <summary>
             /// Mine id witch is useful for detonation.
             /// </summary>
-            public int ID;
+            public readonly int ID;
+
+            public Point Position => new Point(X, Y);
+
+            public Mine(int id) {
+                ID = id;
+                X = default(double);
+                Y = default(double);
+            }
         }
 
         /// <summary>
@@ -42,14 +51,14 @@ namespace ClientLibrary.robot {
         public MineGun MINE_GUN { get; private set; }
 
         /// <summary>
-        /// Number of putted
+        /// Number of put mines on map.
         /// </summary>
-        public int PuttedMines { get; private set; }
+        public int PutMines { get; private set; }
 
         /// <summary>
-        /// List of available mines putted on map.
+        /// List of available mines put on map.
         /// </summary>
-        public readonly List<Mine> PuttedMinesList = new List<Mine>();
+        public readonly List<Mine> PutMinesList = new List<Mine>();
 
         /// <summary>
         /// Create new mineLayer with name.
@@ -82,19 +91,20 @@ namespace ClientLibrary.robot {
         /// <param name="destination">Where to fill answer data.</param>
         private async Task<PutMineAnswerCommand> PutMineAsync(PutMineAnswerCommand destinaton) {
             await sendCommandAsync(new PutMineCommand());
+
+            Point position = Position;
             PutMineAnswerCommand answerCommand = await receiveCommandAsync<PutMineAnswerCommand>();
 
             destinaton.FillData(answerCommand);
             if (answerCommand.SUCCESS) {
-                PuttedMinesList.Add(new Mine() {
-                    ID = answerCommand.MINE_ID,
-                    X = X,
-                    Y = Y
+                PutMinesList.Add(new Mine(id: answerCommand.MINE_ID) {
+                    Y = position.X,
+                    X = position.Y
                 });
             }
 
             if (answerCommand.SUCCESS) {
-                PuttedMines++;
+                PutMines++;
             }
             return answerCommand;
         }
@@ -123,11 +133,11 @@ namespace ClientLibrary.robot {
             destination.FillData(answerCommand);
 
             if (answerCommand.SUCCESS) {
-                PuttedMines--;
+                PutMines--;
 
-                foreach (var mine in PuttedMinesList) {
+                foreach (var mine in PutMinesList) {
                     if (mine.ID == mineId) {
-                        PuttedMinesList.Remove(mine);
+                        PutMinesList.Remove(mine);
                         break;
                     }
                 }

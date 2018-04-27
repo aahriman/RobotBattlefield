@@ -12,7 +12,7 @@
         /// <inheritdoc />
         public int ID { get; private set; }
 
-        public Armor(int MAX_HP, int COST, int ID) {
+        public Armor(int ID, int COST, int MAX_HP) {
             this.MAX_HP = MAX_HP;
             this.COST = COST;
             this.ID = ID;

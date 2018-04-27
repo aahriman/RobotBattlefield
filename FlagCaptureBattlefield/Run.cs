@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
 using BattlefieldLibrary.config;
-using FlagCapcureBattlefield.battlefield;
+using FlagCaptureBattlefield.battlefield;
 using FlagCaptureLibrary.battlefield;
 
-namespace FlagCapcureBattlefield {
+namespace FlagCaptureBattlefield {
     public class Run {
         /// <summary>
         /// Start server with specific arguments

@@ -111,9 +111,8 @@ namespace BaseLibrary.battlefield {
         /// Get robot position (useful for <code>Utils</code>)
         /// </summary>
         /// <returns></returns>
-        public Point GetPosition() {
-            return new Point(X, Y);
-        }
+        public Point Position => new Point(X, Y);
+        
 
         /// <inheritdoc />
         public override string ToString() {

@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
-using BaseLibrary.protocol;
 using BaseLibrary.utils;
 using BattlefieldLibrary.battlefield;
 using FlagCaptureLibrary.battlefield;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
 
-namespace FlagCapcureBattlefield.battlefield {
+namespace FlagCaptureBattlefield.battlefield {
 	public class FlagCaptureBattlefield : Battlefield {
         public const int FLAG_PLACE_SIZE = FlagCapture.FLAG_PLACE_SIZE;
 
@@ -71,7 +67,7 @@ namespace FlagCapcureBattlefield.battlefield {
                     double minDistance = double.MaxValue;
                     foreach (BattlefieldRobot robot in robots) {
                         if (robot.TEAM_ID != flagPlace.TEAM_ID) {
-                            double distance = EuclideanSpaceUtils.Distance(robot.GetPosition(),
+                            double distance = EuclideanSpaceUtils.Distance(robot.Position,
                                                                            flagPlace.GetPosition());
                             if (distance < FLAG_PLACE_SIZE && distance < minDistance) {
                                 flag.RobotId = robot.ID;
@@ -87,7 +83,7 @@ namespace FlagCapcureBattlefield.battlefield {
                         } else {
                             List<FlagPlace> robotFlagPlaces = flagPlacesByTeamId[robot.TEAM_ID];
                             foreach (var robotFlagPlace in robotFlagPlaces) {
-                                double distance = EuclideanSpaceUtils.Distance(robot.GetPosition(),
+                                double distance = EuclideanSpaceUtils.Distance(robot.Position,
                                                                            robotFlagPlace.GetPosition());
                                 if (distance < FLAG_PLACE_SIZE) {
                                     foreach (var robotInTeam in robotsByTeamId[robot.TEAM_ID]) {

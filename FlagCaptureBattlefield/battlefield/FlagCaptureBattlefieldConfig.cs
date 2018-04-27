@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BattlefieldLibrary.battlefield;
 using FlagCaptureLibrary.battlefield;
 
-namespace FlagCapcureBattlefield.battlefield {
+namespace FlagCaptureBattlefield.battlefield {
     public class FlagCaptureBattlefieldConfig : BattlefieldConfig {
         private static FlagPlace[] fromMoreToFlags(object[] more) {
             return (

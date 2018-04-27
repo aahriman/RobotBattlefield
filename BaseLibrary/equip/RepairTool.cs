@@ -18,11 +18,11 @@ namespace BaseLibrary.equip {
         /// </summary>
         public Zone[] ZONES { get; private set; }
 
-        public RepairTool(int ID, int COST, int maxUsages, Zone[] ZONES) {
+        public RepairTool(int ID, int COST, int MAX_USAGES, Zone[] ZONES) {
             if (ZONES == null) throw new ArgumentNullException("zones");
             this.ID = ID;
             this.COST = COST;
-            this.MAX_USAGES = maxUsages;
+            this.MAX_USAGES = MAX_USAGES;
             this.ZONES = new Zone[ZONES.Length];
             for (int i = 0; i < ZONES.Length; i++) {
                 this.ZONES[i] = ZONES[i];

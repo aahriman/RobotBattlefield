@@ -7,14 +7,14 @@ namespace BaseLibrary.command.v1._0.equipment {
 	public class ArmorV1_0 : Armor, InnerSerializerV1_0 {
         private const string NAME = "ARMOR";
 
-		public ArmorV1_0(int maxHp, int cost, int id) :
-			base(maxHp, cost, id) { }
+		public ArmorV1_0(int id, int cost, int maxHp) :
+			base(id, cost, maxHp) { }
 
 		public ArmorV1_0(Armor a) :
-			base(a.MAX_HP, a.COST, a.ID) { }
+			base(a.ID, a.COST, a.MAX_HP) { }
 
         public string Serialize(Deep deep) {
-			return ProtocolV1_0Utils.SerializeParams(NAME, deep, MAX_HP, COST, ID);
+			return ProtocolV1_0Utils.SerializeParams(NAME, deep, ID, COST, MAX_HP);
         }
 
 		public static bool Deserialize(string orig, Deep deep, out ArmorV1_0 deserialized) {

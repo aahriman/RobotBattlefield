@@ -304,8 +304,8 @@ namespace BattlefieldLibrary.battlefield {
             if (repairman.RepairToolUsed < repairman.RepairTool.MAX_USAGES && repairman.HitPoints > 0) {
                 foreach (BattlefieldRobot robot in battlefield.robots) {
                     if (robot.HitPoints > 0) {
-                        double distance = EuclideanSpaceUtils.Distance(robot.GetPosition(),
-                            repairman.GetPosition());
+                        double distance = EuclideanSpaceUtils.Distance(robot.Position,
+                            repairman.Position);
                         if (distance < command.MAX_DISTANCE) {
                             Zone zone = Zone.GetZoneByDistance(repairman.RepairTool.ZONES, distance);
                             robot.HitPoints += zone.EFFECT;

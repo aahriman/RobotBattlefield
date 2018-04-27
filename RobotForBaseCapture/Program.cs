@@ -116,7 +116,7 @@ namespace MinerForBaseCapture {
             if (EuclideanSpaceUtils.Distance(new Point(_mineLayer.X, _mineLayer.Y), new Point(capturedBase.X, capturedBase.Y)) >
                 BaseCapture.BASE_SIZE) {
                 return MinerState.GO_TO_BASE;
-            } else if (_mineLayer.PuttedMines < _mineLayer.MINE_GUN.MAX_MINES) {
+            } else if (_mineLayer.PutMines < _mineLayer.MINE_GUN.MAX_MINES) {
                 return MinerState.PUT_MINE;
             } else if (_mineLayer.HitPoints < _mineLayer.previousHitpoints) {
                 return MinerState.GO_TO_REPAIRMAN;
@@ -145,7 +145,7 @@ namespace MinerForBaseCapture {
                 
                 switch (minetState) {
                     case MinerState.DETONATE:
-                        minerDetonate = _mineLayer.DetonateMine(_mineLayer.PuttedMinesList[0].ID);
+                        minerDetonate = _mineLayer.DetonateMine(_mineLayer.PutMinesList[0].ID);
                         
                         break;
                     case MinerState.PUT_MINE:
