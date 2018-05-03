@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using FlagCaptureLibrary.battlefield;
-using Viewer.utils;
 using ViewerLibrary.gui;
 
 namespace Viewer.gui {
+    /// <summary>
+    /// Draw flag and FlagPlace to arena. Use-full for CaptureTheFlagBattlefield.
+    /// </summary>
     public class FlagDrawer : IDrawerMore {
         private const int FLAG_SIZE = 10;
         private const int FLAG_PLACE_SIZE = 15;

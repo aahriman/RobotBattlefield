@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using BaseCapcureBattlefieldLibrary.battlefield;
-using Viewer.utils;
-using ViewerLibrary;
 using ViewerLibrary.gui;
 
 namespace Viewer.gui {
@@ -32,12 +24,12 @@ namespace Viewer.gui {
             float x = (float) (@base.X - BASE_SIZE / 2.0);
             float y = (float) (@base.Y - BASE_SIZE / 2.0);
             g.FillEllipse(innerBasePen.Brush, x, y, BASE_SIZE, BASE_SIZE);
-            //g.DrawEllipse(getTeamPen(@base.TeamId), x, y, BASE_SIZE, BASE_SIZE);
+            
             
 
             Pen teamPen = DefaultDrawer.GetTeamPen(@base.ProgressTeamId);
+            g.DrawEllipse(teamPen, x, y, BASE_SIZE, BASE_SIZE);
 
-            
             float progressSize = BASE_SIZE * @base.Progress / @base.MAX_PROGRESS;
             if (progressSize > 0) {
                 x = (float) (@base.X - progressSize / 2.0);
