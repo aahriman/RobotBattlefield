@@ -22,8 +22,8 @@ namespace BaseCapcureBattlefield {
             return new GameTypeCommand(battlefield.ROBOTS_IN_TEAM, GameType.CAPTURE_BASE);
         }
 
-        protected override Battlefield NewBattlefield(BattlefieldConfig battlefielConfig) {
-            return new BaseCaptureBattlefield(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefielConfig));
+        protected override Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig) {
+            return new BaseCaptureBattlefield(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
         }
     }
 }

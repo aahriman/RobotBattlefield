@@ -14,8 +14,8 @@ namespace DeadmatchBattlefield {
             return new GameTypeCommand(battlefield.ROBOTS_IN_TEAM, GameType.DEADMATCH);
         }
 
-        protected override Battlefield NewBattlefield(BattlefieldConfig battlefielConfig) {
-            return new Deadmatch(battlefielConfig);
+        protected override Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig) {
+            return new Deadmatch(battlefieldConfig);
         }
     }
 }

@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
-using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
-using BaseLibrary.config;
 using BaseLibrary.protocol;
 using BattlefieldLibrary.config;
 
 namespace ServerLibrary.protocol {
+    /// <summary>
+    /// Handle handshake for server side.
+    /// </summary>
     public class HandShakeProtocol : AProtocol {
         public HandShakeProtocol() : base(){
             comandsFactory.RegisterCommand(AckCommand.FACTORY);

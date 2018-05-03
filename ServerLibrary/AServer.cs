@@ -14,15 +14,23 @@ using NetworkStream = BaseLibrary.NetworkStream;
 
 namespace BattlefieldLibrary {
     public abstract class AServer {
+        /// <summary>
+        /// 
+        /// </summary>
 	    private readonly List<NetworkStream> networkStreamPool = new List<NetworkStream>();
+        /// <summary>
+        /// Created battlefield
+        /// </summary>
 	    protected Battlefield Battlefield;
         protected int port;
         
-        public AServer(int port) {
+        protected AServer(int port) {
             this.port = port;
         }
 
-
+        /// <summary>
+        /// Close server - close all networkStream
+        /// </summary>
         public void Close() {
             lock (networkStreamPool) {
                 foreach (var i in networkStreamPool) {
@@ -31,6 +39,12 @@ namespace BattlefieldLibrary {
             }
         }
 
+        /// <summary>
+        /// Bind socket to listen at address and port.
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
         protected void myBindSocket(Socket socket, IPAddress ip, int port) {
             IPEndPoint ipeV6 = new IPEndPoint(ip, port);
             socket.Bind(ipeV6);
@@ -67,6 +81,11 @@ namespace BattlefieldLibrary {
             }
         }
 
+        /// <summary>
+        /// Disconnect networkStream from server and send message.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="message"></param>
         protected async void disconnect(NetworkStream n, string message) {
             lock (networkStreamPool) {
                 networkStreamPool.Remove(n);
@@ -77,13 +96,18 @@ namespace BattlefieldLibrary {
             n.Close();
         }
 
-        public Battlefield GetBattlefield(BattlefieldConfig battlefielConfig) {
-            if (battlefielConfig.RANDOM_SEED == null) {
+        /// <summary>
+        /// Create battlefield at server with config.
+        /// </summary>
+        /// <param name="battlefieldConfig"></param>
+        /// <returns></returns>
+        public Battlefield GetBattlefield(BattlefieldConfig battlefieldConfig) {
+            if (battlefieldConfig.RANDOM_SEED == null) {
                 int RANDOM_SEED = new Random().Next();
-                battlefielConfig = new BattlefieldConfig(battlefielConfig.MAX_TURN, battlefielConfig.MAX_LAP, battlefielConfig.TEAMS, battlefielConfig.ROBOTS_IN_TEAM, battlefielConfig.RESPAWN_TIMEOUT, battlefielConfig.RESPAWN_ALLOWED, battlefielConfig.MATCH_SAVE_FILE, battlefielConfig.EQUIPMENT_CONFIG_FILE, battlefielConfig.OBSTACLE_CONFIG_FILE, battlefielConfig.WAITING_TIME_BETWEEN_TURNS, battlefielConfig.GUI, RANDOM_SEED, battlefielConfig.MORE);
+                battlefieldConfig = new BattlefieldConfig(battlefieldConfig.MAX_TURN, battlefieldConfig.MAX_LAP, battlefieldConfig.TEAMS, battlefieldConfig.ROBOTS_IN_TEAM, battlefieldConfig.RESPAWN_TIMEOUT, battlefieldConfig.RESPAWN_ALLOWED, battlefieldConfig.MATCH_SAVE_FILE, battlefieldConfig.EQUIPMENT_CONFIG_FILE, battlefieldConfig.OBSTACLE_CONFIG_FILE, battlefieldConfig.WAITING_TIME_BETWEEN_TURNS, battlefieldConfig.GUI, RANDOM_SEED, battlefieldConfig.MORE);
                 Console.WriteLine("Using random seed: " + RANDOM_SEED);
             }
-            Battlefield = NewBattlefield(battlefielConfig);
+            Battlefield = NewBattlefield(battlefieldConfig);
 
             Socket socketIPv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             Socket socketIPv4 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -96,8 +120,18 @@ namespace BattlefieldLibrary {
             return Battlefield;
         }
 
-        protected abstract Battlefield NewBattlefield(BattlefieldConfig battlefielConfig);
+        /// <summary>
+        /// Create battlefield with config (used from GetBattlefield)
+        /// </summary>
+        /// <param name="battlefieldConfig"></param>
+        /// <returns></returns>
+        protected abstract Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig);
 
+        /// <summary>
+        /// Get GameTypeCommand for battlefield (used after success connection).
+        /// </summary>
+        /// <param name="Battlefield"></param>
+        /// <returns></returns>
         public abstract GameTypeCommand GetGameTypeCommand(Battlefield Battlefield);
     }
 }
