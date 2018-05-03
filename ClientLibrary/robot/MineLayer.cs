@@ -36,6 +36,9 @@ namespace ClientLibrary.robot {
             /// </summary>
             public readonly int ID;
 
+            /// <summary>
+            /// Mine position.
+            /// </summary>
             public Point Position => new Point(X, Y);
 
             public Mine(int id) {

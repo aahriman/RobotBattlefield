@@ -37,20 +37,53 @@ namespace ClientLibrary.robot {
         }
 
 
+        /// <summary>
+        /// Motors available to buy by its id.
+        /// </summary>
         public static readonly Dictionary<int, Motor> MOTORS_BY_ID = new Dictionary<int, Motor>();
+
+        /// <summary>
+        /// Motors available to buy.
+        /// </summary>
         public static Dictionary<int, Motor>.ValueCollection MOTORS => MOTORS_BY_ID.Values;
 
 
+        /// <summary>
+        /// Armors available to buy by its id.
+        /// </summary>
         public static readonly Dictionary<int, Armor> ARMORS_BY_ID = new Dictionary<int, Armor>();
+
+        /// <summary>
+        /// Armors available to buy.
+        /// </summary>
         public static Dictionary<int, Armor>.ValueCollection ARMORS => ARMORS_BY_ID.Values;
 
+        /// <summary>
+        /// Guns available to buy by its id.
+        /// </summary>
         public static readonly Dictionary<int, Gun> GUNS_BY_ID = new Dictionary<int, Gun>();
+
+        /// <summary>
+        /// Guns available to buy.
+        /// </summary>
         public static Dictionary<int, Gun>.ValueCollection GUNS => GUNS_BY_ID.Values;
 
+        /// <summary>
+        /// Repair tools available to buy by its id.
+        /// </summary>
         public static readonly Dictionary<int, RepairTool> REPAIR_TOOLS_BY_ID = new Dictionary<int, RepairTool>();
+        /// <summary>
+        /// Repair tools available to buy.
+        /// </summary>
         public static Dictionary<int, RepairTool>.ValueCollection REPAIR_TOOLS => REPAIR_TOOLS_BY_ID.Values;
 
+        /// <summary>
+        /// Mine guns available to buy by its id.
+        /// </summary>
         public static readonly Dictionary<int, MineGun> MINE_GUNS_BY_ID = new Dictionary<int, MineGun>();
+        /// <summary>
+        /// Mine guns available to buy.
+        /// </summary>
         public static Dictionary<int, MineGun>.ValueCollection MINE_GUNS => MINE_GUNS_BY_ID.Values;
 
 
@@ -112,7 +145,7 @@ namespace ClientLibrary.robot {
             }
         }
 
-    /// <summary>
+        /// <summary>
         /// End turn - every robots who do not send command will send command <code>Wait</code>.
         /// </summary>
         /// <seealso cref="Wait"/>
@@ -207,7 +240,6 @@ namespace ClientLibrary.robot {
 
                 connection.ConnectAsync(ip, port).Wait();
                 sns = connection.COMMUNICATION;
-                afterConnect();
                 this.connected = true;
                 await InitAsync(name, teamName);
             }
@@ -221,10 +253,10 @@ namespace ClientLibrary.robot {
         /// <returns></returns>
         private async Task<InitAnswerCommand> InitAsync(String name, String teamName) {
             await sendCommandAsync(new InitCommand(name, teamName, GetRobotType()));
-            InitAnswerCommand answerCommand = (InitAnswerCommand) await sns.ReceiveCommandAsync();
+            InitAnswerCommand answerCommand = (InitAnswerCommand) checkCommand(await sns.ReceiveCommandAsync());
             ProcessInit(answerCommand);
 
-            RobotStateCommand robotState = (RobotStateCommand)await sns.ReceiveCommandAsync();
+            RobotStateCommand robotState = (RobotStateCommand) checkCommand(await sns.ReceiveCommandAsync());
             ProcessState(robotState);
             return answerCommand;
         }
@@ -239,19 +271,19 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Get equipment from server.
         /// </summary>
-        public static void LoadEquip(NetworkStream sns) {
+        private static void LoadEquip(NetworkStream sns) {
             lock (MOTORS_BY_ID) {
                 if (MOTORS_BY_ID.Count == 0) {
                     sns.SendCommandAsync(new GetMotorsCommand()).Wait();
-                    GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) sns.ReceiveCommand();
+                    GetMotorsAnswerCommand motorAnswer = (GetMotorsAnswerCommand) checkCommand(sns.ReceiveCommand());
                     sns.SendCommandAsync(new GetArmorsCommand()).Wait();
-                    GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand) sns.ReceiveCommand();
+                    GetArmorsAnswerCommand armorsAnswer = (GetArmorsAnswerCommand)checkCommand(sns.ReceiveCommand());
                     sns.SendCommandAsync(new GetGunsCommand()).Wait();
-                    GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) sns.ReceiveCommand(); ;
+                    GetGunsAnswerCommand gunAnswer = (GetGunsAnswerCommand) checkCommand(sns.ReceiveCommand());
                     sns.SendCommandAsync(new GetRepairToolsCommand()).Wait();
-                    GetRepairToolsAnswerCommand repairToolsAnswer = (GetRepairToolsAnswerCommand) sns.ReceiveCommand();
+                    GetRepairToolsAnswerCommand repairToolsAnswer = (GetRepairToolsAnswerCommand) checkCommand(sns.ReceiveCommand());
                     sns.SendCommandAsync(new GetMineGunsCommand()).Wait();
-                    GetMineGunsAnswerCommand mineGunsAnswer = (GetMineGunsAnswerCommand) sns.ReceiveCommand(); ;
+                    GetMineGunsAnswerCommand mineGunsAnswer = (GetMineGunsAnswerCommand) checkCommand(sns.ReceiveCommand());
 
                     foreach (Motor motor in motorAnswer.MOTORS) {
                         MOTORS_BY_ID.Add(motor.ID, motor);
@@ -275,6 +307,18 @@ namespace ClientLibrary.robot {
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Check if command is not ErrorCommand
+        /// </summary>
+        /// <throws>NotSupportedException - if command is ErrorCommand and text is message from ErrorCommand</throws>
+        private static T checkCommand<T>(T command) where T : ACommand {
+            ErrorCommand error = command as ErrorCommand;
+            if (error != null) {
+                throw new NotSupportedException("ERROR:" + error.MESSAGE);
+            }
+            return command;
         }
 
         /// <summary>
@@ -451,6 +495,7 @@ namespace ClientLibrary.robot {
         /// <returns>Command</returns>
         protected async Task<T> receiveCommandAsync<T>() where T : ACommand{
             T command = (T) await sns.ReceiveCommandAsync();
+            checkCommand(command);
             ProcessState((RobotStateCommand) await sns.ReceiveCommandAsync());
             return command;
         }
@@ -461,9 +506,14 @@ namespace ClientLibrary.robot {
         /// <returns>Command</returns>
         protected T receiveCommand<T>() where T : ACommand {
             T command = receiveCommandAsync<T>().Result;
-            return command;
+            return checkCommand(command);
         }
 
+        /// <summary>
+        /// Add robot task, so ClientRobot class know when all robot have prepared command.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <throws>NotSupportedException - when robot is not connected or when robot already select action for this turn.</throws>
         protected void addRobotTask(Task t) {
             if (!connected) {
                 throw new NotSupportedException("Robots have to be connected. Use ClientRobot.Connect(args) first.");
@@ -471,7 +521,7 @@ namespace ClientLibrary.robot {
             if (ROBOTS_TASK_COMMANDS.ContainsKey(this)) {
                 throw new NotSupportedException("Robot can not send more then one command during same turn.");
             }
-        lock (ROBOTS_TASK_COMMANDS) {
+            lock (ROBOTS_TASK_COMMANDS) {
                 ROBOTS_TASK_COMMANDS.Add(this, t);
                 lock (ROBOT_COLLECTION) {
                     if (ROBOTS_TASK_COMMANDS.Count == ROBOT_COLLECTION.Count) {
@@ -480,13 +530,6 @@ namespace ClientLibrary.robot {
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Specify what to do at the end of Connection.
-        /// </summary>
-        protected void afterConnect() {
-            
         }
     }
 }
