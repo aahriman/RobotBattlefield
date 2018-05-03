@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ViewerLibrary.serializer {
+    /// <summary>
+    /// Serialize from Turn object to JSON format and de-serialize from JSON format to Turn object.
+    /// </summary>
     public sealed class JSONSerializer {
         private int row = 1;
 

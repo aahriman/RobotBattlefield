@@ -43,10 +43,10 @@ namespace ViewerLibrary.gui
             this.DATA_MODEL = dataModel;
             pictureBox.Resize += (sender, args) => drawTurn();
 
-            BULLET_DELEGATE = (bullet, g, lap) => DRAWER.DrawExplodedBullet(bullet, g, lap);
-            MINE_DELEGATE = (mine, g, lap) => DRAWER.DrawExplodedMine(mine, g, lap);
-            REPAIR_DELEGATE = (repair, g, lap) => DRAWER.DrawRepair(repair, g, lap);
-            SCAN_DELEGATE = (scan, g, lap) => DRAWER.DrawScan(scan, g, lap);
+            BULLET_DELEGATE = (bullet, g, turn) => DRAWER.DrawExplodedBullet(bullet, g, turn);
+            MINE_DELEGATE = (mine, g, turn) => DRAWER.DrawExplodedMine(mine, g, turn);
+            REPAIR_DELEGATE = (repair, g, turn) => DRAWER.DrawRepair(repair, g, turn);
+            SCAN_DELEGATE = (scan, g, turn) => DRAWER.DrawScan(scan, g, turn);
         }
 
         public void Pause() {
@@ -113,10 +113,10 @@ namespace ViewerLibrary.gui
 
 
         private void drawHistory<T>(IReadOnlyList<T[]> history, HistoryDelegate<T> historyDelegate, Graphics g) {
-            for (int lap = history.Count - 1; lap >= 0; lap--) {
-                if (history[lap] != null) {
-                    for (int i = 0; i < history[lap].Length; i++) {
-                        historyDelegate.Invoke(history[lap][i], g, lap);
+            for (int turn = history.Count - 1; turn >= 0; turn--) {
+                if (history[turn] != null) {
+                    for (int i = 0; i < history[turn].Length; i++) {
+                        historyDelegate.Invoke(history[turn][i], g, turn);
                     }
                 }
             }

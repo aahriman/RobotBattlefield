@@ -96,6 +96,11 @@ namespace ViewerLibrary.gui {
 
         List<IDrawerMore> drawersMore = new List<IDrawerMore>();
 
+        /// <summary>
+        /// Return pen for team, or crete new one for that team and return.
+        /// </summary>
+        /// <param name="teamId">For what team id wants to get pen.</param>
+        /// <returns></returns>
         public static Pen GetTeamPen(int teamId) {
             if (teamPen.Length < teamId) {
                 return teamPen[teamId];
@@ -110,11 +115,12 @@ namespace ViewerLibrary.gui {
             robotId = new Dictionary<string, int>();
         }
 
+        /// <inheritdoc />
         public void DrawTurn(Turn turn, Graphics g) {
             drawRobotsStats(turn.ROBOTS, g);
 
             foreach (var robot in turn.ROBOTS) {
-                drawRobot(robot, g);
+                DrawRobot(robot, g);
             }
 
             foreach (var scan in turn.SCANS) {
@@ -122,11 +128,11 @@ namespace ViewerLibrary.gui {
             }
 
             foreach (var bullet in turn.BULLETS) {
-                drawBullet(bullet, g);
+                DrawBullet(bullet, g);
             }
 
             foreach (var mine in turn.MINES) {
-                drawMine(mine, g);
+                DrawMine(mine, g);
             }
 
             foreach (var drawer in drawersMore) {
@@ -136,77 +142,93 @@ namespace ViewerLibrary.gui {
             }
         }
 
-        private Pen GetRobotPen(Robot robot) {
-            int id;
-            if (!robotId.TryGetValue(robot.NAME, out id))
-            {
-                id = robotId.Count;
-                robotId.Add(robot.NAME, id);
+        /// <summary>
+        /// Return pen for robot.
+        /// </summary>
+        /// <param name="robot"></param>
+        /// <returns></returns>
+        public Pen GetRobotPen(Robot robot) {
+            if (robotId.TryGetValue(robot.NAME, out int id)) return robotPen[id];
+            id = robotId.Count;
+            robotId.Add(robot.NAME, id);
 
-                Color robotColor;
-                if (robotBodyColor.Length < id)
-                {
-                    robotColor = robotBodyColor[id];
-                }
-                else
-                {
-                    Color c = robotBodyColor[id % robotBodyColor.Length];
-                    robotColor = ColorUtils.HsvToColor(c.GetHue(), c.GetSaturation(), c.GetBrightness() / (1 + id / robotBodyColor.Length));
-                }
-
-                robotPen.Add(new Pen(robotColor));
+            Color robotColor;
+            if (robotBodyColor.Length < id) {
+                robotColor = robotBodyColor[id];
+            } else {
+                Color c = robotBodyColor[id % robotBodyColor.Length];
+                robotColor = ColorUtils.HsvToColor(c.GetHue(), c.GetSaturation(), c.GetBrightness() / (1 + id / robotBodyColor.Length));
             }
+
+            robotPen.Add(new Pen(robotColor));
             return robotPen[id];
         }
 
-        private void drawRobot(Robot robot, Graphics g) {
-            if (robot.HIT_POINTS > 0) {
-                Pen pen = GetRobotPen(robot);
-                drawRobotBody(robot, pen, g);
+        /// <summary>
+        /// Draw robot on graphics context. When robot HP is 0, then it will not be drawn.
+        /// </summary>
+        /// <param name="robot">robot with should be drawn</param>
+        /// <param name="g">graphics context</param>
+        public void DrawRobot(Robot robot, Graphics g) {
+            if (robot.HIT_POINTS <= 0) return;
+            Pen pen = GetRobotPen(robot);
+            drawRobotBody(robot, pen, g);
 
-                Font drawFont = new Font("Arial", 10);
-                string drawString = $"{robot.NAME} ({robot.HIT_POINTS})";
-                g.DrawString(drawString, drawFont, pen.Brush, DrawerUtils.Translate(robot.GetPosition(), name));
-            }
+            Font drawFont = new Font("Arial", 10);
+            string drawString = $"{robot.NAME} ({robot.HIT_POINTS})";
+            g.DrawString(drawString, drawFont, pen.Brush, DrawerUtils.Translate(robot.GetPosition(), name));
         }
 
-        public void drawBullet(Bullet info, Graphics g) {
+        /// <summary>
+        /// Draw bullet.
+        /// </summary>
+        /// <param name="info">bullet with should be drawn</param>
+        /// <param name="g">graphics context</param>
+        public void DrawBullet(Bullet info, Graphics g) {
             g.FillEllipse(bulletPen.Brush, (float)(info.X - BULLET_SIZE / 2.0), (float)(info.Y - BULLET_SIZE / 2.0), BULLET_SIZE, BULLET_SIZE);
         }
 
-        public void DrawExplodedBullet(Bullet info, Graphics g, int lap) {
-            int index = lap;
+        /// <inheritdoc />
+        public void DrawExplodedBullet(Bullet info, Graphics g, int turn) {
+            int index = turn;
             int size = BULLET_SIZE*(1 + index);
             g.FillEllipse(ExplodedBulletPen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
         }
 
-        public void drawMine(Mine info, Graphics g) {
+        /// <summary>
+        /// Draw placed mine.
+        /// </summary>
+        /// <param name="info">mine with should be drawn</param>
+        /// <param name="g">graphics context</param>
+        public void DrawMine(Mine info, Graphics g) {
             g.FillEllipse(minePen.Brush, (float)(info.X - MINE_SIZE / 2.0), (float)(info.Y - MINE_SIZE / 2.0), MINE_SIZE, MINE_SIZE);
             g.FillEllipse(mineInnerPen.Brush, (float)(info.X - MINE_SIZE / 2.0), (float)(info.Y - MINE_SIZE / 2.0), 1, 1);
         }
 
-        public void DrawExplodedMine(Mine info, Graphics g, int lap) {
-            int index = lap;
+        /// <inheritdoc />
+        public void DrawExplodedMine(Mine info, Graphics g, int turn) {
+            int index = turn;
             int size = MINE_SIZE*(1 + index);
             g.FillEllipse(ExplodedMinePen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
         }
 
-        public void DrawRepair(Repair info, Graphics g, int lap) {
-            int index = lap;
+        /// <inheritdoc />
+        public void DrawRepair(Repair info, Graphics g, int turn) {
+            int index = turn;
             int size = REPAIR_SIZE*(1 + index);
             g.FillEllipse(RepairPen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
         }
 
         private void drawRobotBody(Robot robot, Pen pen, Graphics g) {
             pen.Width = 5;
-            PointF[] spike = DrawerUtils.Transform(AngleUtils.ToRads(robot.ANGLE), PointF.Empty, DefaultDrawer.spike);
-            PointF[] botton = DrawerUtils.Transform(AngleUtils.ToRads(robot.ANGLE), PointF.Empty, DefaultDrawer.bottom);
+            PointF[] spike = DrawerUtils.Rotate(AngleUtils.ToRads(robot.ANGLE), PointF.Empty, DefaultDrawer.spike);
+            PointF[] bottom = DrawerUtils.Rotate(AngleUtils.ToRads(robot.ANGLE), PointF.Empty, DefaultDrawer.bottom);
             PointF robotPosition = robot.GetPosition();
             Pen teamPen = DefaultDrawer.GetTeamPen(robot.TEAM_ID);
             float oldTeamPenWidth = teamPen.Width;
             teamPen.Width = 5;
             g.DrawLines(teamPen, DrawerUtils.Translate(robotPosition, spike));
-            g.DrawLines(pen, DrawerUtils.Translate(robotPosition, botton));
+            g.DrawLines(pen, DrawerUtils.Translate(robotPosition, bottom));
             teamPen.Width = oldTeamPenWidth;
         }
 
@@ -253,19 +275,20 @@ namespace ViewerLibrary.gui {
             }
         }
 
-        public void DrawScan(Scan scan, Graphics g, int lap) {
-            int index = lap;
+        /// <inheritdoc />
+        public void DrawScan(Scan scan, Graphics g, int turn) {
+            int index = turn;
             Pen pen = scannerPen[index];
             pen.Width = 2;
             double startAngle = scan.ANGLE - scan.PRECISION + 360;
             double stopAngle = scan.ANGLE + scan.PRECISION + 360;
-            if (lap == 0) {
+            if (turn == 0) {
                 PointF scanPosition = scan.GetPosition();
                 PointF endScan1 = DrawerUtils.Translate(scanPosition,
-                    DrawerUtils.Transform(AngleUtils.ToRads(startAngle), PointF.Empty,
+                    DrawerUtils.Rotate(AngleUtils.ToRads(startAngle), PointF.Empty,
                         new PointF((float)scan.DISTANCE, 0F)));
                 PointF endScan2 = DrawerUtils.Translate(scanPosition,
-                    DrawerUtils.Transform(AngleUtils.ToRads(stopAngle), PointF.Empty,
+                    DrawerUtils.Rotate(AngleUtils.ToRads(stopAngle), PointF.Empty,
                         new PointF((float)scan.DISTANCE, 0F)));
 
                 g.DrawLine(pen, scanPosition, endScan1);
@@ -282,6 +305,7 @@ namespace ViewerLibrary.gui {
             }
         }
 
+        /// <inheritdoc />
         public void RegisterDrawerMore(IDrawerMore drawer) {
             drawersMore.Add(drawer);
         }

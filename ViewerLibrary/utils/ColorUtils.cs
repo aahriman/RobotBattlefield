@@ -2,7 +2,19 @@
 using System.Drawing;
 
 namespace ViewerLibrary.utils {
+    /// <summary>
+    /// Utilities for changing color.
+    /// </summary>
 	public static class ColorUtils {
+        /// <summary>
+        /// Transform HSV color representation to RGB representation.
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="S"></param>
+        /// <param name="V"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
 		public static void HsvToRgb(double h, double S, double V, out int r, out int g, out int b) {
 			// taken from http://stackoverflow.com/questions/1335426/is-there-a-built-in-c-net-system-api-for-hsv-to-rgb
 			double H = h;
@@ -88,12 +100,26 @@ namespace ViewerLibrary.utils {
 			b = Clamp((int)(B * 255.0));
 		}
 
+        /// <summary>
+        /// Transform HSV representation of color to Color object.
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="S"></param>
+        /// <param name="V"></param>
+        /// <returns></returns>
 		public static Color HsvToColor(double h, double S, double V) {
 			int r, g, b;
 			HsvToRgb(h, S, V, out r, out g, out b);
 			return Color.FromArgb(r, g, b);
 		}
 
+        /// <summary>
+        /// Transform HSV representation of color to Color object.
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="S"></param>
+        /// <param name="V"></param>
+        /// <returns></returns>
 		public static Color HsvToColor(double h, double S, double V, int alpha) {
 			int r, g, b;
 			HsvToRgb(h, S, V, out r, out g, out b);

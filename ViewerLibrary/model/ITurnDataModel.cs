@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace ViewerLibrary.model
 {
+    /// <summary>
+    /// Allow to return future Turn. First turn is returned by first call Next().
+    /// </summary>
     public interface ITurnDataModel
     {
         /// <summary>
-        /// Returns next turn
+        /// Returns next turn. Null when no next turn exist.
         /// </summary>
         Turn Next();
 
@@ -20,10 +23,13 @@ namespace ViewerLibrary.model
         bool HasNext();
     }
 
+    /// <summary>
+    /// This allow to step backward.
+    /// </summary>
     public interface IReversibleTurnDataModel : ITurnDataModel
     {
         /// <summary>
-        /// Returns previous turn
+        /// Returns previous turn. Null when no previous turn exists.
         /// </summary>
         Turn Previous();
 
