@@ -6,14 +6,17 @@ using BaseLibrary.protocol;
 using BaseLibrary.utils;
 
 namespace ObstacleMod.obstacle {
+    /// <summary>
+    /// Represent sand on map. Robot can move through sand slower then from normal ground.
+    /// </summary>
     [ModDescription()]
     public class Sand : IMoveInfluence {
         public bool Standable => true;
 
         public const string COMMAND_NAME = "SAND";
-        public static readonly IFactory<IObstacle, IObstacle> FACTORY = new ObtacleFactory();
-        private sealed class ObtacleFactory : AObstacleFactory {
-            internal ObtacleFactory() { }
+        public static readonly IFactory<IObstacle, IObstacle> FACTORY = new ObstacleFactory();
+        private sealed class ObstacleFactory : AObstacleFactory {
+            internal ObstacleFactory() { }
             public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {

@@ -263,7 +263,7 @@ namespace ObstacleMap {
             saveFileDialog.Filter = "All files (*)|*";
             DialogResult dialogResult = saveFileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK) {
-                ObstacleManager.SaveObtaclesToFile(obtacles.Values, saveFileDialog.FileName);
+                ObstacleManager.SaveObstaclesToFile(obtacles.Values, saveFileDialog.FileName);
             }
         }
 
@@ -279,7 +279,7 @@ namespace ObstacleMap {
                 loadedFileName.Text = openFileDialog.FileName;
                 if (dialogResult == DialogResult.OK) {
                     loadedFileName.Text = openFileDialog.FileName;
-                    foreach (IObstacle obtacle in ObstacleManager.LoadObtaclesFromFile(openFileDialog.FileName)) {
+                    foreach (IObstacle obtacle in ObstacleManager.LoadObstaclesFromFile(openFileDialog.FileName)) {
                         Point key = new Point(obtacle.X, obtacle.Y);
                         obtacles.Add(key, obtacle);
                     }

@@ -108,7 +108,7 @@ namespace BattlefieldLibrary.battlefield {
                 robot.AngleDrive, robot.NAME));
             TURN_DATA_MODEL?.Add(battlefieldTurn.ConvertToTurn(), false);
 
-            return battlefield.AddToInitAnswereCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
+            return battlefield.AddToInitAnswerCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
                 robot.ID, robot.TEAM_ID, classEquipment.ID, robot.Armor.ID, robot.Motor.ID));
         }
 

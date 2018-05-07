@@ -8,10 +8,10 @@ namespace BaseLibrary.protocol {
     /// Abstract class for protocol.
     /// </summary>
     public abstract class AProtocol {
-        protected Factories<ACommand.Sendable, ACommand> comandsFactory = new Factories<ACommand.Sendable, ACommand>();
+        protected Factories<ACommand.Sendable, ACommand> commandsFactory = new Factories<ACommand.Sendable, ACommand>();
 
 	    protected AProtocol() {
-            comandsFactory.RegisterCommand(ErrorCommand.FACTORY);
+            commandsFactory.RegisterCommand(ErrorCommand.FACTORY);
         }
 
         /// <summary>
@@ -20,11 +20,11 @@ namespace BaseLibrary.protocol {
         /// <param name="s"></param>
         /// <returns></returns>
         public virtual ACommand GetCommand(string s) {
-			return (ACommand) comandsFactory.Deserialize(s);
+			return (ACommand) commandsFactory.Deserialize(s);
         }
 
         public virtual string GetSendableCommand(ACommand s) {
-            ACommand.Sendable commandSendable = comandsFactory.Transfer(s);
+            ACommand.Sendable commandSendable = commandsFactory.Transfer(s);
             if (commandSendable == null) {
                 throw new ArgumentException("Protocol (" + this.GetType().Name + ") do not know command type: " + s.GetType().Name);
             }

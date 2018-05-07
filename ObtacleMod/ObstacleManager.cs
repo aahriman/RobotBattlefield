@@ -11,71 +11,71 @@ using Newtonsoft.Json.Linq;
 namespace ObstacleMod {
 
     public class ObstacleManager {
-        public static IObstacle GetObtacle(string obtacleName, int x, int y) {
-            Type type = Type.GetType(obtacleName);
+        public static IObstacle GetObtacle(string obstacleName, int x, int y) {
+            Type type = Type.GetType(obstacleName);
             if (type != null)
                 return (IObstacle)Activator.CreateInstance(type, x, y);
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
-                type = asm.GetType(obtacleName);
+                type = asm.GetType(obstacleName);
                 if (type != null)
                     return (IObstacle)Activator.CreateInstance(type, x, y);
             }
             return null;
         }
 
-        public static void SaveObtaclesToFile(IEnumerable<IObstacle> obtacles, string filename) {
-            SaveObtaclesToFile(obtacles.ToArray(), filename);
+        public static void SaveObstaclesToFile(IEnumerable<IObstacle> obstacles, string filename) {
+            SaveObstaclesToFile(obstacles.ToArray(), filename);
         }
 
-        public static void SaveObtaclesToFile(IObstacle[] obtacles, string filename) {
+        public static void SaveObstaclesToFile(IObstacle[] obstacles, string filename) {
             StreamWriter writer = new StreamWriter(filename);
-            writer.WriteLine(JsonConvert.SerializeObject(obtacles));
+            writer.WriteLine(JsonConvert.SerializeObject(obstacles));
             writer.Close();
         }
 
-        public static List<IObstacle> LoadObtaclesFromFile(string filename) {
+        public static List<IObstacle> LoadObstaclesFromFile(string filename) {
 
-            List<IObstacle> obtacles = new List<IObstacle>();
+            List<IObstacle> obstacles = new List<IObstacle>();
             StreamReader reader = new StreamReader(filename);
             IEnumerable<JObject> deserializedObject = JsonConvert.DeserializeObject<IEnumerable<JObject>>(reader.ReadLine());
-            foreach (var obtacle in deserializedObject) {
-                JToken x = obtacle["X"];
-                JToken y = obtacle["Y"];
-                JToken typeName = obtacle["TypeName"];
-                obtacles.Add(GetObtacle(typeName.ToString(), x.ToObject<int>(), y.ToObject<int>()));
+            foreach (var obstacle in deserializedObject) {
+                JToken x = obstacle["X"];
+                JToken y = obstacle["Y"];
+                JToken typeName = obstacle["TypeName"];
+                obstacles.Add(GetObtacle(typeName.ToString(), x.ToObject<int>(), y.ToObject<int>()));
             }
             reader.Close();
-            return obtacles;
+            return obstacles;
         }
 
         private readonly Random random;
 
-        private Dictionary<Point, IMoveInfluence> movementObtacles = new Dictionary<Point, IMoveInfluence>();
-        private Dictionary<Point, IShotInfluence> shotObtacles = new Dictionary<Point, IShotInfluence>();
-        private Dictionary<Point, IScanInfluence> scanObtacles = new Dictionary<Point, IScanInfluence>();
+        private Dictionary<Point, IMoveInfluence> movementObstacles = new Dictionary<Point, IMoveInfluence>();
+        private Dictionary<Point, IShotInfluence> shotObstacles = new Dictionary<Point, IShotInfluence>();
+        private Dictionary<Point, IScanInfluence> scanObstacles = new Dictionary<Point, IScanInfluence>();
 
-        public ObstacleManager(IEnumerable<IObstacle> obtacles, int? randomSeed ) {
-            IEnumerable<IMoveInfluence> movementObtacles = from o in obtacles
+        public ObstacleManager(IEnumerable<IObstacle> obstacles, int? randomSeed ) {
+            IEnumerable<IMoveInfluence> movementObstacles = from o in obstacles
                                                            where o is IMoveInfluence
                                                            select o as IMoveInfluence;
-            IEnumerable<IShotInfluence> shotObtacles = from o in obtacles
+            IEnumerable<IShotInfluence> shotObstacles = from o in obstacles
                                                        where o is IShotInfluence
                                                        select o as IShotInfluence;
 
-            IEnumerable<IScanInfluence> scanObtacles = from o in obtacles
+            IEnumerable<IScanInfluence> scanObstacles = from o in obstacles
                                                        where o is IScanInfluence
                                                        select o as IScanInfluence;
 
-            foreach (var obtacle in movementObtacles) {
-                this.movementObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+            foreach (var obstacle in movementObstacles) {
+                this.movementObstacles.Add(new Point(obstacle.X, obstacle.Y), obstacle);
             }
 
-            foreach (var obtacle in shotObtacles) {
-                this.shotObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+            foreach (var obstacle in shotObstacles) {
+                this.shotObstacles.Add(new Point(obstacle.X, obstacle.Y), obstacle);
             }
 
-            foreach (var obtacle in scanObtacles) {
-                this.scanObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+            foreach (var obstacle in scanObstacles) {
+                this.scanObstacles.Add(new Point(obstacle.X, obstacle.Y), obstacle);
             }
 
             if (randomSeed == null) {
@@ -85,33 +85,30 @@ namespace ObstacleMod {
             }
         }
 
-        public void AddMovementObtacle(IMoveInfluence obtacle) {
-            this.movementObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+        public void AddMovementObstacle(IMoveInfluence obstacle) {
+            this.movementObstacles.Add(new Point(obstacle.X, obstacle.Y), obstacle);
         }
 
-        public void AddShotObtacle(IShotInfluence obtacle) {
-            this.shotObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+        public void AddShotObstacle(IShotInfluence obstacle) {
+            this.shotObstacles.Add(new Point(obstacle.X, obstacle.Y), obstacle);
         }
 
-        public void AddScanObtacle(IScanInfluence obtacle) {
-            this.scanObtacles.Add(new Point(obtacle.X, obtacle.Y), obtacle);
+        public void AddScanObstacle(IScanInfluence obstacle) {
+            this.scanObstacles.Add(new Point(obstacle.X, obstacle.Y), obstacle);
         }
 
-        public IObstacle[] GetObtaclesInPoints(Point[] points) {
-            List<IObstacle> obtacles = new List<IObstacle>();
-            IMoveInfluence moveInfluenceObtacle;
-            IScanInfluence scanInfluenceObtacle;
-            IShotInfluence shotInfluenceObtacle;
+        public IObstacle[] GetObstaclesInPoints(Point[] points) {
+            List<IObstacle> obstacles = new List<IObstacle>();
             foreach (var point in points) {
-                if (movementObtacles.TryGetValue(point, out moveInfluenceObtacle)) {
-                    obtacles.Add(moveInfluenceObtacle);
-                } else if (scanObtacles.TryGetValue(point, out scanInfluenceObtacle)) {
-                    obtacles.Add(scanInfluenceObtacle);
-                } else if (shotObtacles.TryGetValue(point, out shotInfluenceObtacle)) {
-                    obtacles.Add(shotInfluenceObtacle);
+                if (movementObstacles.TryGetValue(point, out IMoveInfluence moveInfluenceObstacle)) {
+                    obstacles.Add(moveInfluenceObstacle);
+                } else if (scanObstacles.TryGetValue(point, out IScanInfluence scanInfluenceObstacle)) {
+                    obstacles.Add(scanInfluenceObstacle);
+                } else if (shotObstacles.TryGetValue(point, out IShotInfluence shootInfluenceObstacle)) {
+                    obstacles.Add(shootInfluenceObstacle);
                 }
             }
-            return obtacles.ToArray();
+            return obstacles.ToArray();
         }
 
         public Point StartRobotPosition(int maxX, int maxY) {
@@ -121,8 +118,7 @@ namespace ObstacleMod {
 
                 for (int x = generatedX; x >= 0; x--) {
                     Point position = new Point(x, generatedY);
-                    IMoveInfluence moveObtacle;
-                    if (!movementObtacles.TryGetValue(position, out moveObtacle) || !moveObtacle.Standable) {
+                    if (!movementObstacles.TryGetValue(position, out IMoveInfluence moveObstacle) || !moveObstacle.Standable) {
                         return new Point((position.X + random.NextDouble()),
                             (position.Y + random.NextDouble()));
                     }
@@ -130,8 +126,7 @@ namespace ObstacleMod {
 
                 for (int x = generatedX; x < maxX; x++) {
                     Point position = new Point(x, generatedY);
-                    IMoveInfluence moveObtacle;
-                    if (!movementObtacles.TryGetValue(position, out moveObtacle) || !moveObtacle.Standable) {
+                    if (!movementObstacles.TryGetValue(position, out IMoveInfluence moveObstacle) || !moveObstacle.Standable) {
                         return new Point((position.X + random.NextDouble()),
                             (position.Y + random.NextDouble()));
                     }
@@ -139,8 +134,7 @@ namespace ObstacleMod {
 
                 for (int y = generatedY; y >= 0; y--) {
                     Point position = new Point(generatedX, y);
-                    IMoveInfluence moveObtacle;
-                    if (!movementObtacles.TryGetValue(position, out moveObtacle) || !moveObtacle.Standable) {
+                    if (!movementObstacles.TryGetValue(position, out IMoveInfluence moveObstacle) || !moveObstacle.Standable) {
                         return new Point((position.X + random.NextDouble()),
                             (position.Y + random.NextDouble()));
                     }
@@ -148,8 +142,7 @@ namespace ObstacleMod {
 
                 for (int y = generatedY; y < maxY; y++) {
                     Point position = new Point(generatedX, y);
-                    IMoveInfluence moveObtacle;
-                    if (!movementObtacles.TryGetValue(position, out moveObtacle) || !moveObtacle.Standable) {
+                    if (!movementObstacles.TryGetValue(position, out IMoveInfluence moveObstacle) || !moveObstacle.Standable) {
                         return new Point((position.X + random.NextDouble()),
                             (position.Y + random.NextDouble()));
                     }
@@ -161,13 +154,12 @@ namespace ObstacleMod {
 
         private Point manualRobotPosition(int maxX, int maxY) {
             Console.WriteLine(
-                $"Cannot geneterate start position for robot. Please write it manualy (first x, second y splitted by space, decimal point is '.'). X in [0, {maxX}). Y in [0,{maxY})");
+                $"Cannot generate start position for robot. Please write it manually (first x, second y split by space, decimal point is '.'). X in [0, {maxX}). Y in [0,{maxY})");
             while (true) {
                 string row = Console.ReadLine();
-                string[] splitedRow = row.Split(' ');
-                if (splitedRow.Length == 2) {
-                    double x, y;
-                    if (double.TryParse(splitedRow[0], out x) && double.TryParse(splitedRow[1], out y)) {
+                string[] splitRow = row.Split(' ');
+                if (splitRow.Length == 2) {
+                    if (double.TryParse(splitRow[0], out double x) && double.TryParse(splitRow[1], out double y)) {
                         return new Point(x, y);
                     }
                 }
@@ -178,16 +170,16 @@ namespace ObstacleMod {
         private IEnumerable<T> getEnumerator<T>(IDictionary<Point, T> dictionary, double fromX, double fromY, double toX,
             double toY) where T : IObstacle {
             // TODO test this method
-            T obtacle;
+            T obstacle;
             if (fromX.DEquals(toX) && fromY.DEquals(toY)) {
-                if (dictionary.TryGetValue(new Point(fromX, fromY), out obtacle)) {
-                    yield return obtacle;
+                if (dictionary.TryGetValue(new Point(fromX, fromY), out obstacle)) {
+                    yield return obstacle;
                 } else {
                     yield break;
                 }
             }
 
-            // průchod po přímce a vracení obtacle na daném bodě
+            // průchod po přímce a vracení obstacle na daném bodě
             double dX = toX - fromX;
             double dY = toY - fromY;
             double x = fromX;
@@ -239,20 +231,20 @@ namespace ObstacleMod {
 
                 if (crossLeftOrRigh) {
                     Point crossedSqueare = new Point((int) x, (int) prevY);
-                    if (dictionary.TryGetValue(crossedSqueare, out obtacle) && obtacle.Used == false) {
-                        yield return obtacle;
+                    if (dictionary.TryGetValue(crossedSqueare, out obstacle) && obstacle.Used == false) {
+                        yield return obstacle;
                     }
                 }
 
                 if (crossUpOrDown) {
                     Point crossedSqueare = new Point((int) prevX, (int) y);
-                    if (dictionary.TryGetValue(crossedSqueare, out obtacle) && obtacle.Used == false) {
-                        yield return obtacle;
+                    if (dictionary.TryGetValue(crossedSqueare, out obstacle) && obstacle.Used == false) {
+                        yield return obstacle;
                     }
                 }
 
-                if (dictionary.TryGetValue(new Point(x, y), out obtacle) && obtacle.Used == false) {
-                    yield return obtacle;
+                if (dictionary.TryGetValue(new Point(x, y), out obstacle) && obstacle.Used == false) {
+                    yield return obstacle;
                 }
                 prevX = x;
                 prevY = y;
@@ -264,16 +256,17 @@ namespace ObstacleMod {
 
 
         public void MoveChange(Robot robot, int turn, double fromX, double fromY, double toX, double toY) {
-            clearUsages(movementObtacles.Values);
-            var enumerator = getEnumerator(movementObtacles, fromX, fromY, toX, toY).GetEnumerator();
-            List<IMoveInfluence> usedObtacle = new List<IMoveInfluence>();
-            while (enumerator.MoveNext()) {
-                IMoveInfluence movemetObtacle = enumerator.Current;
-                movemetObtacle.Used = true;
-                usedObtacle.Add(movemetObtacle);
+            clearUsages(movementObstacles.Values);
+            var enumerator = getEnumerator(movementObstacles, fromX, fromY, toX, toY).GetEnumerator();
+            List<IMoveInfluence> usedObstacle = new List<IMoveInfluence>();
+            while (enumerator.MoveNext()) { 
+                IMoveInfluence movementObstacle = enumerator.Current;
+                if (movementObstacle == null) continue;
+                movementObstacle.Used = true;
+                usedObstacle.Add(movementObstacle);
 
                 Segment leadSegment = new Segment(fromX, fromY, toX, toY);
-                Point nearestIntersect = EuclideanSpaceUtils.GetNearestIntersect(leadSegment, movemetObtacle.Segments());
+                Point nearestIntersect = EuclideanSpaceUtils.GetNearestIntersect(leadSegment, movementObstacle.Segments());
 
                 robot.X = nearestIntersect.X;
                 robot.Y = nearestIntersect.Y;
@@ -283,10 +276,10 @@ namespace ObstacleMod {
                 double prevToX = toX;
                 double prevToY = toY;
 
-                movemetObtacle.Change(robot, turn, ref fromX, ref fromY, ref toX, ref toY);
+                movementObstacle.Change(robot, turn, ref fromX, ref fromY, ref toX, ref toY);
                 if (!fromX.DEquals(prevFromX) || !fromY.DEquals(prevFromY) || !toX.DEquals(prevToX) || toY.DEquals(prevToY)) {
                     enumerator.Dispose();
-                    enumerator = getEnumerator(movementObtacles, fromX, fromY, toX, toY).GetEnumerator();
+                    enumerator = getEnumerator(movementObstacles, fromX, fromY, toX, toY).GetEnumerator();
                 }
             }
             enumerator.Dispose();
@@ -294,28 +287,29 @@ namespace ObstacleMod {
             robot.X = toX;
             robot.Y = toY;
 
-            clearUsages(usedObtacle);
+            clearUsages(usedObstacle);
         }
 
         public void ShotChange(int turn, double fromX, double fromY, ref double toX, ref double toY) {
-            var enumerator = getEnumerator(shotObtacles, fromX, fromY, toX, toY).GetEnumerator();
+            var enumerator = getEnumerator(shotObstacles, fromX, fromY, toX, toY).GetEnumerator();
             while (enumerator.MoveNext()) {
-                IShotInfluence obtacle = enumerator.Current;
-                if (obtacle.Change(turn, fromX, fromY, ref toX, ref toY)) {
+                IShotInfluence obstacle = enumerator.Current;
+                if (obstacle == null) continue;
+                if (obstacle.Change(turn, fromX, fromY, ref toX, ref toY)) {
                     enumerator.Dispose();
                     Segment leadSegment = new Segment(fromX, fromY, toX, toY);
-                    Point nearestIntersect = EuclideanSpaceUtils.GetNearestIntersect(leadSegment, obtacle.Segments());
+                    Point nearestIntersect = EuclideanSpaceUtils.GetNearestIntersect(leadSegment, obstacle.Segments());
 
                     fromX = nearestIntersect.X;
                     fromY = nearestIntersect.Y;
-                    enumerator = getEnumerator(shotObtacles, fromX, fromY, toX, toY).GetEnumerator();
+                    enumerator = getEnumerator(shotObstacles, fromX, fromY, toX, toY).GetEnumerator();
                 }
             }
         }
 
         public bool CanScan(int turn, double fromX, double fromY, double toX, double toY) {
-            foreach (var obtacle in getEnumerator(scanObtacles, fromX, fromY, toX, toY)) {
-                if (!obtacle.CanScan(turn, fromX, fromY, toX, toY)) {
+            foreach (var obstacle in getEnumerator(scanObstacles, fromX, fromY, toX, toY)) {
+                if (!obstacle.CanScan(turn, fromX, fromY, toX, toY)) {
                     return false;
                 }
             }
@@ -323,9 +317,9 @@ namespace ObstacleMod {
         }
 
 
-        private static void clearUsages<T>(IEnumerable<T> obtacles) where T : IObstacle {
-            foreach (var obtacle in obtacles) {
-                obtacle.Used = false;
+        private static void clearUsages<T>(IEnumerable<T> obstacles) where T : IObstacle {
+            foreach (var obstacle in obstacles) {
+                obstacle.Used = false;
             }
         }
     }

@@ -22,21 +22,17 @@ namespace FlagCaptureLibrary.battlefield {
             private const string COMMAND_BASE_NAME = "FLAG_PLACE";
             internal SubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
-                string[] basesString;
-                if (ProtocolV1_0Utils.Deserialize(s, out basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
+                if (ProtocolV1_0Utils.Deserialize(s, out string[] basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
                     List<FlagPlace> flagPlaces = new List<FlagPlace>();
-                    foreach (var baseString in basesString) {// parametrs are separated by DEFAULT.NEXT.NEXT.NEXT
-                        string[] flagPlaceParams;
+                    foreach (string baseString in basesString) {// parameters are separated by DEFAULT.NEXT.NEXT.NEXT
 
                         if (ProtocolV1_0Utils.GetParams(baseString, COMMAND_BASE_NAME,
-                                                        ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out flagPlaceParams)) {
+                                                        ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out string[] flagPlaceParams)) {
                             if (flagPlaceParams.Length == 3) {
-                                ProtocolDouble x, y;
-                                int teamId;
-                                if (ProtocolDouble.TryParse(flagPlaceParams[0], out x) &&
-                                    ProtocolDouble.TryParse(flagPlaceParams[1], out y) &&
-                                    int.TryParse(flagPlaceParams[2], out teamId) ) {
+                                if (ProtocolDouble.TryParse(flagPlaceParams[0], out ProtocolDouble x) &&
+                                    ProtocolDouble.TryParse(flagPlaceParams[1], out ProtocolDouble y) &&
+                                    int.TryParse(flagPlaceParams[2], out int teamId) ) {
 
                                     FlagPlace flagPlace = new FlagPlace(x, y, teamId);
                                     flagPlaces.Add(flagPlace);
@@ -51,8 +47,7 @@ namespace FlagCaptureLibrary.battlefield {
 
             public bool Serialize(object singleMore, out string serializedSingleMore) {
                 // this is use in InitAnswerCommand (DEFAULT) in array (DEFAULT.NEXT) => separator for arrays items is DEAULT.NEXT.NEXT
-                FlagPlace[] o = singleMore as FlagPlace[];
-                if (o != null) {
+                if (singleMore is FlagPlace[] o) {
                     StringBuilder sb = new StringBuilder();
                     if (0 < o.Length) {
                         sb.Append("[");
@@ -80,18 +75,15 @@ namespace FlagCaptureLibrary.battlefield {
             private const string COMMAND_BASE_NAME = "FLAG";
             internal StateSubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
-                string[] basesString;
-                if (ProtocolV1_0Utils.Deserialize(s, out basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
+                if (ProtocolV1_0Utils.Deserialize(s, out string[] basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
                     List<Flag> flags = new List<Flag>();
-                    foreach (var baseString in basesString) {// parametrs are separated by DEFAULT.NEXT.NEXT.NEXT
-                        string[] flagParams;
+                    foreach (string baseString in basesString) {// parametrs are separated by DEFAULT.NEXT.NEXT.NEXT
 
                         if (ProtocolV1_0Utils.GetParams(baseString, COMMAND_BASE_NAME,
-                                                        ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out flagParams)) {
+                                                        ProtocolV1_0Utils.DEFAULT.NEXT.NEXT.NEXT, out string[] flagParams)) {
                             if (flagParams.Length == 2) {
-                                int flagPlaceId, RobotId;
-                                if (int.TryParse(flagParams[0], out flagPlaceId) && int.TryParse(flagParams[1], out RobotId)) {
+                                if (int.TryParse(flagParams[0], out int flagPlaceId) && int.TryParse(flagParams[1], out int RobotId)) {
 
                                     Flag flag = new Flag(flagPlaceId, RobotId);
                                     flags.Add(flag);
@@ -135,14 +127,21 @@ namespace FlagCaptureLibrary.battlefield {
             POSITION_IN_ROBOT_STATE_COMMAND = RobotStateCommand.RegisterSubCommandFactory(STATE_SUB_COMMAND_FACTORY);
         }
 
-        private readonly Dictionary<int, FlagPlace> flagPlacesById = new Dictionary<int, FlagPlace>();
-        private readonly Dictionary<int, List<FlagPlace>> flagPlacesByTeamId = new Dictionary<int, List<FlagPlace>>();
-        private readonly List<Flag> flags = new List<Flag>();
-
+        /// <summary>
+        /// Return flag from <code>RobotStateCommand</code>
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
         public static Flag[] GetFlags(RobotStateCommand state) {
             return (Flag[])state.MORE[POSITION_IN_ROBOT_STATE_COMMAND];
         }
 
+
+        /// <summary>
+        /// Return FlagPlaces from <code>InitAnswerCommand</code>
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
         public static FlagPlace[] GetFlagPlaces(InitAnswerCommand state) {
             return (FlagPlace[])state.MORE[POSITION_IN_INIT_ASNWER_COMMAND];
         }

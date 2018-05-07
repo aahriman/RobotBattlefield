@@ -2,17 +2,32 @@
 using BaseLibrary.utils.euclidianSpaceStruct;
 
 namespace ObstacleMod {
+    /// <summary>
+    /// Generic obstacle interface
+    /// </summary>
     public interface IObstacle {
+        /// <summary>
+        /// Type name for used in de-serialization
+        /// </summary>
         string TypeName { get; }
 
+        /// <summary>
+        /// X - coordinate of obstacle
+        /// </summary>
         int X { get; }
+        /// <summary>
+        /// Y - coordinate of obstacle
+        /// </summary>
         int Y { get; }
 
 
+        /// <summary>
+        /// Flag if this obstacle was used to avoid cycle.
+        /// </summary>
         bool Used { get; set; }
 
         /// <summary>
-        /// 
+        /// Draw this obstacle at correct position.
         /// </summary>
         /// <param name="graphics"></param>
         /// <param name="xScale">How many pixels is one unit</param>

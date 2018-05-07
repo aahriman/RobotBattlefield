@@ -12,6 +12,9 @@ using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
 namespace FlagCaptureBattlefield.battlefield {
 	public class FlagCaptureBattlefield : Battlefield {
+        /// <summary>
+        /// How far from flag center of flag place have to robot be to capture the flag.
+        /// </summary>
         public const int FLAG_PLACE_SIZE = FlagCapture.FLAG_PLACE_SIZE;
 
         private static readonly int POSITION_IN_BATTLE_TURN_FLAG_PLACES;
@@ -29,8 +32,7 @@ namespace FlagCaptureBattlefield.battlefield {
 	    public FlagCaptureBattlefield(FlagCaptureBattlefieldConfig battlefieldConfig) : base(battlefieldConfig) {
            
 	        foreach (var flagPlace in battlefieldConfig.FlagsPlaces) {
-	            List<FlagPlace> flagPlaces;
-	            if (!flagPlacesByTeamId.TryGetValue(flagPlace.TEAM_ID, out flagPlaces)) {
+	            if (!flagPlacesByTeamId.TryGetValue(flagPlace.TEAM_ID, out List<FlagPlace> flagPlaces)) {
 	                flagPlaces = new List<FlagPlace>();
                     flagPlacesByTeamId.Add(flagPlace.TEAM_ID, flagPlaces);
                 }
@@ -43,23 +45,28 @@ namespace FlagCaptureBattlefield.battlefield {
             
         }
 
+        /// <inheritdoc />
 	    protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        robotStateCommand.MORE[FlagCapture.POSITION_IN_ROBOT_STATE_COMMAND] = flags.ToArray();
             return robotStateCommand;
 	    }
 
-	    protected override InitAnswerCommand AddToInitAnswereCommand(InitAnswerCommand initAnswerCommand) {
+	    /// <inheritdoc />
+	    protected override InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
 	        initAnswerCommand.MORE[FlagCapture.POSITION_IN_INIT_ASNWER_COMMAND] = flagPlacesById.Values.ToArray();
             return initAnswerCommand;
 	    }
 
+	    /// <inheritdoc />
 		protected override LapState NewLapState() {
             return Turn > MAX_TURN ? LapState.TURN_OUT : LapState.NONE;
         }
 
+	    /// <inheritdoc />
         protected override void afterProcessCommand() {
         }
 
+	    /// <inheritdoc />
         protected override void afterMovingAndDamaging() {
             foreach (var flag in flags) {
                 FlagPlace flagPlace = flagPlacesById[flag.FROM_FLAGPLACE_ID];
@@ -107,6 +114,11 @@ namespace FlagCaptureBattlefield.battlefield {
 	        }
 	    }
 
+        /// <summary>
+        /// Convert flag to ViewerFlag format in field flags.
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
 	    public ViewerFlag[] ConvertFlag(Flag[] flags) {
 	        ViewerFlag[] viewerFlags = new ViewerFlag[flags.Length];
 
@@ -118,13 +130,17 @@ namespace FlagCaptureBattlefield.battlefield {
 	    }
 
 
+        /// <summary>
+        /// Convert flag to ViewerFlag format in list flags.
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public ViewerFlag[] ConvertFlag(List<Flag> flags) {
             List<ViewerFlag> viewerFlags = new List<ViewerFlag>();
 
-            for (int i = 0; i < flags.Count; i++) {
-                BattlefieldRobot robot;
-                if (robotsById.TryGetValue(flags[i].RobotId, out robot)) {
-                    int teamId = flagPlacesById[flags[i].FROM_FLAGPLACE_ID].TEAM_ID;
+            foreach (Flag flag in flags) {
+                if (robotsById.TryGetValue(flag.RobotId, out BattlefieldRobot robot)) {
+                    int teamId = flagPlacesById[flag.FROM_FLAGPLACE_ID].TEAM_ID;
                     viewerFlags.Add(new ViewerFlag(robot.X, robot.Y, teamId));
                 }
             }

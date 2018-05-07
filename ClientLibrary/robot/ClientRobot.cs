@@ -1,6 +1,9 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.battlefield;
@@ -34,6 +37,13 @@ namespace ClientLibrary.robot {
 
         static ClientRobot() {
             ModUtils.LoadMods();
+
+            if (!System.Diagnostics.Debugger.IsAttached) { // add handler for non debugging
+                Console.SetError(new IndentedTextWriter(File.AppendText("error.txt")));
+                AppDomain currentDomain = AppDomain.CurrentDomain;
+                currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+                Thread.GetDomain().UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+            }
         }
 
 
@@ -518,10 +528,11 @@ namespace ClientLibrary.robot {
             if (!connected) {
                 throw new NotSupportedException("Robots have to be connected. Use ClientRobot.Connect(args) first.");
             }
-            if (ROBOTS_TASK_COMMANDS.ContainsKey(this)) {
-                throw new NotSupportedException("Robot can not send more then one command during same turn.");
-            }
+            
             lock (ROBOTS_TASK_COMMANDS) {
+                if (ROBOTS_TASK_COMMANDS.ContainsKey(this)) {
+                    throw new NotSupportedException("Robot can not send more then one command during same turn.");
+                }
                 ROBOTS_TASK_COMMANDS.Add(this, t);
                 lock (ROBOT_COLLECTION) {
                     if (ROBOTS_TASK_COMMANDS.Count == ROBOT_COLLECTION.Count) {
@@ -530,6 +541,20 @@ namespace ClientLibrary.robot {
                     }
                 }
             }
+        }
+
+
+        static void MyHandler(object sender, UnhandledExceptionEventArgs e) {
+            Console.Error.WriteLine(DateTime.Now);
+            Console.Error.WriteLine(e.ExceptionObject);
+            Console.Error.Flush();
+            if (e.ExceptionObject is Exception ex) {
+                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in error.txt and will be closed.");
+            } else {
+                Console.WriteLine("Some error occurs. Application store more information in error.txt and will be closed.");
+            }
+            Thread.Sleep(1000);
+            Environment.Exit(1);
         }
     }
 }

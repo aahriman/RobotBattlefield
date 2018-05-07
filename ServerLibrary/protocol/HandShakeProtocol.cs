@@ -12,10 +12,10 @@ namespace ServerLibrary.protocol {
     /// </summary>
     public class HandShakeProtocol : AProtocol {
         public HandShakeProtocol() : base(){
-            comandsFactory.RegisterCommand(AckCommand.FACTORY);
-            comandsFactory.RegisterCommand(HelloCommand.FACTORY);
-            comandsFactory.RegisterCommand(OllehCommand.FACTORY);
-            comandsFactory.RegisterCommand(ErrorCommand.FACTORY);
+            commandsFactory.RegisterCommand(AckCommand.FACTORY);
+            commandsFactory.RegisterCommand(HelloCommand.FACTORY);
+            commandsFactory.RegisterCommand(OllehCommand.FACTORY);
+            commandsFactory.RegisterCommand(ErrorCommand.FACTORY);
         }
 
         /// <summary>

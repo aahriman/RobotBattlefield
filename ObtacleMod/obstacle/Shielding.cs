@@ -5,13 +5,16 @@ using BaseLibrary.protocol;
 using BaseLibrary.utils;
 
 namespace ObstacleMod.obstacle {
+    /// <summary>
+    /// Represent shielding. Through shielding is not possible to scan.
+    /// </summary>
     [ModDescription()]
     public class Shielding : IScanInfluence{
         internal const string COMMAND_NAME = "SHIELDING";
 
-        public static readonly IFactory<IObstacle, IObstacle> FACTORY = new ObtacleFactory();
-        private sealed class ObtacleFactory : AObstacleFactory {
-            internal ObtacleFactory() {}
+        public static readonly IFactory<IObstacle, IObstacle> FACTORY = new ObstacleFactory();
+        private sealed class ObstacleFactory : AObstacleFactory {
+            internal ObstacleFactory() {}
             public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {

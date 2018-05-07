@@ -1,7 +1,10 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.command;
@@ -23,7 +26,16 @@ namespace BattlefieldLibrary {
         /// </summary>
 	    protected Battlefield Battlefield;
         protected int port;
-        
+
+        static AServer () {
+            if (!System.Diagnostics.Debugger.IsAttached) { // add handler for non debugging
+                Console.SetError(new IndentedTextWriter(File.AppendText("error.txt")));
+                AppDomain currentDomain = AppDomain.CurrentDomain;
+                currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+                Thread.GetDomain().UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+            }
+}
+
         protected AServer(int port) {
             this.port = port;
         }
@@ -133,5 +145,18 @@ namespace BattlefieldLibrary {
         /// <param name="Battlefield"></param>
         /// <returns></returns>
         public abstract GameTypeCommand GetGameTypeCommand(Battlefield Battlefield);
+
+        static void MyHandler(object sender, UnhandledExceptionEventArgs e) {
+            Console.Error.WriteLine(DateTime.Now);
+            Console.Error.WriteLine(e.ExceptionObject);
+            Console.Error.Flush();
+            if (e.ExceptionObject is Exception ex) {
+                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in error.txt and will be closed.");
+            } else {
+                Console.WriteLine("Some error occurs. Application store more information in error.txt and will be closed.");
+            }
+            Thread.Sleep(1000);
+            Environment.Exit(1);
+        }
     }
 }

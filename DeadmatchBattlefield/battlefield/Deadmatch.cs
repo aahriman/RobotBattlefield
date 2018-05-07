@@ -1,28 +1,28 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
 using BaseLibrary.command.common;
 using BaseLibrary.command.handshake;
-using BaseLibrary.equip;
 using BattlefieldLibrary.battlefield;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
 
 namespace DeadmatchBattlefield.battlefield {
 	public class Deadmatch : Battlefield {
-		public Deadmatch(BattlefieldConfig battlefieldConfig)  : base(battlefieldConfig) {
+	    /// <inheritdoc />
+        public Deadmatch(BattlefieldConfig battlefieldConfig)  : base(battlefieldConfig) {
         }
 
+	    /// <inheritdoc />
         protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        return robotStateCommand;
 	    }
 
-	    protected override InitAnswerCommand AddToInitAnswereCommand(InitAnswerCommand initAnswerCommand) {
+        /// <inheritdoc />
+	    protected override InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
 	        return initAnswerCommand;
 	    }
 
+	    /// <inheritdoc />
 		protected override LapState NewLapState() {
 			if (Turn > MAX_TURN) {
 				return LapState.TURN_OUT;
@@ -34,10 +34,12 @@ namespace DeadmatchBattlefield.battlefield {
 			return LapState.NONE;
 		}
 
+	    /// <inheritdoc />
 	    protected override void afterProcessCommand() {
 	        // do nothing
 	    }
 
+	    /// <inheritdoc />
 	    protected override void afterMovingAndDamaging() {
 	        // do nothing
 	    }

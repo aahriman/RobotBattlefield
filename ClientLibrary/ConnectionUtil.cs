@@ -66,7 +66,7 @@ namespace ClientLibrary {
                 try {
                     COMMUNICATION = new NetworkStream(socket);
                 } catch (TypeInitializationException e) {
-                    throw e.InnerException;
+                    if (e.InnerException != null) throw e.InnerException;
                 }
                 handShake();
                 waitHandle.Set();

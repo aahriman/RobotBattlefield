@@ -10,7 +10,7 @@ namespace FlagCaptureBattlefield {
         /// <summary>
         /// Start server with specific arguments
         /// </summary>
-        /// <param name="args">[0] => port, [1] => number of robots, [2] => file to equipment</param>
+        /// <param name="args">[0] => port, [1] => config file</param>
         public static void Main(string[] args) {
             Console.WriteLine("Arena start.");
 

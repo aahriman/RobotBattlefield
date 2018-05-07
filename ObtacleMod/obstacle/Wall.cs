@@ -8,15 +8,19 @@ using Point = BaseLibrary.utils.euclidianSpaceStruct.Point;
 using PointF = System.Drawing.PointF;
 
 namespace ObstacleMod.obstacle {
+    /// <summary>
+    /// Wall represent wall on map. It is not possible to shoot through it neither move through it.
+    /// </summary>
     [ModDescription()]
     public class Wall : IMoveInfluence, IShotInfluence {
 
+        /// <inheritdoc />
         public bool Standable => false;
 
         public const string COMMAND_NAME = "WALL";
-        private static readonly AObstacleFactory FACTORY = new ObtacleFactory();
-        private class ObtacleFactory : AObstacleFactory {
-            internal ObtacleFactory() {}
+        private static readonly AObstacleFactory FACTORY = new ObstacleFactory();
+        private class ObstacleFactory : AObstacleFactory {
+            internal ObstacleFactory() {}
             public override bool IsDeserializeable(string s) {
                 string[] rest;
                 if (ProtocolV1_0Utils.GetParams(s, COMMAND_NAME, out rest)) {
@@ -65,6 +69,7 @@ namespace ObstacleMod.obstacle {
             Y = y;
         }
 
+        /// <inheritdoc />
         void IMoveInfluence.Change(Robot robot, int turn, ref double fromX, ref double fromY, ref double toX, ref double toY) {
             robot.HitPoints -= (int) Math.Max(1, Math.Round(5 * robot.Power * robot.Motor.MAX_SPEED / 100));
             robot.Power = 0;
@@ -74,6 +79,7 @@ namespace ObstacleMod.obstacle {
             fromY = robot.Y;
         }
 
+        /// <inheritdoc />
         bool IShotInfluence.Change(int turn, double fromX, double fromY, ref double toX, ref double toY) {
             Segment shotSegment = new Segment(fromX, fromY, toX, toY);
 
@@ -87,13 +93,13 @@ namespace ObstacleMod.obstacle {
         public void Draw(Graphics graphics, float xScale, float yScale) {
             PointF leftUpCorner = new PointF(X * xScale, Y * yScale);
             PointF scale = new PointF(xScale, yScale);
-            Image drawingIcon;
-            if (!CACHE.TryGetCached(scale, out drawingIcon)) {
-                Image icon = drawIcon();
-                drawingIcon = new Bitmap(icon, new Size((int)xScale, (int)yScale));
-                CACHE.Cached(scale, drawingIcon);
+            Image icon;
+            if (!CACHE.TryGetCached(scale, out icon)) {
+                icon = drawIcon();
+                icon = new Bitmap(icon, new Size((int)xScale, (int)yScale));
+                CACHE.Cached(scale, icon);
             }
-            graphics.DrawImage(drawingIcon, leftUpCorner);
+            graphics.DrawImage(icon, leftUpCorner);
         }
 
         private Image drawIcon() {

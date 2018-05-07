@@ -45,7 +45,7 @@ namespace BaseCapcureBattlefield.battlefield {
 
         }
 
-	    protected override InitAnswerCommand AddToInitAnswereCommand(InitAnswerCommand initAnswerCommand) {
+	    protected override InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
 	        return initAnswerCommand;
 	    }
 

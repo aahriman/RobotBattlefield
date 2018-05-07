@@ -328,7 +328,7 @@ namespace BattlefieldLibrary.battlefield {
 	        } else {
 	            ServerConfig.SetDefaultEquipment();
 	        }
-            IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBSTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObtaclesFromFile(battlefieldConfig.OBSTACLE_CONFIG_FILE) : new IObstacle[0];
+            IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBSTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObstaclesFromFile(battlefieldConfig.OBSTACLE_CONFIG_FILE) : new IObstacle[0];
 	        obstacleManager = new ObstacleManager(obstacles, battlefieldConfig.RANDOM_SEED);
 	       
 	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS, battlefieldConfig.MATCH_SAVE_FILE);
@@ -804,7 +804,7 @@ namespace BattlefieldLibrary.battlefield {
 
 	    protected void AddObtacleInSight(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        Point[] points = generateSignPoints(r);
-            ObstaclesAroundRobot obtaclesInSight = new ObstaclesAroundRobot(obstacleManager.GetObtaclesInPoints(points));
+            ObstaclesAroundRobot obtaclesInSight = new ObstaclesAroundRobot(obstacleManager.GetObstaclesInPoints(points));
             obtaclesInSight.AddToRobotStateCommand(robotStateCommand);
 	    }
 
@@ -821,7 +821,7 @@ namespace BattlefieldLibrary.battlefield {
 
         protected abstract RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r);
 
-        protected abstract InitAnswerCommand AddToInitAnswereCommand(InitAnswerCommand initAnswerCommand);
+        protected abstract InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand);
 
 
         protected abstract LapState NewLapState();
