@@ -7,11 +7,9 @@ using System.Runtime.Remoting.Channels;
 using System.Text;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.equip;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.protocol;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
 

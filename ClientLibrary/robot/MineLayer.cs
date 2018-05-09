@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.command.miner;
-using BaseLibrary.command.tank;
-using BaseLibrary.equip;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.command.miner;
+using BaseLibrary.equipment;
 using BaseLibrary.utils.euclidianSpaceStruct;
 
 namespace ClientLibrary.robot {

@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using BaseLibrary;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.protocol;
 using BaseLibrary.utils;
 
 namespace ObstacleMod.obstacle {

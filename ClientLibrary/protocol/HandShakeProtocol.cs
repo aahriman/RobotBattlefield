@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.protocol;
+using BaseLibrary.communication;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.protocol;
 using ClientLibrary.config;
 
 namespace ClientLibrary.protocol {
@@ -37,7 +37,7 @@ namespace ClientLibrary.protocol {
 					await ack.SendAsync(clientSocket);
                     return protocol;
                 }
-				ErrorCommand error = new ErrorCommand(string.Format("Unsupported protocols '{0}'. Handshake failed.", olleh.PROTOCOL));
+				ErrorCommand error = new ErrorCommand($"Unsupported protocols '{olleh.PROTOCOL}'. Handshake failed.");
                 await error.SendAsync(clientSocket);
             } else {
 				printIfErrorElseSendMessage(shouldBeOLLEH, "Handshake error. Expected OllehCommand but receive " + shouldBeOLLEH.GetType().Name, clientSocket);

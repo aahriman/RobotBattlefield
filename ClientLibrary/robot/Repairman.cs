@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.command.miner;
-using BaseLibrary.command.repairman;
-using BaseLibrary.equip;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.command.repairman;
+using BaseLibrary.equipment;
 
 namespace ClientLibrary.robot {
     /// <summary>

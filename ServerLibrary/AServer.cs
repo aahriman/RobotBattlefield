@@ -7,13 +7,12 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.protocol;
 using BattlefieldLibrary.battlefield;
 using ServerLibrary.protocol;
-using NetworkStream = BaseLibrary.NetworkStream;
+using NetworkStream = BaseLibrary.communication.NetworkStream;
 
 namespace BattlefieldLibrary {
     public abstract class AServer {

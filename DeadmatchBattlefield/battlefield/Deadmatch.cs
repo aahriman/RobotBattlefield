@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using BaseLibrary.battlefield;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.handshake;
 using BattlefieldLibrary.battlefield;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
@@ -25,11 +25,11 @@ namespace DeadmatchBattlefield.battlefield {
 	    /// <inheritdoc />
 		protected override LapState NewLapState() {
 			if (Turn > MAX_TURN) {
-				return LapState.TURN_OUT;
+				return LapState.TURNS_OUT;
 			}
             List<BattlefieldRobot> aliveRobots = getAliveRobots();
             if (aliveRobots.Count <= 1 && aliveRobots.Count != robots.Count) {
-				return LapState.WIN;
+				return LapState.SOMEONE_WIN;
 			}
 			return LapState.NONE;
 		}

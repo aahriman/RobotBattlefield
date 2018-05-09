@@ -1,5 +1,5 @@
 ﻿using System;
-using BaseLibrary.equip;
+using BaseLibrary.equipment;
 using BaseLibrary.utils.euclidianSpaceStruct;
 
 namespace BaseLibrary.battlefield {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.equip;
+using BaseLibrary.communication;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.equipment;
 using JetBrains.Annotations;
 
 namespace BattlefieldLibrary.battlefield.robot {

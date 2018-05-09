@@ -19,7 +19,7 @@ namespace ViewerLibrary.gui
 
 
 
-        private readonly ITurnDataModel DATA_MODEL;
+        private readonly ITurnDataModel dataModel;
         private readonly IDrawer DRAWER;
         private readonly System.Windows.Forms.PictureBox PICTURE_BOX;
 
@@ -40,7 +40,7 @@ namespace ViewerLibrary.gui
         public Render(ITurnDataModel dataModel, System.Windows.Forms.PictureBox pictureBox, IDrawer drawer) {
             this.PICTURE_BOX = pictureBox;
             this.DRAWER = drawer;
-            this.DATA_MODEL = dataModel;
+            this.dataModel = dataModel;
             pictureBox.Resize += (sender, args) => drawTurn();
 
             BULLET_DELEGATE = (bullet, g, turn) => DRAWER.DrawExplodedBullet(bullet, g, turn);
@@ -57,8 +57,8 @@ namespace ViewerLibrary.gui
             animate = true;
 
             Thread thread = new Thread(() => {
-                while (animate && DATA_MODEL.HasNext()) {
-                    actualTurn = DATA_MODEL.Next();
+                while (animate && dataModel.HasNext()) {
+                    actualTurn = dataModel.Next();
                     drawTurn();
                     Task.Delay(Delay).Wait();
                 }
@@ -68,7 +68,7 @@ namespace ViewerLibrary.gui
 
         public void StepNext() {
             animate = false;
-            actualTurn = DATA_MODEL.Next();
+            actualTurn = dataModel.Next();
             drawTurn();
         }
 
@@ -130,21 +130,21 @@ namespace ViewerLibrary.gui
     }
 
     public class ReversibleRender : Render {
-        private readonly IReversibleTurnDataModel DATA_MODEL;
+        private readonly IReversibleTurnDataModel dataModel;
 
         public ReversibleRender(IReversibleTurnDataModel dataModel, System.Windows.Forms.PictureBox pictureBox, IDrawer drawer) : base(dataModel, pictureBox, drawer) {
-            this.DATA_MODEL = dataModel;
+            this.dataModel = dataModel;
         }
 
         public void StepPrevious()
         {
             animate = false;
             int i = -1;
-            for (; i < MAX_HISTORICS_LAP && DATA_MODEL.HasPrevious(); i++) {
-                DATA_MODEL.Previous();
+            for (; i < MAX_HISTORICS_LAP && dataModel.HasPrevious(); i++) {
+                dataModel.Previous();
             }
             while (i-- > 0) {
-                actualTurn = DATA_MODEL.Next();
+                actualTurn = dataModel.Next();
                 drawTurn();
             }
         }

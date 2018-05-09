@@ -8,11 +8,8 @@ using System.Text;
 using BaseCapcureBattlefieldLibrary.battlefield;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.equip;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.handshake;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
 using BattlefieldLibrary.battlefield;
@@ -121,10 +118,10 @@ namespace BaseCapcureBattlefield.battlefield {
                  where @base.TeamId == teamId
                  where @base.Progress > 0
                  select @base).Count() == bases.Length) {
-                return LapState.WIN;
+                return LapState.SOMEONE_WIN;
             }
 
-            return Turn > MAX_TURN ? LapState.TURN_OUT : LapState.NONE;
+            return Turn > MAX_TURN ? LapState.TURNS_OUT : LapState.NONE;
         }
     }
 }

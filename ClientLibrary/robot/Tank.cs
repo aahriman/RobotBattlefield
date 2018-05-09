@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
-using BaseLibrary.command.tank;
-using BaseLibrary.equip;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.command.tank;
+using BaseLibrary.equipment;
 
 namespace ClientLibrary.robot {
 

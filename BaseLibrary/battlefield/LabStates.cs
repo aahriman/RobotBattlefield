@@ -12,11 +12,11 @@
         /// <summary>
         /// Someone win the battle.
         /// </summary>
-		WIN,
+		SOMEONE_WIN,
 
         /// <summary>
         /// Out of turns in lap.
         /// </summary>
-        TURN_OUT
+        TURNS_OUT
 	};
 }

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Threading.Tasks;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.equipment;
-using BaseLibrary.command.handshake;
-using BaseLibrary.command.miner;
-using BaseLibrary.command.repairman;
-using BaseLibrary.command.tank;
-using BaseLibrary.equip;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.equipment;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.command.miner;
+using BaseLibrary.communication.command.repairman;
+using BaseLibrary.communication.command.tank;
+using BaseLibrary.equipment;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
 using BattlefieldLibrary.battlefield.robot;
@@ -28,14 +27,15 @@ namespace BattlefieldLibrary.battlefield {
             addTankProcesses();
             addMineLayerProcesses();
             addRepairmanProcesses();
+            addMerchantProcesses();
         }
 
         private void addGetCommandProcesses() {
-            commandProcessorBeforeInitRobot.RegisterProcess<GetArmorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GET_COMMAND ? new GetArmorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Armors) : (ACommand) new ErrorCommand("Armors can be ask only in " + BattlefieldState.GET_COMMAND + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetMotorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GET_COMMAND ? new GetMotorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Motors) : (ACommand) new ErrorCommand("Motors can be ask only in " + BattlefieldState.GET_COMMAND + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GET_COMMAND ? new GetGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Guns) : (ACommand) new ErrorCommand("Guns can be ask only in " + BattlefieldState.GET_COMMAND + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetRepairToolsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GET_COMMAND ? new GetRepairToolsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.RepairTools) : (ACommand) new ErrorCommand("Repair tools can be ask only in " + BattlefieldState.GET_COMMAND + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetMineGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GET_COMMAND ? new GetMineGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.MineGuns) : (ACommand) new ErrorCommand("Mine gun can be ask only in " + BattlefieldState.GET_COMMAND + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetArmorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetArmorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Armors) : (ACommand) new ErrorCommand("Armors can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetMotorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetMotorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Motors) : (ACommand) new ErrorCommand("Motors can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Guns) : (ACommand) new ErrorCommand("Guns can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetRepairToolsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetRepairToolsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.RepairTools) : (ACommand) new ErrorCommand("Repair tools can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetMineGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetMineGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.MineGuns) : (ACommand) new ErrorCommand("Mine gun can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
             commandProcessorBeforeInitRobot.RegisterProcess<InitCommand>(initProcess);
         }
 
@@ -106,7 +106,7 @@ namespace BattlefieldLibrary.battlefield {
 
             battlefieldTurn.AddRobot(new Robot(robot.TEAM_ID, robot.Score, robot.Gold, robot.HitPoints, robot.X, robot.Y,
                 robot.AngleDrive, robot.NAME));
-            TURN_DATA_MODEL?.Add(battlefieldTurn.ConvertToTurn(), false);
+            turnDataModel?.Add(battlefieldTurn.ConvertToTurn(), false);
 
             return battlefield.AddToInitAnswerCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
                 robot.ID, robot.TEAM_ID, classEquipment.ID, robot.Armor.ID, robot.Motor.ID));

@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BaseLibrary.communication.command.common;
 using ClientLibrary.robot;
 using ClientLibrary.config;
-using BaseLibrary.command.common;
 using BaseLibrary.utils;
-using BaseLibrary.equip;
-
 
 
 namespace MultiSpot {

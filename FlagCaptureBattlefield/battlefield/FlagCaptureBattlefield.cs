@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.battlefield;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.handshake;
 using BaseLibrary.utils;
 using BattlefieldLibrary.battlefield;
 using FlagCaptureLibrary.battlefield;
@@ -59,7 +59,7 @@ namespace FlagCaptureBattlefield.battlefield {
 
 	    /// <inheritdoc />
 		protected override LapState NewLapState() {
-            return Turn > MAX_TURN ? LapState.TURN_OUT : LapState.NONE;
+            return Turn > MAX_TURN ? LapState.TURNS_OUT : LapState.NONE;
         }
 
 	    /// <inheritdoc />

@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,12 +44,17 @@
   <ItemGroup>
     <Compile Include="battlefield\Base.cs" />
     <Compile Include="battlefield\BaseCapture.cs" />
+    <Compile Include="gui\BaseDrawer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
       <Project>{f98017b1-c7c8-4c33-ab46-31fd068d8a68}</Project>
       <Name>BaseLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewerLibrary\ViewerLibrary.csproj">
+      <Project>{e83d7cab-dbde-4e18-bcbc-59cf6c247c2c}</Project>
+      <Name>ViewerLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,13 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.protocol;
 using BaseLibrary.config;
-using BaseLibrary.protocol;
 using ClientLibrary.protocol;
-using NetworkStream = BaseLibrary.NetworkStream;
+using NetworkStream = BaseLibrary.communication.NetworkStream;
 
 namespace ClientLibrary {
     /// <summary>

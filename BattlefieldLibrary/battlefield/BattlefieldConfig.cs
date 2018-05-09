@@ -49,7 +49,7 @@ namespace BattlefieldLibrary.battlefield {
         public readonly string OBSTACLE_CONFIG_FILE;
 
         /// <summary>
-        /// How long (in ms) want to wait for collection robots command. -1 is forever.
+        /// How long (in ms) want to wait for collection robots command. -1 is until get command from every robot.
         /// </summary>
         public readonly int WAITING_TIME_BETWEEN_TURNS;
 

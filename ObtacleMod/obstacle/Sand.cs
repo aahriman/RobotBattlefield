@@ -2,7 +2,7 @@
 using System.Drawing;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.protocol;
 using BaseLibrary.utils;
 
 namespace ObstacleMod.obstacle {

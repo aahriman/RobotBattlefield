@@ -1,9 +1,8 @@
 ﻿using System;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
+using BaseLibrary.communication;
+using BaseLibrary.communication.command.handshake;
 using JetBrains.Annotations;
 
 namespace BattlefieldLibrary.battlefield.robot {

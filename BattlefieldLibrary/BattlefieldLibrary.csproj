@@ -57,7 +57,7 @@
     <Compile Include="battlefield\robot\MineLayer.cs" />
     <Compile Include="battlefield\robot\Repairman.cs" />
     <Compile Include="battlefield\robot\Tank.cs" />
-    <Compile Include="config\ServerConfig.cs" />
+    <Compile Include="config\EqipmentConfig.cs" />
     <Compile Include="gui\BattlefieldViewer.cs">
       <SubType>Form</SubType>
     </Compile>

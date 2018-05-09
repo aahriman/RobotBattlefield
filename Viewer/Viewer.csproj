@@ -53,8 +53,6 @@
     <Compile Include="ViewerForm.Designer.cs">
       <DependentUpon>ViewerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="gui\BaseDrawer.cs" />
-    <Compile Include="gui\FlagDrawer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\Settings.settings">

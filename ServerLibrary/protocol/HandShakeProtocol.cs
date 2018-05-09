@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.handshake;
-using BaseLibrary.protocol;
-using BattlefieldLibrary.config;
+using BaseLibrary.communication;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.protocol;
+using ServerLibrary.config;
 
 namespace ServerLibrary.protocol {
     /// <summary>

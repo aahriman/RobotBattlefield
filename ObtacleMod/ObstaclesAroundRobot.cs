@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using BaseLibrary;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.protocol;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.protocol;
 using BaseLibrary.utils;
 
 namespace ObstacleMod {

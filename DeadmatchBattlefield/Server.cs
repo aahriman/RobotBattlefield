@@ -1,4 +1,4 @@
-﻿using BaseLibrary.command.handshake;
+﻿using BaseLibrary.communication.command.handshake;
 using BattlefieldLibrary;
 using BattlefieldLibrary.battlefield;
 using DeadmatchBattlefield.battlefield;

@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.equipment;
-using BaseLibrary.command.handshake;
-using BaseLibrary.equip;
-using BaseLibrary.protocol;
+using BaseLibrary.communication;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.equipment;
+using BaseLibrary.communication.command.handshake;
+using BaseLibrary.communication.protocol;
+using BaseLibrary.equipment;
 using BaseLibrary.utils;
 using BattlefieldLibrary.battlefield.robot;
 using BattlefieldLibrary.config;
@@ -33,8 +34,11 @@ namespace BattlefieldLibrary.battlefield {
             ModUtils.LoadMods();
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(ObstaclesAroundRobot).TypeHandle);
         }
-        
-	    public struct RobotAndBattlefield {
+
+	    /// <summary>
+	    /// Store robot instance and battlefield instance
+	    /// </summary>
+        public struct RobotAndBattlefield {
 	        public readonly BattlefieldRobot ROBOT;
 	        public readonly Battlefield BATTLEFIELD;
 
@@ -44,8 +48,15 @@ namespace BattlefieldLibrary.battlefield {
 	        }
         }
 
+        /// <summary>
+        /// Store network stream and battlefield
+        /// </summary>
 	    public struct NetworkStreamAndBattlefield {
+            /// <summary>
+            /// Network stream for communication.
+            /// </summary>
 	        public readonly NetworkStream NETWORK_STREAM;
+            
 	        public readonly Battlefield BATTLEFIELD;
 
 	        public NetworkStreamAndBattlefield(NetworkStream networkStream, Battlefield battlefield) {
@@ -70,9 +81,9 @@ namespace BattlefieldLibrary.battlefield {
         /// </summary>
         public enum BattlefieldState {
             /// <summary>
-            /// For inicialization. Get equipments commands and init command.
+            /// For initialization. Get equipments commands and init command.
             /// </summary>
-	        GET_COMMAND,
+	        GETTING_EQUIPMENT,
             /// <summary>
             /// One lap is running. Robots are moving and shooting and so on.
             /// </summary>
@@ -188,7 +199,7 @@ namespace BattlefieldLibrary.battlefield {
         /// </summary>
         public readonly Thread RunThread;
 
-        /// <summary
+        /// <summary>
         /// Commands splits by robot.
         /// </summary>
 		private readonly Dictionary<BattlefieldRobot, ACommand> receivedCommands = new Dictionary<BattlefieldRobot, ACommand>();
@@ -272,16 +283,16 @@ namespace BattlefieldLibrary.battlefield {
         /// <summary>
         /// Actual battle state
         /// </summary>
-        BattlefieldState _battlefieldState = BattlefieldState.GET_COMMAND;
+        BattlefieldState _battlefieldState = BattlefieldState.GETTING_EQUIPMENT;
 
 	    /// <summary>
-	    /// Processor for commands
+	    /// Processor for commands in state GETTING_EQUIPMENT
 	    /// </summary>
-	    public CommandProcessor<ACommand, NetworkStreamAndBattlefield> commandProcessorBeforeInitRobot;
+	    protected CommandProcessor<ACommand, NetworkStreamAndBattlefield> commandProcessorBeforeInitRobot;
         /// <summary>
         /// Processor for commands
         /// </summary>
-        public CommandProcessor<ACommand, RobotAndBattlefield> commandProcessor;
+        protected CommandProcessor<ACommand, RobotAndBattlefield> commandProcessor;
 
 	    private StreamWriter writer;
 
@@ -290,7 +301,7 @@ namespace BattlefieldLibrary.battlefield {
         /// <summary>
         /// Data model for drawing battle on-line.
         /// </summary>
-	    private readonly SerialTurnDataModel TURN_DATA_MODEL;
+	    private readonly SerialTurnDataModel turnDataModel;
 
 
         private readonly Dictionary<NetworkStream, BattlefieldRobot> robotsByStream = new Dictionary<NetworkStream, BattlefieldRobot>();
@@ -313,27 +324,27 @@ namespace BattlefieldLibrary.battlefield {
             CONFIG = battlefieldConfig;
 
             if (battlefieldConfig.GUI) {
-                TURN_DATA_MODEL = new SerialTurnDataModel();
+                turnDataModel = new SerialTurnDataModel();
                 
                 Thread t = new Thread( () => {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new BattlefieldViewer(TURN_DATA_MODEL));
+                    Application.Run(new BattlefieldViewer(turnDataModel));
                 });
                 t.Start();
             }
 
             if (battlefieldConfig.EQUIPMENT_CONFIG_FILE != null) {
-	            ServerConfig.SetEquipmentFromFile(battlefieldConfig.EQUIPMENT_CONFIG_FILE);
+	            EqipmentConfig.SetEquipmentFromFile(battlefieldConfig.EQUIPMENT_CONFIG_FILE);
 	        } else {
-	            ServerConfig.SetDefaultEquipment();
+                EqipmentConfig.SetDefaultEquipment();
 	        }
             IEnumerable<IObstacle> obstacles = (battlefieldConfig.OBSTACLE_CONFIG_FILE != null) ? (IEnumerable<IObstacle>) ObstacleManager.LoadObstaclesFromFile(battlefieldConfig.OBSTACLE_CONFIG_FILE) : new IObstacle[0];
 	        obstacleManager = new ObstacleManager(obstacles, battlefieldConfig.RANDOM_SEED);
 	       
-	        battlefieldSetting(ServerConfig.MOTORS, ServerConfig.GUNS, ServerConfig.ARMORS, ServerConfig.REPAIR_TOOLS, ServerConfig.MINE_GUNS, battlefieldConfig.MATCH_SAVE_FILE);
+	        battlefieldSetting(EqipmentConfig.MOTORS, EqipmentConfig.GUNS, EqipmentConfig.ARMORS, EqipmentConfig.REPAIR_TOOLS, EqipmentConfig.MINE_GUNS, battlefieldConfig.MATCH_SAVE_FILE);
 
-            RunThread = new Thread(new ThreadStart(this.running));
+            RunThread = new Thread(running);
 
            commandProcessorBeforeInitRobot = new CommandProcessor<ACommand, NetworkStreamAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
            commandProcessor = new CommandProcessor<ACommand, RobotAndBattlefield>(command => new ErrorCommand("Unsupported command " + command.GetType().Name + ". Arena is in " + _battlefieldState + "."));
@@ -546,7 +557,7 @@ namespace BattlefieldLibrary.battlefield {
                 heapBullet.Remove(Turn);
             }
 	        
-	        TURN_DATA_MODEL?.Add(turn, last);
+	        turnDataModel?.Add(turn, last);
         }
 
         private HashSet<BattlefieldRobot> processCommands() {
@@ -573,7 +584,7 @@ namespace BattlefieldLibrary.battlefield {
 
         private void changeBattlefieldState() {
             switch (_battlefieldState) {
-                case BattlefieldState.GET_COMMAND:
+                case BattlefieldState.GETTING_EQUIPMENT:
                     _battlefieldState = BattlefieldState.FIGHT;
                     break;
                 case BattlefieldState.MERCHANT:

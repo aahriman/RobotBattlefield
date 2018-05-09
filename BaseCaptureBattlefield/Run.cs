@@ -2,7 +2,7 @@
 using BaseCapcureBattlefieldLibrary.battlefield;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
-using BattlefieldLibrary.config;
+using ServerLibrary.config;
 
 namespace BaseCapcureBattlefield {
     public class Run {

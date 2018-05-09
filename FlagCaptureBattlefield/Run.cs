@@ -1,9 +1,9 @@
 ﻿using System;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
-using BattlefieldLibrary.config;
 using FlagCaptureBattlefield.battlefield;
 using FlagCaptureLibrary.battlefield;
+using ServerLibrary.config;
 
 namespace FlagCaptureBattlefield {
     public class Run {

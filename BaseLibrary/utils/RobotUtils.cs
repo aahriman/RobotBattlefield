@@ -2,7 +2,7 @@
 using BaseLibrary.battlefield;
 
 namespace BaseLibrary.utils {
-    public class RobotUtils {
+    public static class RobotUtils {
 
         /// <summary>
         /// Get robots vertical speed.

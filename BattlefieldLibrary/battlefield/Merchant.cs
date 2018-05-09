@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.equip;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.equipment;
 using BattlefieldLibrary.battlefield.robot;
 
 namespace BattlefieldLibrary.battlefield {
@@ -35,15 +34,20 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
-        public void CalcGold(List<BattlefieldRobot> robots, int[] premies) {
+        /// <summary>
+        /// Add gold beside robots score. Robots gold is increased by bonus[i], where i is robot position sort by score.
+        /// </summary>
+        /// <param name="robots"></param>
+        /// <param name="bonus"></param>
+        public void CalcGold(List<BattlefieldRobot> robots, int[] bonus) {
             SortedDictionary<int, BattlefieldRobot> robotsByScore = new SortedDictionary<int, BattlefieldRobot>();
             foreach (BattlefieldRobot r in robots) {
                 robotsByScore.Add(r.Score, r);
             }
             int i = 0;
             foreach (var pair in robotsByScore) {
-                if (i < premies.Length) {
-                    pair.Value.Gold += premies[i++];
+                if (i < bonus.Length) {
+                    pair.Value.Gold += bonus[i++];
                 } else {
                     break;
                 }
@@ -55,13 +59,21 @@ namespace BattlefieldLibrary.battlefield {
             }
         }
 
+        /// <summary>
+        /// It buy and repair hit-points for robot r. Robot can only buy equipment witch is cheaper then robot gold.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="motorId"></param>
+        /// <param name="armorId"></param>
+        /// <param name="classEquipmentID"></param>
+        /// <param name="hp"></param>
+        /// <returns></returns>
         public MerchantAnswerCommand Buy(BattlefieldRobot r, int motorId, int armorId, int classEquipmentID, int hp) {
             repairHp(r, r.Armor.MAX_HP/10);
 
 
-            {
-                Armor wantedBuy;
-                if (armorsById.TryGetValue(classEquipmentID, out wantedBuy) && !wantedBuy.Equals(r.Armor)) {
+           {
+                if (armorsById.TryGetValue(classEquipmentID, out Armor wantedBuy) && !wantedBuy.Equals(r.Armor)) {
                     if (r.Gold >= wantedBuy.COST) {
                         r.Gold -= wantedBuy.COST;
                         r.Armor = wantedBuy;
@@ -71,14 +83,13 @@ namespace BattlefieldLibrary.battlefield {
             }
 
             if (hp - r.HitPoints > 0) {
-                int possibleToRapairHP = Math.Min(hp - r.HitPoints, r.Gold*4);
-                r.Gold -= (possibleToRapairHP+3)/4;
-                repairHp(r, possibleToRapairHP);
+                int possibleToRepairHP = Math.Min(hp - r.HitPoints, r.Gold*4);
+                r.Gold -= (possibleToRepairHP+3)/4;
+                repairHp(r, possibleToRepairHP);
             }
 
 	        {
-		        Motor wantedBuy;
-		        if (motorsById.TryGetValue(motorId, out wantedBuy) && !wantedBuy.Equals(r.Motor)) {
+	            if (motorsById.TryGetValue(motorId, out Motor wantedBuy) && !wantedBuy.Equals(r.Motor)) {
 			        if (r.Gold >= wantedBuy.COST) {
 				        r.Gold -= wantedBuy.COST;
 				        r.Motor = wantedBuy;
@@ -97,8 +108,7 @@ namespace BattlefieldLibrary.battlefield {
                 Tank tank = r as Tank;
                 if (tank != null) {
                     classEquipment = tank.Gun;
-                    Gun wantedBuy;
-                    if (gunsById.TryGetValue(classEquipmentId, out wantedBuy) && !wantedBuy.Equals(classEquipment)) {
+                    if (gunsById.TryGetValue(classEquipmentId, out Gun wantedBuy) && !wantedBuy.Equals(classEquipment)) {
                         if (r.Gold >= wantedBuy.COST) {
                             r.Gold -= wantedBuy.COST;
                             tank.Gun = wantedBuy;
@@ -111,8 +121,7 @@ namespace BattlefieldLibrary.battlefield {
                 MineLayer mineLayer = r as MineLayer;
                 if (mineLayer != null) {
                     classEquipment = mineLayer.MineGun;
-                    MineGun wantedBuy;
-                    if (mineGunsById.TryGetValue(classEquipmentId, out wantedBuy) && !wantedBuy.Equals(classEquipment)) {
+                    if (mineGunsById.TryGetValue(classEquipmentId, out MineGun wantedBuy) && !wantedBuy.Equals(classEquipment)) {
                         if (r.Gold >= wantedBuy.COST) {
                             r.Gold -= wantedBuy.COST;
                             mineLayer.MineGun = wantedBuy;
@@ -125,8 +134,7 @@ namespace BattlefieldLibrary.battlefield {
                 Repairman repairman = r as Repairman;
                 if (repairman != null) {
                     classEquipment = repairman.RepairTool;
-                    RepairTool wantedBuy;
-                    if (repairToolsById.TryGetValue(classEquipmentId, out wantedBuy) && !wantedBuy.Equals(classEquipment)) {
+                    if (repairToolsById.TryGetValue(classEquipmentId, out RepairTool wantedBuy) && !wantedBuy.Equals(classEquipment)) {
                         if (r.Gold >= wantedBuy.COST) {
                             r.Gold -= wantedBuy.COST;
                             repairman.RepairTool = wantedBuy;

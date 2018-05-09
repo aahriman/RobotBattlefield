@@ -7,13 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using BaseLibrary;
 using BaseLibrary.battlefield;
-using BaseLibrary.command;
-using BaseLibrary.command.common;
-using BaseLibrary.command.equipment;
-using BaseLibrary.command.handshake;
+using BaseLibrary.communication;
+using BaseLibrary.communication.command;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.equipment;
+using BaseLibrary.communication.command.handshake;
 using BaseLibrary.config;
-using BaseLibrary.equip;
-using BaseLibrary.protocol;
+using BaseLibrary.equipment;
 using BaseLibrary.utils;
 using ClientLibrary.config;
 
@@ -373,7 +373,7 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Set percentage power of motor and direction. It send this action to server asynchronously. At the end set <code>AngleDrive</code> if rotation success and fill answer data to <code>destination</code>.
         /// </summary>
-        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.<</param>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.</param>
         /// <param name="power">
         public async Task DriveAsync(DriveAnswerCommand destination, double angle, double power) {
             await sendCommandAsync(new DriveCommand(power, angle));

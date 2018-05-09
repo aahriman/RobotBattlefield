@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BaseLibrary.command.common;
-using BaseLibrary.command.handshake;
+using BaseLibrary.communication.command.common;
+using BaseLibrary.communication.command.handshake;
 using BaseLibrary.utils;
 using ClientLibrary.robot;
 using FlagCaptureLibrary.battlefield;
