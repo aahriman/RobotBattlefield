@@ -6,14 +6,14 @@ namespace BaseLibrary.communication.command.v1._0.equipment {
 	public class GunV1_0 : Gun, InnerSerializerV1_0 {
 		private const string NAME = "GUN";
 
-		public GunV1_0(int id, int cost, int maxBullets, int maxRange, double shotSpeed, ZoneV1_0[] zones) :
-			base(id, cost, maxBullets, maxRange, shotSpeed, zones) { }
+		public GunV1_0(int id, int cost, int barrelNumber, int maxRange, double shotSpeed, ZoneV1_0[] zones) :
+			base(id, cost, barrelNumber, maxRange, shotSpeed, zones) { }
 		
 		public GunV1_0(Gun GUN) :
-			base(GUN.ID, GUN.COST, GUN.MAX_BULLETS, GUN.MAX_RANGE, GUN.SHOT_SPEED, ZoneV1_0.Convert(GUN.ZONES)) { }
+			base(GUN.ID, GUN.COST, GUN.BARREL_NUMBER, GUN.MAX_RANGE, GUN.SHOT_SPEED, ZoneV1_0.Convert(GUN.ZONES)) { }
 
 		public string Serialize(Deep deep) {
-			return ProtocolV1_0Utils.SerializeParams(NAME, deep, ID, COST, MAX_BULLETS, MAX_RANGE, SHOT_SPEED, ZONES);
+			return ProtocolV1_0Utils.SerializeParams(NAME, deep, ID, COST, BARREL_NUMBER, MAX_RANGE, SHOT_SPEED, ZONES);
 		}
 
 		public static bool Deserialize(string orig, Deep deep, out GunV1_0 deserialized) {

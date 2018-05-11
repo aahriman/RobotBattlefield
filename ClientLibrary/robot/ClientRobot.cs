@@ -477,7 +477,7 @@ namespace ClientLibrary.robot {
         /// </summary>
         /// <seealso cref="Merchant"/>
         protected virtual void SendMerchant() {
-            Merchant(Motor.ID, Armor.ID, GetClassEquip().ID, 100);
+            Merchant(Motor.ID, Armor.ID, GetClassEquip().ID, HitPoints - Armor.MAX_HP);
         }
 
         /// <summary>

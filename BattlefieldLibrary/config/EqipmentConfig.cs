@@ -33,7 +33,7 @@ namespace BattlefieldLibrary.config {
             };
 
             GUNS = new Gun[] {
-                new Gun(ID: 1, COST: 0, MAX_BULLETS: 2, MAX_RANGE: 700, SHOT_SPEED: 15,
+                new Gun(ID: 1, COST: 0, BARREL_NUMBER: 2, MAX_RANGE: 700, SHOT_SPEED: 15,
                     ZONES: new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),
                 new Gun(2, 80, 2, 800, 24,
                     new Zone[] {new Zone(5, 20), new Zone(10, 10), new Zone(20, 5), new Zone(30, 3)}),

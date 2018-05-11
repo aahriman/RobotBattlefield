@@ -6,7 +6,7 @@ namespace BaseLibrary.equipment {
         /// <summary>
         /// Return first sufficient zone (<code>zone.DISTANCE > distance</code>).
         /// </summary>
-        /// <param name="zones">List of zones</param>
+        /// <param name="zones">Field of zones. Zones have to be sorted ASC by DISTANCE</param>
         /// <param name="distance">Compared distance.</param>
         /// <returns>Return sufficient zone or <code>NULL_ZONE</code></returns>
         /// <seealso cref="NULL_ZONE"/>
@@ -22,7 +22,7 @@ namespace BaseLibrary.equipment {
         /// <summary>
         /// Return first sufficient zone (<code>zone.DISTANCE > distance</code>).
         /// </summary>
-        /// <param name="zones">List of zones.</param>
+        /// <param name="zones">List of zones. Zones have to be sorted ASC by DISTANCE</param>
         /// <param name="distance">Compared distance.</param>
         /// <returns>Return sufficient zone or <code>NULL_ZONE</code></returns>
         /// <seealso cref="NULL_ZONE"/>
@@ -36,7 +36,7 @@ namespace BaseLibrary.equipment {
         }
 
         /// <summary>
-        /// Zone with no effect (<code>EFFECT = 0 </code>) and max distance (<code>DISTANCE = 0</code>).
+        /// Zone with no effect (<code>EFFECT = 0 </code>) and max distance (<code>DISTANCE = int.MaxValue</code>).
         /// </summary>
         public static readonly Zone NULL_ZONE = new Zone(int.MaxValue, 0);
 

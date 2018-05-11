@@ -4,12 +4,13 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.communication.command.v1._0 {
 	internal class MerchantAnswerCommandV1_0 : MerchantAnswerCommand, ACommand.Sendable {
+	    private const string COMMAND_NAME = "MERCHANT_ANSWER";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             public override bool IsDeserializeable(string s) {
                 s = s.Trim();
                 string[] rest;
-                if (StringUtils.GetRestOfStringSplit(s, "MERCHANT_ASNWER(", ")", out rest, ';')) {
+                if (StringUtils.GetRestOfStringSplit(s, COMMAND_NAME+"(", ")", out rest, ';')) {
                     if (rest.Length != 3) {
                         return false;
                     }
@@ -38,7 +39,7 @@ namespace BaseLibrary.communication.command.v1._0 {
         public MerchantAnswerCommandV1_0(int motorIdBought, int armorIdBought, int classEquipmentIdBought) : base(motorIdBought, armorIdBought, classEquipmentIdBought) { }
 
         public string Serialize() {
-            return string.Format("MERCHANT_ASNWER({0};{1};{2})", MOTOR_ID_BOUGHT, ARMOR_ID_BOUGHT, CLASS_EQUIPMENT_ID_BOUGHT);
+            return ProtocolV1_0Utils.SerializeParams(COMMAND_NAME, MOTOR_ID_BOUGHT, ARMOR_ID_BOUGHT, CLASS_EQUIPMENT_ID_BOUGHT);
         }
     }
 }

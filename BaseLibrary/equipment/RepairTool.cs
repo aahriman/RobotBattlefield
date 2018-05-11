@@ -29,15 +29,15 @@ namespace BaseLibrary.equipment {
             }
         }
 
-        protected bool Equals(Gun other) {
-            return ID == other.ID && COST == other.COST && MAX_USAGES == other.MAX_BULLETS && Equals(ZONES, other.ZONES);
+        protected bool Equals(RepairTool other) {
+            return ID == other.ID && COST == other.COST && MAX_USAGES == other.MAX_USAGES && Equals(ZONES, other.ZONES);
         }
 
         public override bool Equals(object obj) {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Gun)obj);
+            return Equals((RepairTool)obj);
         }
 
         public override int GetHashCode() {

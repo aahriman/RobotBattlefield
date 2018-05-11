@@ -216,7 +216,7 @@ namespace BattlefieldLibrary.battlefield {
                 return new ErrorCommand(robot.ROBOT_TYPE + " cannot use shot command.");
             }
             
-            if (tank.GunsToLoad < tank.Gun.MAX_BULLETS && tank.HitPoints > 0) {
+            if (tank.GunsToLoad < tank.Gun.BARREL_NUMBER && tank.HitPoints > 0) {
                 double range = command.RANGE;
                 if (range > tank.Gun.MAX_RANGE) {
                     range = tank.Gun.MAX_RANGE;
