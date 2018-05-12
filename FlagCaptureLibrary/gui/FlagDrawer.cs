@@ -26,14 +26,22 @@ namespace Viewer.gui {
         public void drawFlags(ViewerFlag[] flags, Graphics g) {
             foreach (var flag in flags) {
                 Pen teamPen = DefaultDrawer.GetTeamPen(flag.TEAM_ID);
-                g.FillRectangle(teamPen.Brush, (float)(flag.X - FLAG_SIZE / 2.0), (float)(flag.Y - FLAG_SIZE / 2.0), FLAG_SIZE, FLAG_SIZE);
+                lock (g) {
+                    lock (teamPen) {
+                        g.FillRectangle(teamPen.Brush, (float)(flag.X - FLAG_SIZE / 2.0), (float)(flag.Y - FLAG_SIZE / 2.0), FLAG_SIZE, FLAG_SIZE);
+                    }
+                }
             }
         }
         
         public void drawFlagPlaces(FlagPlace[] flagPlaces, Graphics g) {
             foreach (var flagPlace in flagPlaces) {
                 Pen teamPen = DefaultDrawer.GetTeamPen(flagPlace.TEAM_ID);
-                g.FillEllipse(teamPen.Brush, (float)(flagPlace.X - FLAG_PLACE_SIZE/2.0), (float)(flagPlace.Y - FLAG_PLACE_SIZE/2.0), FLAG_PLACE_SIZE, FLAG_PLACE_SIZE);
+                lock (g) {
+                    lock (teamPen) {
+                        g.FillEllipse(teamPen.Brush, (float)(flagPlace.X - FLAG_PLACE_SIZE / 2.0), (float)(flagPlace.Y - FLAG_PLACE_SIZE / 2.0), FLAG_PLACE_SIZE, FLAG_PLACE_SIZE);
+                    }
+                }
             }
         }
 
