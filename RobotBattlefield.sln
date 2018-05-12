@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rabbit", "Rabbit\Rabbit.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotForBaseCapture", "RobotForBaseCapture\RobotForBaseCapture.csproj", "{92B1E2D7-EE61-44ED-BE94-FEBBA1AFE85F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseCaptureLibrary", "BaseCaptureBattlefieldLibrary\BaseCaptureLibrary.csproj", "{DA246D22-28D1-4703-83F8-18FE342664AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseCaptureLibrary", "BaseCaptureLibrary\BaseCaptureLibrary.csproj", "{DA246D22-28D1-4703-83F8-18FE342664AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotForFlagCapture", "RobotForFlagCapture\RobotForFlagCapture.csproj", "{25583880-090E-4193-8CD1-98CF4D755DE8}"
 EndProject
