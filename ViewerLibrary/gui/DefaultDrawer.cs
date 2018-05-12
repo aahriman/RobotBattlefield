@@ -65,8 +65,7 @@ namespace ViewerLibrary.gui {
             new Pen(ColorUtils.HsvToColor(Color.Blue.GetHue(), 0.4, 1, 200))
         };
 
-        private readonly List<Pen> robotPen;
-        private readonly Dictionary<string, int> robotId;
+        private readonly Dictionary<int, Pen> robotPen = new Dictionary<int, Pen>();
 
 
         static DefaultDrawer() {
@@ -111,8 +110,6 @@ namespace ViewerLibrary.gui {
         }
 
         public DefaultDrawer() {
-            robotPen = new List<Pen>();
-            robotId = new Dictionary<string, int>();
         }
 
         /// <inheritdoc />
@@ -148,9 +145,9 @@ namespace ViewerLibrary.gui {
         /// <param name="robot"></param>
         /// <returns></returns>
         public Pen GetRobotPen(Robot robot) {
-            if (robotId.TryGetValue(robot.NAME, out int id)) return robotPen[id];
-            id = robotId.Count;
-            robotId.Add(robot.NAME, id);
+            if (robotPen.TryGetValue(robot.ID, out Pen pen)) return pen;
+
+            int id = robot.ID;
 
             Color robotColor;
             if (robotBodyColor.Length < id) {
@@ -160,7 +157,7 @@ namespace ViewerLibrary.gui {
                 robotColor = ColorUtils.HsvToColor(c.GetHue(), c.GetSaturation(), c.GetBrightness() / (1 + id / robotBodyColor.Length));
             }
 
-            robotPen.Add(new Pen(robotColor));
+            robotPen.Add(id, new Pen(robotColor));
             return robotPen[id];
         }
 
@@ -172,11 +169,17 @@ namespace ViewerLibrary.gui {
         public void DrawRobot(Robot robot, Graphics g) {
             if (robot.HIT_POINTS <= 0) return;
             Pen pen = GetRobotPen(robot);
+
+
             drawRobotBody(robot, pen, g);
 
             Font drawFont = new Font("Arial", 10);
-            string drawString = $"{robot.NAME} ({robot.HIT_POINTS})";
-            g.DrawString(drawString, drawFont, pen.Brush, DrawerUtils.Translate(robot.GetPosition(), name));
+            string drawString = $"{robot.NAME}:{robot.ID} ({robot.HIT_POINTS})";
+            lock (g) {
+                lock (pen) {
+                    g.DrawString(drawString, drawFont, pen.Brush, DrawerUtils.Translate(robot.GetPosition(), name));
+                }
+            }
         }
 
         /// <summary>
@@ -185,14 +188,22 @@ namespace ViewerLibrary.gui {
         /// <param name="info">bullet with should be drawn</param>
         /// <param name="g">graphics context</param>
         public void DrawBullet(Bullet info, Graphics g) {
-            g.FillEllipse(bulletPen.Brush, (float)(info.X - BULLET_SIZE / 2.0), (float)(info.Y - BULLET_SIZE / 2.0), BULLET_SIZE, BULLET_SIZE);
+            lock (g) {
+                lock (bulletPen) {
+                    g.FillEllipse(bulletPen.Brush, (float) (info.X - BULLET_SIZE / 2.0), (float) (info.Y - BULLET_SIZE / 2.0), BULLET_SIZE, BULLET_SIZE);
+                }
+            }
         }
 
         /// <inheritdoc />
         public void DrawExplodedBullet(Bullet info, Graphics g, int turn) {
             int index = turn;
             int size = BULLET_SIZE*(1 + index);
-            g.FillEllipse(ExplodedBulletPen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
+            lock (g) {
+                lock (ExplodedBulletPen[index]) {
+                    g.FillEllipse(ExplodedBulletPen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
+                }
+            }
         }
 
         /// <summary>
@@ -201,35 +212,60 @@ namespace ViewerLibrary.gui {
         /// <param name="info">mine with should be drawn</param>
         /// <param name="g">graphics context</param>
         public void DrawMine(Mine info, Graphics g) {
-            g.FillEllipse(minePen.Brush, (float)(info.X - MINE_SIZE / 2.0), (float)(info.Y - MINE_SIZE / 2.0), MINE_SIZE, MINE_SIZE);
-            g.FillEllipse(mineInnerPen.Brush, (float)(info.X - MINE_SIZE / 2.0), (float)(info.Y - MINE_SIZE / 2.0), 1, 1);
+            lock (g) {
+                lock (minePen) {
+                    g.FillEllipse(minePen.Brush, (float) (info.X - MINE_SIZE / 2.0), (float) (info.Y - MINE_SIZE / 2.0), MINE_SIZE, MINE_SIZE);
+                }
+                lock (mineInnerPen) {
+                    g.FillEllipse(mineInnerPen.Brush, (float)(info.X - MINE_SIZE / 2.0), (float)(info.Y - MINE_SIZE / 2.0), 1, 1);
+                }
+            }         
         }
 
         /// <inheritdoc />
         public void DrawExplodedMine(Mine info, Graphics g, int turn) {
             int index = turn;
             int size = MINE_SIZE*(1 + index);
-            g.FillEllipse(ExplodedMinePen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
+            lock (g) {
+                lock (ExplodedMinePen[index]) {
+                    g.FillEllipse(ExplodedMinePen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
+                }
+            }            
         }
 
         /// <inheritdoc />
         public void DrawRepair(Repair info, Graphics g, int turn) {
             int index = turn;
             int size = REPAIR_SIZE*(1 + index);
-            g.FillEllipse(RepairPen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
+            lock (g) {
+                lock (RepairPen[index]) {
+                    g.FillEllipse(RepairPen[index].Brush, (float)(info.X - size / 2.0), (float)(info.Y - size / 2.0), size, size);
+                }
+            }
+            
         }
 
         private void drawRobotBody(Robot robot, Pen pen, Graphics g) {
-            pen.Width = 5;
             PointF[] spike = DrawerUtils.Rotate(AngleUtils.ToRads(robot.ANGLE), PointF.Empty, DefaultDrawer.spike);
             PointF[] bottom = DrawerUtils.Rotate(AngleUtils.ToRads(robot.ANGLE), PointF.Empty, DefaultDrawer.bottom);
             PointF robotPosition = robot.GetPosition();
             Pen teamPen = DefaultDrawer.GetTeamPen(robot.TEAM_ID);
-            float oldTeamPenWidth = teamPen.Width;
-            teamPen.Width = 5;
-            g.DrawLines(teamPen, DrawerUtils.Translate(robotPosition, spike));
-            g.DrawLines(pen, DrawerUtils.Translate(robotPosition, bottom));
-            teamPen.Width = oldTeamPenWidth;
+            
+            
+            lock (g) {
+                lock (teamPen) {
+                    float oldTeamPenWidth = teamPen.Width;
+                    teamPen.Width = 5;
+                    g.DrawLines(teamPen, DrawerUtils.Translate(robotPosition, spike));
+                    teamPen.Width = oldTeamPenWidth;
+                }
+
+                lock (pen) {
+                    pen.Width = 5;
+                    g.DrawLines(pen, DrawerUtils.Translate(robotPosition, bottom));
+                }
+            }
+            
         }
 
         private class RobotComparer : IComparer, IComparer<Robot> {
@@ -256,13 +292,21 @@ namespace ViewerLibrary.gui {
             Font drawFont = new Font("Arial", 10);
             float spaceToScore = 0;
             float indentText = 10;
-            g.DrawString("Score:", drawFont, Brushes.Black, new PointF(indentText, 0));
+            lock (g) {
+                lock (Brushes.Black) {
+                    g.DrawString("Score:", drawFont, Brushes.Black, new PointF(indentText, 0));
+                }
+            }
             for (int i = 0; i < robots.Length; i++) {
                 Robot robot = robots[i];
                 Pen robotPen = GetRobotPen(robot);
                 string name = $"{robot.NAME}";
                 PointF drawFrom = new PointF(indentText, drawFont.Height * (i + 1));
-                g.DrawString(name, drawFont, robotPen.Brush, drawFrom);
+                lock (g) {
+                    lock (robotPen) {
+                        g.DrawString(name, drawFont, robotPen.Brush, drawFrom);
+                    }
+                }
                 spaceToScore = Math.Max(spaceToScore, g.MeasureString(name, drawFont).Width);
             }
 
@@ -271,7 +315,11 @@ namespace ViewerLibrary.gui {
                 Pen robotPen = GetRobotPen(robot);
                 string score = $"{robot.SCORE}";
                 PointF drawFrom = new PointF(indentText + spaceToScore + indentText, drawFont.Height * (i + 1));
-                g.DrawString(score, drawFont, robotPen.Brush, drawFrom);
+                lock (g) {
+                    lock (robotPen) {
+                        g.DrawString(score, drawFont, robotPen.Brush, drawFrom);
+                    }
+                }
             }
         }
 
@@ -279,7 +327,6 @@ namespace ViewerLibrary.gui {
         public void DrawScan(Scan scan, Graphics g, int turn) {
             int index = turn;
             Pen pen = scannerPen[index];
-            pen.Width = 2;
             double startAngle = scan.ANGLE - scan.PRECISION + 360;
             double stopAngle = scan.ANGLE + scan.PRECISION + 360;
             if (turn == 0) {
@@ -290,9 +337,14 @@ namespace ViewerLibrary.gui {
                 PointF endScan2 = DrawerUtils.Translate(scanPosition,
                     DrawerUtils.Rotate(AngleUtils.ToRads(stopAngle), PointF.Empty,
                         new PointF((float)scan.DISTANCE, 0F)));
+                lock (g) {
+                    lock (pen) {
+                        pen.Width = 2;
+                        g.DrawLine(pen, scanPosition, endScan1);
+                        g.DrawLine(pen, scanPosition, endScan2);
+                    }
+                }
 
-                g.DrawLine(pen, scanPosition, endScan1);
-                g.DrawLine(pen, scanPosition, endScan2);
             }
             RectangleF circle = new RectangleF(
                 (float) (scan.X - scan.DISTANCE),
@@ -301,7 +353,11 @@ namespace ViewerLibrary.gui {
                 (float) scan.DISTANCE*2
                 );
             if (scan.PRECISION > 0 && scan.DISTANCE > 0) {
-                g.DrawArc(pen, circle, (float)startAngle, (float)scan.PRECISION * 2);
+                lock (g) {
+                    lock (pen) {
+                        g.DrawArc(pen, circle, (float) startAngle, (float) scan.PRECISION * 2);
+                    }
+                }
             }
         }
 

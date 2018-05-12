@@ -112,6 +112,10 @@ namespace ViewerLibrary {
 
     public class Robot {
         /// <summary>
+        /// Id of robot.
+        /// </summary>
+        public int ID { get; private set; }
+        /// <summary>
         /// Team id for team in which robot belong to.
         /// </summary>
         public int TEAM_ID { get; private set; }
@@ -146,7 +150,8 @@ namespace ViewerLibrary {
         /// </summary>
         public double Y { get; private set; }
 
-        public Robot(int TEAM_ID, int SCORE, int GOLD, int HIT_POINTS, double X, double Y, double ANGLE, string NAME) {
+        public Robot(int ID, int TEAM_ID, int SCORE, int GOLD, int HIT_POINTS, double X, double Y, double ANGLE, string NAME) {
+            this.ID = ID;
             this.TEAM_ID = TEAM_ID;
             this.SCORE = SCORE;
             this.GOLD = GOLD;

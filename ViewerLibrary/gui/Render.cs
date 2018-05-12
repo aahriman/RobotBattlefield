@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,6 +41,9 @@ namespace ViewerLibrary.gui
         public Render(ITurnDataModel dataModel, System.Windows.Forms.PictureBox pictureBox, IDrawer drawer) {
             this.PICTURE_BOX = pictureBox;
             this.DRAWER = drawer;
+
+            registerMoreDrawer(drawer);
+
             this.dataModel = dataModel;
             pictureBox.Resize += (sender, args) => drawTurn();
 
@@ -78,7 +82,11 @@ namespace ViewerLibrary.gui
             if (actualTurn == null) {
                 return;
             }
-            Bitmap drawingBitmap = new Bitmap(PICTURE_BOX.Width, PICTURE_BOX.Height);
+            int width = PICTURE_BOX.Width;
+            int height = PICTURE_BOX.Height;
+            if (width == 0 || height == 0) return; 
+
+            Bitmap drawingBitmap = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(drawingBitmap);
             g.ScaleTransform(drawingBitmap.Width / 1000f, drawingBitmap.Height / 1000f);
 
@@ -126,6 +134,17 @@ namespace ViewerLibrary.gui
             for (int i = history.Count - 2; i >= 0; i--) {
                 history[i + 1] = history[i];
             }
+        }
+
+        private void registerMoreDrawer(IDrawer drawer) {
+            var type = typeof(IDrawerMore);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => type.IsAssignableFrom(p) && p.IsClass);
+            foreach (var t in types) {
+                drawer.RegisterDrawerMore((IDrawerMore) Activator.CreateInstance(t));
+            }
+            
         }
     }
 

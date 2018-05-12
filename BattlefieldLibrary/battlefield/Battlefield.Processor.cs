@@ -104,9 +104,11 @@ namespace BattlefieldLibrary.battlefield {
             }
             robot.NAME = command.NAME;
 
-            battlefieldTurn.AddRobot(new Robot(robot.TEAM_ID, robot.Score, robot.Gold, robot.HitPoints, robot.X, robot.Y,
-                robot.AngleDrive, robot.NAME));
-            turnDataModel?.Add(battlefieldTurn.ConvertToTurn(), false);
+            lock (battlefieldTurn) {
+                battlefieldTurn.AddRobot(new Robot(robot.ID, robot.TEAM_ID, robot.Score, robot.Gold, robot.HitPoints, robot.X, robot.Y,
+                    robot.AngleDrive, robot.NAME));
+                turnDataModel?.Add(battlefieldTurn.ConvertToTurn(), false);
+            }
 
             return battlefield.addToInitAnswerCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
                 robot.ID, robot.TEAM_ID, classEquipment.ID, robot.Armor.ID, robot.Motor.ID));
@@ -164,8 +166,7 @@ namespace BattlefieldLibrary.battlefield {
                 if (robot.Power <= robot.Motor.ROTATE_IN) {
                     robot.AngleDrive = command.ANGLE;
                 }
-                robot.WantedPower = Math.Min(command.POWER, 100);
-                robot.WantedPower = Math.Max(robot.WantedPower, 0);
+                robot.WantedPower = command.POWER > 100 ? 100 : (command.POWER < 0 ? 0 : command.POWER);
                 return new DriveAnswerCommand(robot.AngleDrive.DEquals(command.ANGLE));
             } else {
                 return new DriveAnswerCommand(robot.AngleDrive.DEquals(command.ANGLE));

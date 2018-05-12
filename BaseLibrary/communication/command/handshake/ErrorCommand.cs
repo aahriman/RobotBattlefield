@@ -18,7 +18,7 @@ namespace BaseLibrary.communication.command.handshake {
             internal CommandFactory() : base() { }
 
             public override bool IsDeserializeable(string s) {
-                if (s.StartsWith("ERROR")) {
+                if (s != null && s.StartsWith("ERROR")) {
                     var message = s.Substring(("ERROR").Length).Trim();
                     cache.Cached(s, new ErrorCommand(message));
                     return true;

@@ -89,9 +89,8 @@ namespace BaseLibrary.communication {
 
 	        string s = await sr.ReadLineAsync();
 	        ACommand command = PROTOCOL.GetCommand(s);
-	        if (command == null) {
-	            throw new ArgumentException("Protocol (" + _protocol.GetType().Name + ") can not deserialize string - " +
-	                                        s);
+            if (command == null) {
+                throw new ArgumentException($"Protocol ({_protocol.GetType().Name}) can not deserialize string '{s}'");
 	        }
 
 	        if (command is ErrorCommand) {
@@ -119,8 +118,12 @@ namespace BaseLibrary.communication {
 			}
 
             string serializedCommand = PROTOCOL.GetSendableCommand(command);
-
-            await WriteLineAsync(serializedCommand);
+            try {
+                await WriteLineAsync(serializedCommand);
+            } catch(Exception e) when(e is IOException || e is ObjectDisposedException) {
+                // cannot write to stream, server or client close it.
+            }
+            
 		}
 
 	    private bool close = false;

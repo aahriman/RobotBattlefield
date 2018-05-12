@@ -63,7 +63,9 @@ namespace BaseCapcureBattlefield.battlefield {
                 foreach (var robot in getAliveRobots()) {
                     if (EuclideanSpaceUtils.Distance(new Point(@base.X, @base.Y), new Point(robot.X, robot.Y)) < BASE_SIZE) {
                         aliveRobotsAtBaseByBase[@base].Add(robot);
-                        robot.Score++;
+                        if (@base.TeamId != robot.TEAM_ID) {
+                            robot.Score++;
+                        }
                         int progressForTeam;
                         if (!progressByTeamId.TryGetValue(robot.TEAM_ID, out progressForTeam)) {
                             progressForTeam = 0;
@@ -116,7 +118,7 @@ namespace BaseCapcureBattlefield.battlefield {
             int teamId = bases.First().TeamId;
             if ((from @base in bases
                  where @base.TeamId == teamId
-                 where @base.Progress > 0
+                 where @base.Progress > @base.MAX_PROGRESS / 2
                  select @base).Count() == bases.Length) {
                 return LapState.SOMEONE_WIN;
             }

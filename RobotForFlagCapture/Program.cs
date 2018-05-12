@@ -8,7 +8,7 @@ using FlagCaptureLibrary.battlefield;
 
 namespace RobotForFlagCapture {
     class Program {
-        private static FlagPlace[] flagPlaces;
+        private static FlagPlace[] flagPlaces = new FlagPlace[0];
 
         class MyTank : Tank {
             public bool carryFlag = false;
@@ -29,6 +29,7 @@ namespace RobotForFlagCapture {
             }
 
             protected override void ProcessInit(InitAnswerCommand initAnswerCommand) {
+                base.ProcessInit(initAnswerCommand);
                 flagPlaces = FlagCapture.GetFlagPlaces(initAnswerCommand);
             }
         }
@@ -61,6 +62,8 @@ namespace RobotForFlagCapture {
         }
 
         static void Main(string[] args) {
+            ClientRobot.Connect(args);
+
             FlagPlace toFlagPlace = null;
             FlagPlace ownFlagPlace = null;
 

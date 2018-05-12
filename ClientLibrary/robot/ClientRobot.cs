@@ -35,15 +35,38 @@ namespace ClientLibrary.robot {
         private static String ip = null;
         private static int port;
 
+        private static readonly String ERROR_FILE_NAME = "error.txt";
+
         static ClientRobot() {
             ModUtils.LoadMods();
 
             if (!System.Diagnostics.Debugger.IsAttached) { // add handler for non debugging
-                Console.SetError(new IndentedTextWriter(File.AppendText("error.txt")));
+
+                uint numberOfTry = 0;
+                while (true) {
+                    numberOfTry++;
+                    try {
+                        ERROR_FILE_NAME = errorName(numberOfTry);
+                        Console.SetError(new IndentedTextWriter(File.AppendText(ERROR_FILE_NAME)));
+                        break;
+                    } catch {
+                        // cannot open file, try next one
+                        if (numberOfTry > 1000) {
+                            Console.WriteLine("Cannot open error file. Application will be closed.");
+                            Thread.Sleep(1000);
+                            Environment.Exit(2);
+                        }
+                    }
+                }
+
                 AppDomain currentDomain = AppDomain.CurrentDomain;
                 currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
                 Thread.GetDomain().UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
             }
+        }
+
+        private static String errorName(uint numberOfTry) {
+            return $"{System.Reflection.Assembly.GetEntryAssembly().GetName().Name}-error-{numberOfTry}.txt";
         }
 
 
@@ -248,7 +271,7 @@ namespace ClientLibrary.robot {
             if (!connected) {
                 ConnectionUtil connection = new ConnectionUtil();
 
-                connection.ConnectAsync(ip, port).Wait();
+                await connection.ConnectAsync(ip, port);
                 sns = connection.COMMUNICATION;
                 this.connected = true;
                 await InitAsync(name, teamName);
@@ -455,7 +478,9 @@ namespace ClientLibrary.robot {
         /// <param name="repairHitPoints"></param>
         /// <returns></returns>
         protected void Merchant(int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
-            addRobotTask(MerchantAsync(motorId, armorId, classEquipmentId, repairHitPoints));
+            sendCommandAsync(new MerchantCommand(motorId, armorId, classEquipmentId, repairHitPoints)).Wait();
+            MerchantAnswerCommand answer = receiveCommandAsync<MerchantAnswerCommand>().Result;
+            ProcessMerchant(answer);
         }
 
         /// <summary>
@@ -504,9 +529,8 @@ namespace ClientLibrary.robot {
         /// </summary>
         /// <returns>Command</returns>
         protected async Task<T> receiveCommandAsync<T>() where T : ACommand{
-            T command = (T) await sns.ReceiveCommandAsync();
-            checkCommand(command);
-            ProcessState((RobotStateCommand) await sns.ReceiveCommandAsync());
+            T command = (T) checkCommand(await sns.ReceiveCommandAsync());
+            ProcessState((RobotStateCommand) checkCommand(await sns.ReceiveCommandAsync()));
             return command;
         }
 
@@ -549,11 +573,12 @@ namespace ClientLibrary.robot {
             Console.Error.WriteLine(e.ExceptionObject);
             Console.Error.Flush();
             if (e.ExceptionObject is Exception ex) {
-                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in error.txt and will be closed.");
+                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
             } else {
-                Console.WriteLine("Some error occurs. Application store more information in error.txt and will be closed.");
+                Console.WriteLine("Some error occurs. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
             }
-            Thread.Sleep(1000);
+            Console.WriteLine("Continue with pressing eny key.");
+            Console.Read();
             Environment.Exit(1);
         }
     }

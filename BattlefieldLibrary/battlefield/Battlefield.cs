@@ -102,7 +102,7 @@ namespace BattlefieldLibrary.battlefield {
         /// <summary>
         /// Actual lap number.
         /// </summary>
-		protected int lap = 0;
+		protected int lap = 1;
 	    
         /// <summary>
         /// Motor equipment available for this battle.
@@ -412,6 +412,7 @@ namespace BattlefieldLibrary.battlefield {
                         }
                         break;
                 }
+                return;
             } catch (IOException) {
                 // client was disconnected
                 lock (robots) {
@@ -419,16 +420,41 @@ namespace BattlefieldLibrary.battlefield {
                         robots.Remove(robotsByStream[sns]);
                     }
                 }
+                lock (receivedCommands) {
+                    lock (robots) {
+                        if (_run && robots.Count == receivedCommands.Count) {
+                            allSendCommand.TrySetResult(true);
+                        }
+                    }
+                }
             } catch (ObjectDisposedException) {
                 // server disconnect client
                 lock (robots) {
-                    robots.Remove(robotsByStream[sns]);
+                    if (robotsByStream.ContainsKey(sns)) {
+                        robots.Remove(robotsByStream[sns]);
+                    }
+                }
+                lock (receivedCommands) {
+                    lock (robots) {
+                        if (_run && robots.Count == receivedCommands.Count) {
+                            allSendCommand.TrySetResult(true);
+                        }
+                    }
                 }
             } catch (ArgumentException e) {
                 lock (robots) {
-                    BattlefieldRobot robot = robotsByStream[sns];
-                    robots.Remove(robotsByStream[sns]);
-                    Console.WriteLine("Disconnected robot " + robot.NAME + " because " + e.Message);
+                    if (robotsByStream.ContainsKey(sns)) {
+                        BattlefieldRobot robot = robotsByStream[sns];
+                        robots.Remove(robotsByStream[sns]);
+                        Console.WriteLine("Disconnected robot " + robot.NAME + " because " + e.Message);
+                    }
+                }
+                lock (receivedCommands) {
+                    lock (robots) {
+                        if (_run && robots.Count == receivedCommands.Count) {
+                            allSendCommand.TrySetResult(true);
+                        }
+                    }
                 }
             }
 		}
@@ -497,8 +523,9 @@ namespace BattlefieldLibrary.battlefield {
 
 		protected virtual void firstBattle() {
             Console.WriteLine("Battle start");
-
-		    sendRobotStateCommand(LapState.NONE, robots);
+		    newBattle();
+		    lap = 1;
+            sendRobotStateCommand(LapState.NONE, robots);
 		}
 
 		protected List<BattlefieldRobot> getAliveRobots() {
@@ -519,7 +546,7 @@ namespace BattlefieldLibrary.battlefield {
 	        Turn turn;
             lock (writer) {
 	            foreach (BattlefieldRobot r in robots) {
-	                battlefieldTurn.AddRobot(new ViewerLibrary.Robot(r.TEAM_ID, r.Score, r.Gold, r.HitPoints, r.X, r.Y,
+	                battlefieldTurn.AddRobot(new ViewerLibrary.Robot(r.ID, r.TEAM_ID, r.Score, r.Gold, r.HitPoints, r.X, r.Y,
 	                                                                     r.AngleDrive, r.NAME));
 	            }
 
@@ -602,7 +629,9 @@ namespace BattlefieldLibrary.battlefield {
                     if (r.Power > r.WantedPower) {
                         r.Power = Math.Max(r.Power - r.Motor.DECELERATION, r.WantedPower);
                     } else {
-                        r.Power = Math.Max(r.Power, Math.Min(r.Motor.MAX_INITIAL_POWER, r.WantedPower));
+                        if (r.Power < r.Motor.MAX_INITIAL_POWER) {
+                            r.Power = Math.Min(r.Motor.MAX_INITIAL_POWER, r.WantedPower);
+                        }
                         r.Power = Math.Min(r.Power + r.Motor.ACCELERATION, r.WantedPower);
                     }
                 }

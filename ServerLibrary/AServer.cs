@@ -26,14 +26,37 @@ namespace BattlefieldLibrary {
 	    protected Battlefield Battlefield;
         protected int port;
 
+        private static readonly String ERROR_FILE_NAME;
+
         static AServer () {
             if (!System.Diagnostics.Debugger.IsAttached) { // add handler for non debugging
-                Console.SetError(new IndentedTextWriter(File.AppendText("error.txt")));
+
+                uint numberOfTry = 0;
+                while (true) {
+                    numberOfTry++;
+                    try {
+                        ERROR_FILE_NAME = errorName(numberOfTry);
+                        Console.SetError(new IndentedTextWriter(File.AppendText(ERROR_FILE_NAME)));
+                        break;
+                    } catch {
+                        // cannot open file, try next one
+                        if (numberOfTry > 1000) {
+                            Console.WriteLine("Cannot open error file. Application will be closed.");
+                            Thread.Sleep(1000);
+                            Environment.Exit(2);
+                        }
+                    }
+                }
+
                 AppDomain currentDomain = AppDomain.CurrentDomain;
                 currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
                 Thread.GetDomain().UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
             }
-}
+        }
+
+        private static String errorName(uint numberOfTry) {
+            return $"{System.Reflection.Assembly.GetEntryAssembly().GetName().Name}-error-{numberOfTry}.txt";
+        }
 
         protected AServer(int port) {
             this.port = port;
@@ -145,16 +168,16 @@ namespace BattlefieldLibrary {
         /// <returns></returns>
         public abstract GameTypeCommand GetGameTypeCommand(Battlefield Battlefield);
 
-        static void MyHandler(object sender, UnhandledExceptionEventArgs e) {
+        public static void MyHandler(object sender, UnhandledExceptionEventArgs e) {
             Console.Error.WriteLine(DateTime.Now);
             Console.Error.WriteLine(e.ExceptionObject);
             Console.Error.Flush();
             if (e.ExceptionObject is Exception ex) {
-                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in error.txt and will be closed.");
+                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
             } else {
-                Console.WriteLine("Some error occurs. Application store more information in error.txt and will be closed.");
+                Console.WriteLine("Some error occurs. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
             Environment.Exit(1);
         }
     }

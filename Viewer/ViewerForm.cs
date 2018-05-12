@@ -2,11 +2,16 @@
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using BaseLibrary.utils;
 using ViewerLibrary.gui;
 using ViewerLibrary.model;
 
 namespace Viewer {
     public partial class ViewerForm : Form {
+
+        static ViewerForm() {
+            ModUtils.LoadMods();
+        }
         private ReversibleRender render;
 
         private FileTurnDataModel dataModel;
