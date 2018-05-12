@@ -36,13 +36,13 @@ namespace BaseCapcureBattlefield.battlefield {
             }
         }
 
-        protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
+        protected override RobotStateCommand addToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        robotStateCommand.MORE[BaseCapture.POSITION_IN_ROBOT_STATE_COMMAND] = bases.ToArray();
             return robotStateCommand;
 
         }
 
-	    protected override InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
+	    protected override InitAnswerCommand addToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
 	        return initAnswerCommand;
 	    }
 
@@ -112,7 +112,7 @@ namespace BaseCapcureBattlefield.battlefield {
             }
         }
 
-        protected override LapState NewLapState() {
+        protected override LapState newLapState() {
             int teamId = bases.First().TeamId;
             if ((from @base in bases
                  where @base.TeamId == teamId
@@ -121,7 +121,7 @@ namespace BaseCapcureBattlefield.battlefield {
                 return LapState.SOMEONE_WIN;
             }
 
-            return Turn > MAX_TURN ? LapState.TURNS_OUT : LapState.NONE;
+            return turn > MAX_TURN ? LapState.TURNS_OUT : LapState.NONE;
         }
     }
 }

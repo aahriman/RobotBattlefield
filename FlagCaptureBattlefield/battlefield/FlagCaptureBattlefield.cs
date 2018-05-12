@@ -46,20 +46,20 @@ namespace FlagCaptureBattlefield.battlefield {
         }
 
         /// <inheritdoc />
-	    protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
+	    protected override RobotStateCommand addToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        robotStateCommand.MORE[FlagCapture.POSITION_IN_ROBOT_STATE_COMMAND] = flags.ToArray();
             return robotStateCommand;
 	    }
 
 	    /// <inheritdoc />
-	    protected override InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
+	    protected override InitAnswerCommand addToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
 	        initAnswerCommand.MORE[FlagCapture.POSITION_IN_INIT_ASNWER_COMMAND] = flagPlacesById.Values.ToArray();
             return initAnswerCommand;
 	    }
 
 	    /// <inheritdoc />
-		protected override LapState NewLapState() {
-            return Turn > MAX_TURN ? LapState.TURNS_OUT : LapState.NONE;
+		protected override LapState newLapState() {
+            return turn > MAX_TURN ? LapState.TURNS_OUT : LapState.NONE;
         }
 
 	    /// <inheritdoc />

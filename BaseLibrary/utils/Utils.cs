@@ -33,14 +33,39 @@ namespace BaseLibrary.utils {
         /// <summary>
         /// Calc angle from position to to position via <code>Math.Atan2</code>
         /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <see cref="Math.Atan2"/>
+        /// <see cref="AngleUtils.Angle"/>
+        /// <returns>angle in rads</returns>
+        public static double Angle(Point from, Point to) {
+            return AngleUtils.Angle(from.X, from.Y, to.X, to.Y);
+        }
+
+        /// <summary>
+        /// Calc angle from position to to position via <code>Math.Atan2</code>
+        /// </summary>
         /// <param name="fromX"></param>
         /// <param name="fromY"></param>
         /// <param name="toX"></param>
         /// <param name="toY"></param>
         /// <see cref="Math.Atan2"/>
+        /// <see cref="AngleUtils.Angle"/>
         /// <returns>angle in rads</returns>
 		public static double Angle(double fromX, double fromY, double toX, double toY) {
             return AngleUtils.Angle(fromX, fromY, toX, toY);
+        }
+
+        /// <summary>
+        /// Calc angle from position to to position via <code>Math.Atan2</code>
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param
+        /// <see cref="Math.Atan2"/>
+        /// <see cref="AngleUtils.AngleDegree"/>
+        /// <returns>angle in degree</returns>
+        public static double AngleDegree(Point from, Point to) {
+            return AngleUtils.AngleDegree(from.X, from.Y, to.X, to.Y);
         }
 
         /// <summary>
@@ -51,6 +76,7 @@ namespace BaseLibrary.utils {
         /// <param name="toX"></param
         /// <param name="toY"></param>
         /// <see cref="Math.Atan2"/>
+        /// <see cref="AngleUtils.AngleDegree"/>
         /// <returns>angle in degree</returns>
 		public static double AngleDegree(double fromX, double fromY, double toX, double toY) {
             return AngleUtils.AngleDegree(fromX, fromY, toX, toY);

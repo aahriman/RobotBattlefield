@@ -82,7 +82,7 @@ namespace BattlefieldLibrary.battlefield {
         }
 
         /// <summary>
-        /// Convert this object to object Turn
+        /// Convert this object to object turn
         /// </summary>
         /// <returns></returns>
         public Turn ConvertToTurn() {

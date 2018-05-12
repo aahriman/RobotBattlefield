@@ -227,12 +227,12 @@ namespace BattlefieldLibrary.battlefield {
         /// <summary>
         /// Instance of merchant for buying equipment.
         /// </summary>
-		protected Merchant Merchant;
+		protected Merchant merchant;
 
         /// <summary>
         /// Actual turn.
         /// </summary>
-		protected int Turn { get; private set; }
+		protected int turn { get; private set; }
 
         /// <summary>
         /// How many teams will play this battle.
@@ -359,7 +359,7 @@ namespace BattlefieldLibrary.battlefield {
             this.RepairTools = repairTools;
 
             
-			Merchant = new Merchant(motors, armors, guns, repairTools, mineGuns);
+			merchant = new Merchant(motors, armors, guns, repairTools, mineGuns);
 
             if (File.Exists(filename)) {
                 File.Delete(filename);
@@ -465,7 +465,7 @@ namespace BattlefieldLibrary.battlefield {
 		}
 
         protected void newBattle() {
-			Turn = 0;
+			turn = 0;
 		    lap++;
 			foreach (BattlefieldRobot r in robots) {
 				r.Power = 0;
@@ -502,7 +502,7 @@ namespace BattlefieldLibrary.battlefield {
 		}
 
 		protected List<BattlefieldRobot> getAliveRobots() {
-			if (cache.IsCached(Turn)) {
+			if (cache.IsCached(turn)) {
 				return cache.GetCached();
 			}
 			var aliveRobots = new List<BattlefieldRobot>();
@@ -511,7 +511,7 @@ namespace BattlefieldLibrary.battlefield {
 					aliveRobots.Add(r);
 				}
 			}
-			cache.Cached(Turn, aliveRobots);
+			cache.Cached(turn, aliveRobots);
 			return aliveRobots;
 		}
 
@@ -525,12 +525,12 @@ namespace BattlefieldLibrary.battlefield {
 
                 foreach (var pairValueKeyBullets in heapBullet) { // add bullets
                     foreach (var bullet in pairValueKeyBullets.Value) {
-                        int difference = Turn - bullet.FROM_LAP;
+                        int difference = this.turn - bullet.FROM_LAP;
                         double speedX = (bullet.TO_X - bullet.FROM_X) / (bullet.TO_LAP - bullet.FROM_LAP);
                         double speedY = (bullet.TO_Y - bullet.FROM_Y) / (bullet.TO_LAP - bullet.FROM_LAP);
                         double x = bullet.FROM_X + difference * speedX;
                         double y = bullet.FROM_Y + difference * speedY;
-                        battlefieldTurn.AddBullet(new ViewerLibrary.Bullet(x, y, pairValueKeyBullets.Key == Turn));
+                        battlefieldTurn.AddBullet(new ViewerLibrary.Bullet(x, y, pairValueKeyBullets.Key == this.turn));
                     }
                 }
 
@@ -554,14 +554,14 @@ namespace BattlefieldLibrary.battlefield {
                 writer.WriteLine(SERIALIZER.Serialize(turn));
 
                 detonatedMines.Clear();
-                heapBullet.Remove(Turn);
+                heapBullet.Remove(this.turn);
             }
 	        
 	        turnDataModel?.Add(turn, last);
         }
 
         private HashSet<BattlefieldRobot> processCommands() {
-            battlefieldTurn = new BattlefieldTurn(Turn);
+            battlefieldTurn = new BattlefieldTurn(turn);
             List<Task> tasks = new List<Task>();
             HashSet<BattlefieldRobot> robotsSendCommand = new HashSet<BattlefieldRobot>();
             foreach (KeyValuePair<BattlefieldRobot, ACommand> pair in receivedCommands) {
@@ -607,7 +607,7 @@ namespace BattlefieldLibrary.battlefield {
                     }
                 }
 
-                obstacleManager.MoveChange(r, Turn, r.X, r.Y, r.X + RobotUtils.GetSpeedX(r), r.Y + RobotUtils.GetSpeedY(r));
+                obstacleManager.MoveChange(r, turn, r.X, r.Y, r.X + RobotUtils.GetSpeedX(r), r.Y + RobotUtils.GetSpeedY(r));
                 if (r.X < 0 || r.X >= 1000 || r.Y < 0 || r.Y >= 1000) {
                     r.HitPoints -= (int)Math.Max(1, 5 * r.Power / 100.0);
                     r.Power = 0;
@@ -639,7 +639,7 @@ namespace BattlefieldLibrary.battlefield {
         }
 
         protected void shooting() {
-            if (heapBullet.TryGetValue(Turn, out List<Bullet> bulletList)) {
+            if (heapBullet.TryGetValue(turn, out List<Bullet> bulletList)) {
                 foreach (Bullet bullet in bulletList) {
                     foreach (BattlefieldRobot r in robots) {
                         if (r.HitPoints > 0) {
@@ -656,7 +656,7 @@ namespace BattlefieldLibrary.battlefield {
                 }
             }
 
-            if (gunLoaded.TryGetValue(Turn, out List<Tank> tanksFinishLoading)) {
+            if (gunLoaded.TryGetValue(turn, out List<Tank> tanksFinishLoading)) {
                 foreach (var tank in tanksFinishLoading) {
                     tank.GunsToLoad--;
                 }
@@ -682,7 +682,7 @@ namespace BattlefieldLibrary.battlefield {
         protected abstract void afterMovingAndDamaging();
 
         private void respawn() {
-            if (RESPAWN_ROBOT_AT_TURN.TryGetValue(Turn, out List<BattlefieldRobot> respawnedRobots)) {
+            if (RESPAWN_ROBOT_AT_TURN.TryGetValue(turn, out List<BattlefieldRobot> respawnedRobots)) {
                 foreach (BattlefieldRobot respawnedRobot in respawnedRobots) {
                     respawnedRobot.HitPoints = respawnedRobot.Armor.MAX_HP;
                     Point position = obstacleManager.StartRobotPosition(ARENA_MAX_SIZE, ARENA_MAX_SIZE);
@@ -713,8 +713,8 @@ namespace BattlefieldLibrary.battlefield {
                 if (lapState != LapState.NONE) {
                     endLapCommand = new EndLapCommand(lapState, r.Gold, r.Score);
                 }
-                RobotStateCommand command = AddToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, Turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
-                AddObtacleInSight(command, r);
+                RobotStateCommand command = addToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
+                addObstacleInSight(command, r);
                 robotStatesTaskList.Add(r.NETWORK_STREAM.SendCommandAsync(command));
                 r.LastRequestAt = NOW;
             }
@@ -744,8 +744,8 @@ namespace BattlefieldLibrary.battlefield {
         /// </summary>
 	    protected void singleTurnCycle() {
 	        lock (receivedCommands) {
-	            Turn++;
-                Console.WriteLine("Turn: " + Turn);
+	            turn++;
+                Console.WriteLine("Turn: " + turn);
                 HashSet<BattlefieldRobot> robotsSendCommand = processCommands();
                 afterProcessCommand();
 	            changeBattlefieldState();
@@ -755,7 +755,7 @@ namespace BattlefieldLibrary.battlefield {
 	            detonatingMines();
 	            afterMovingAndDamaging();
 	            respawn();
-	            LapState lapState = NewLapState();
+	            LapState lapState = newLapState();
 	            if (lapState != LapState.NONE && RESPAWN_ALLOWED) {
 	                healAllRobots();
 	            }
@@ -765,7 +765,7 @@ namespace BattlefieldLibrary.battlefield {
 	            handleEndTurn(lapState != LapState.NONE && MAX_LAP == lap);
 	            if (RESPAWN_ALLOWED) {
 	                foreach (var robot in killedRobots) {
-	                    int respawnTurn = Turn + RESPAWN_TIMEOUT;
+	                    int respawnTurn = turn + RESPAWN_TIMEOUT;
 	                    if (!RESPAWN_ROBOT_AT_TURN.TryGetValue(respawnTurn, out List<BattlefieldRobot> respawnedRobots)) {
 	                        respawnedRobots = new List<BattlefieldRobot>();
 	                        RESPAWN_ROBOT_AT_TURN.Add(respawnTurn, respawnedRobots);
@@ -813,10 +813,10 @@ namespace BattlefieldLibrary.battlefield {
         }
 
 
-	    protected void AddObtacleInSight(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
+	    protected void addObstacleInSight(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        Point[] points = generateSignPoints(r);
-            ObstaclesAroundRobot obtaclesInSight = new ObstaclesAroundRobot(obstacleManager.GetObstaclesInPoints(points));
-            obtaclesInSight.AddToRobotStateCommand(robotStateCommand);
+            ObstaclesAroundRobot obstaclesInSight = new ObstaclesAroundRobot(obstacleManager.GetObstaclesInPoints(points));
+            obstaclesInSight.AddToRobotStateCommand(robotStateCommand);
 	    }
 
 	    private static Point[] generateSignPoints(BattlefieldRobot r) {
@@ -830,12 +830,12 @@ namespace BattlefieldLibrary.battlefield {
 	        return sight;
 	    }
 
-        protected abstract RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r);
+        protected abstract RobotStateCommand addToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r);
 
-        protected abstract InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand);
+        protected abstract InitAnswerCommand addToInitAnswerCommand(InitAnswerCommand initAnswerCommand);
 
 
-        protected abstract LapState NewLapState();
+        protected abstract LapState newLapState();
 
     }
 }

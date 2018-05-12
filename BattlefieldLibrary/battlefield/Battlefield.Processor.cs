@@ -108,7 +108,7 @@ namespace BattlefieldLibrary.battlefield {
                 robot.AngleDrive, robot.NAME));
             turnDataModel?.Add(battlefieldTurn.ConvertToTurn(), false);
 
-            return battlefield.AddToInitAnswerCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
+            return battlefield.addToInitAnswerCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
                 robot.ID, robot.TEAM_ID, classEquipment.ID, robot.Armor.ID, robot.Motor.ID));
         }
 
@@ -181,7 +181,7 @@ namespace BattlefieldLibrary.battlefield {
             BattlefieldRobot minTarget = robot;
             if (robot.HitPoints > 0) {
                 foreach (BattlefieldRobot target in battlefield.robots) {
-                    if (robot.ID != target.ID && target.HitPoints > 0 && battlefield.obstacleManager.CanScan(battlefield.Turn, robot.X, robot.Y, target.X, target.Y)) {
+                    if (robot.ID != target.ID && target.HitPoints > 0 && battlefield.obstacleManager.CanScan(battlefield.turn, robot.X, robot.Y, target.X, target.Y)) {
                         double distance = EuclideanSpaceUtils.Distance(robot.X, robot.Y, target.X, target.Y);
                         if (distance < minDistance) {
                             double degree = AngleUtils.NormalizeDegree(AngleUtils.AngleDegree(robot.X, robot.Y, target.X, target.Y));
@@ -223,14 +223,14 @@ namespace BattlefieldLibrary.battlefield {
                 }
                 double toX = range * Math.Cos(AngleUtils.ToRads(command.ANGLE)) + tank.X;
                 double toY = range * Math.Sin(AngleUtils.ToRads(command.ANGLE)) + tank.Y;
-                battlefield.obstacleManager.ShotChange(battlefield.Turn, tank.X, tank.Y, ref toX, ref toY);
-                int toLap = (int) Math.Ceiling(range / tank.Gun.SHOT_SPEED) + battlefield.Turn;
+                battlefield.obstacleManager.ShotChange(battlefield.turn, tank.X, tank.Y, ref toX, ref toY);
+                int toLap = (int) Math.Ceiling(range / tank.Gun.SHOT_SPEED) + battlefield.turn;
                 if (!battlefield.heapBullet.TryGetValue(toLap, out List<Bullet> bulletList)) {
                     bulletList = new List<Bullet>();
                     battlefield.heapBullet.Add(toLap, bulletList);
                 }
-                bulletList.Add(new Bullet(battlefield.Turn, toLap, toX, toY, tank));
-                int loadAtTurn = battlefield.Turn + RELOAD_TIME;
+                bulletList.Add(new Bullet(battlefield.turn, toLap, toX, toY, tank));
+                int loadAtTurn = battlefield.turn + RELOAD_TIME;
                 if (!battlefield.gunLoaded.TryGetValue(loadAtTurn, out List<Tank> list)) {
                     list = new List<Tank>();
                     battlefield.gunLoaded.Add(loadAtTurn, list);
@@ -333,7 +333,7 @@ namespace BattlefieldLibrary.battlefield {
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
             Battlefield battlefield = robotAndBattlefield.BATTLEFIELD;
             if (battlefield._battlefieldState == BattlefieldState.MERCHANT) {
-                return battlefield.Merchant.Buy(robot, visitor.MOTOR_ID, visitor.ARMOR_ID, visitor.CLASS_EQUIPMENT_ID, visitor.REPAIR_HP);
+                return battlefield.merchant.Buy(robot, visitor.MOTOR_ID, visitor.ARMOR_ID, visitor.CLASS_EQUIPMENT_ID, visitor.REPAIR_HP);
             } else {
                 return new ErrorCommand("Cannot use MerchantCommand in state " + battlefield._battlefieldState);
             }

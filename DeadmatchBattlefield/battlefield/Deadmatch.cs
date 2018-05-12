@@ -13,18 +13,18 @@ namespace DeadmatchBattlefield.battlefield {
         }
 
 	    /// <inheritdoc />
-        protected override RobotStateCommand AddToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
+        protected override RobotStateCommand addToRobotStateCommand(RobotStateCommand robotStateCommand, BattlefieldRobot r) {
 	        return robotStateCommand;
 	    }
 
         /// <inheritdoc />
-	    protected override InitAnswerCommand AddToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
+	    protected override InitAnswerCommand addToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
 	        return initAnswerCommand;
 	    }
 
 	    /// <inheritdoc />
-		protected override LapState NewLapState() {
-			if (Turn > MAX_TURN) {
+		protected override LapState newLapState() {
+			if (turn > MAX_TURN) {
 				return LapState.TURNS_OUT;
 			}
             List<BattlefieldRobot> aliveRobots = getAliveRobots();
