@@ -14,9 +14,11 @@ namespace ClientLibrary.robot {
         /// </summary>
         public RepairTool REPAIR_TOOL { get; private set; }
 
+        /// <inheritdoc />
         public Repairman(String name) : base(name) { }
 
-        public Repairman(String name, String teamName) : base(name, teamName) { }
+        /// <inheritdoc />
+        public Repairman(String name, String robotTeamName) : base(name, robotTeamName) { }
 
         /// <summary>
         /// Repair robots in max range.

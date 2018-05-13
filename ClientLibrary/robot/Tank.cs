@@ -17,9 +17,11 @@ namespace ClientLibrary.robot {
         /// </summary>
         public Gun GUN { get; private set; }
 
+        /// <inheritdoc />
         public Tank(String name) : base(name) { }
 
-        public Tank(String name, String teamName) : base(name, teamName) {}
+        /// <inheritdoc />
+        public Tank(String name, String robotTeamName) : base(name, robotTeamName) {}
 
         /// <summary>
         /// Shoot bullet.
@@ -40,7 +42,7 @@ namespace ClientLibrary.robot {
         /// <param name="range">how far this robot wants to shot</param>
         private async Task<ShootAnswerCommand> ShootAsync(ShootAnswerCommand destination, double angle, double range) {
             await sendCommandAsync(new ShootCommand(range, angle));
-            ShootAnswerCommand answer = receiveCommand<ShootAnswerCommand>();
+            ShootAnswerCommand answer = await receiveCommandAsync<ShootAnswerCommand>();
             destination.FillData(answer);
             return answer;
         }

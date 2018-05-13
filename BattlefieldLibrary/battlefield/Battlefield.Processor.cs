@@ -226,17 +226,23 @@ namespace BattlefieldLibrary.battlefield {
                 double toY = range * Math.Sin(AngleUtils.ToRads(command.ANGLE)) + tank.Y;
                 battlefield.obstacleManager.ShotChange(battlefield.turn, tank.X, tank.Y, ref toX, ref toY);
                 int toLap = (int) Math.Ceiling(range / tank.Gun.SHOT_SPEED) + battlefield.turn;
-                if (!battlefield.heapBullet.TryGetValue(toLap, out List<Bullet> bulletList)) {
-                    bulletList = new List<Bullet>();
-                    battlefield.heapBullet.Add(toLap, bulletList);
+                lock (battlefield.heapBullet) { 
+                    if (!battlefield.heapBullet.TryGetValue(toLap, out List<Bullet> bulletList)) {
+                        bulletList = new List<Bullet>();
+                        battlefield.heapBullet.Add(toLap, bulletList);
+                    }
+                
+                    bulletList.Add(new Bullet(battlefield.turn, toLap, toX, toY, tank));
                 }
-                bulletList.Add(new Bullet(battlefield.turn, toLap, toX, toY, tank));
                 int loadAtTurn = battlefield.turn + RELOAD_TIME;
-                if (!battlefield.gunLoaded.TryGetValue(loadAtTurn, out List<Tank> list)) {
-                    list = new List<Tank>();
-                    battlefield.gunLoaded.Add(loadAtTurn, list);
+                lock (battlefield.gunLoaded) {
+                    if (!battlefield.gunLoaded.TryGetValue(loadAtTurn, out List<Tank> list)) {
+                        list = new List<Tank>();
+                        battlefield.gunLoaded.Add(loadAtTurn, list);
+                    }
+                    list.Add(tank);
                 }
-                list.Add(tank);
+                
                 tank.GunsToLoad++;
                 return new ShootAnswerCommand(true);
             } else {
@@ -283,7 +289,9 @@ namespace BattlefieldLibrary.battlefield {
             Mine mine;
             if (mineLayer.MINES_BY_ID.TryGetValue(command.MINE_ID, out mine) && mineLayer.HitPoints > 0) {
                 mineLayer.MINES_BY_ID.Remove(command.MINE_ID);
-                battlefield.detonatedMines.Add(mine);
+                lock (battlefield.detonatedMines) {
+                    battlefield.detonatedMines.Add(mine);
+                }
                 return new DetonateMineAnswerCommand(true);
             } else {
                 return new DetonateMineAnswerCommand(false);

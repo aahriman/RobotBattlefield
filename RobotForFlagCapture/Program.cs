@@ -14,7 +14,7 @@ namespace RobotForFlagCapture {
             public bool carryFlag = false;
             public double WantedPower;
 
-            public MyTank(String name, String teamName) : base(name, teamName) {}
+            public MyTank(String name, String robotTeamName) : base(name, robotTeamName) {}
 
             protected override void ProcessState(RobotStateCommand state) {
                 base.ProcessState(state);

@@ -167,14 +167,11 @@ namespace ClientLibrary.robot {
 
         private static void connectAllUnconnectedRobots() {
             lock (ROBOT_COLLECTION) {
-                Task[] tasks = new Task[ROBOT_COLLECTION.Count];
-                int i = 0;
                 foreach (var robot in ROBOT_COLLECTION) {
                     if (!robot.connected) {
-                        tasks[i++] = robot.ConnectAsync(ip, port);
+                        robot.Connect(ip, port);
                     }
                 }
-                Task.WaitAll(tasks);
             }
         }
 
@@ -222,12 +219,12 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Robot's name.
         /// </summary>
-        private String name;
+        public String NAME { get; private set; }
 
         /// <summary>
         /// Robot's team name.
         /// </summary>
-        private String teamName;
+        public String ROBOT_TEAM_NAME { get; private set; }
 
         /// <summary>
         /// Flag if is robot already connected.
@@ -245,20 +242,19 @@ namespace ClientLibrary.robot {
         /// Create new instance of robot.
         /// </summary>
         /// <param name="name"> name of this robot</param>
-        /// <param name="teamName">name of team</param>
-        protected ClientRobot(String name, String teamName) {
+        /// <param name="robotTeamName">name of team</param>
+        protected ClientRobot(String name, String robotTeamName) {
             LAP = 1;
-            this.name = name;
-            this.teamName = teamName;
+            this.NAME = name;
+            this.ROBOT_TEAM_NAME = robotTeamName;
 
             lock (ROBOT_COLLECTION) {
                 ROBOT_COLLECTION.Add(this);
 
                 if (ip != null) {
-                    ConnectAsync(ip, port).Wait();
+                    Connect(ip, port);
                 }
             }
-
         }
 
         /// <summary>
@@ -267,14 +263,14 @@ namespace ClientLibrary.robot {
         /// <param name="ip"></param>
         /// <param name="port"></param>
         /// <returns></returns>
-        private async Task ConnectAsync(String ip, int port) {
+        private void Connect(String ip, int port) {
             if (!connected) {
                 ConnectionUtil connection = new ConnectionUtil();
 
-                await connection.ConnectAsync(ip, port);
+                connection.ConnectAsync(ip, port).Wait();
                 sns = connection.COMMUNICATION;
                 this.connected = true;
-                await InitAsync(name, teamName);
+                InitAsync(NAME, ROBOT_TEAM_NAME).Wait();
             }
         }
 
@@ -385,7 +381,7 @@ namespace ClientLibrary.robot {
         /// </summary>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
         /// <param name="power">percentage from 0 to 100.</param>
-        /// <seealso cref="AngleDrive"/>
+        /// <seealso cref="Robot.AngleDrive"/>
         /// <returns></returns>
         public DriveAnswerCommand Drive(double angle, double power) {
             DriveAnswerCommand answer = new DriveAnswerCommand();
@@ -396,8 +392,11 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Set percentage power of motor and direction. It send this action to server asynchronously. At the end set <code>AngleDrive</code> if rotation success and fill answer data to <code>destination</code>.
         /// </summary>
+        /// <param name="destination">Where to fill answer data.</param>
         /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.</param>
-        /// <param name="power">
+        /// <param name="power">percentage from 0 to 100.</param>
+        /// <seealso cref="Robot.AngleDrive"/>
+        /// <returns></returns>
         public async Task DriveAsync(DriveAnswerCommand destination, double angle, double power) {
             await sendCommandAsync(new DriveCommand(power, angle));
             var answerCommand =  await receiveCommandAsync<DriveAnswerCommand>();
@@ -421,7 +420,8 @@ namespace ClientLibrary.robot {
         /// <summary>
         /// Robot make scan and send that action to server asynchronously. Answer data fill to <code>destination</code>.
         /// </summary>
-        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.<</param>
+        /// <param name="destination">Where to fill answer data.</param>
+        /// <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.</param>
         /// <param name="precision">parameter for sector. Min is 0 max is 10</param>
         private async Task ScanAsync(ScanAnswerCommand destination, double angle, double precision) {
             await sendCommandAsync(new ScanCommand(precision, angle));

@@ -37,9 +37,11 @@ namespace MultiSpot {
                        || (spot.direction == 0 && spot.X > 850)) {
                 spot.direction = (spot.direction + 90) % 360;
                 return ToDo.DRIVE_0;
-            } else if (spot.scanAnswer.ENEMY_ID != spot.ID) {
+            } else if (spot.scanAnswer != null && spot.scanAnswer.ENEMY_ID != spot.ID) {
                 return ToDo.SHOOT;
-            } else return ToDo.SCAN;
+            } else {
+                return ToDo.SCAN;
+            }
         }
 
         static void process(Spot spot, ToDo toDo) {
@@ -52,6 +54,7 @@ namespace MultiSpot {
                     break;
                 case ToDo.SHOOT:
                     spot.Shoot(spot.angle, spot.scanAnswer.RANGE);
+                    spot.scanAnswer = null;
                     break;
                 case ToDo.SCAN:
                     spot.scanAnswer = spot.Scan(spot.angle, 10);

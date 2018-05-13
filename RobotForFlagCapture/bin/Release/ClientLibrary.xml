@@ -45,6 +45,11 @@
             </summary>
             <param name="message"></param>
         </member>
+        <member name="T:ClientLibrary.config.ClientConfig">
+            <summary>
+            Config for client side.
+            </summary>
+        </member>
         <member name="F:ClientLibrary.config.ClientConfig.SUPPORTED_PROTOCOLS">
             <summary>
             Protocol witch is supported by client.
@@ -60,7 +65,10 @@
             Handshake protocol for client side.
             </summary>
         </member>
-        <member name="M:ClientLibrary.protocol.HandShakeProtocol.HandShakeClient(BaseLibrary.NetworkStream)">
+        <member name="M:ClientLibrary.protocol.HandShakeProtocol.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:ClientLibrary.protocol.HandShakeProtocol.HandShakeClient(BaseLibrary.communication.NetworkStream)">
             <summary>
             Do handshake for client side.
             </summary>
@@ -92,27 +100,51 @@
             Mine id witch is useful for detonation.
             </summary>
         </member>
+        <member name="P:ClientLibrary.robot.MineLayer.Mine.Position">
+            <summary>
+            Mine position.
+            </summary>
+        </member>
+        <member name="M:ClientLibrary.robot.MineLayer.Mine.#ctor(System.Int32)">
+            <summary>
+            Create mine with defined ID.
+            </summary>
+            <param name="id"></param>
+        </member>
         <member name="P:ClientLibrary.robot.MineLayer.MINE_GUN">
             <summary>
             Mine gun witch robot has.
             </summary>
         </member>
-        <member name="P:ClientLibrary.robot.MineLayer.PuttedMines">
+        <member name="P:ClientLibrary.robot.MineLayer.PutMines">
             <summary>
-            Number of putted
+            Number of put mines on map.
             </summary>
         </member>
-        <member name="F:ClientLibrary.robot.MineLayer.PuttedMinesList">
+        <member name="F:ClientLibrary.robot.MineLayer.PutMinesList">
             <summary>
-            List of available mines putted on map.
+            List of available mines put on map.
             </summary>
+        </member>
+        <member name="M:ClientLibrary.robot.MineLayer.#ctor(System.String)">
+            <summary>
+            Create new mineLayer with name.
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:ClientLibrary.robot.MineLayer.#ctor(System.String,System.String)">
+            <summary>
+            Create new mineLayer with name and into team specified by teamName
+            </summary>
+            <param name="name"></param>
+            <param name="robotTeamName"></param>
         </member>
         <member name="M:ClientLibrary.robot.MineLayer.PutMine">
             <summary>
             Put mine on robot position.
             </summary>
         </member>
-        <member name="M:ClientLibrary.robot.MineLayer.PutMineAsync(BaseLibrary.command.miner.PutMineAnswerCommand)">
+        <member name="M:ClientLibrary.robot.MineLayer.PutMineAsync(BaseLibrary.communication.command.miner.PutMineAnswerCommand)">
             <summary>
             Put mine on robot position.
             </summary>
@@ -125,9 +157,9 @@
             <param name="mineId">witch mine robot wants to detonate.</param>
             <returns></returns>
         </member>
-        <member name="M:ClientLibrary.robot.MineLayer.DetonateMineAsync(BaseLibrary.command.miner.DetonateMineAnswerCommand,System.Int32)">
+        <member name="M:ClientLibrary.robot.MineLayer.DetonateMineAsync(BaseLibrary.communication.command.miner.DetonateMineAnswerCommand,System.Int32)">
             <summary>
-            Detonate specified mine. Send action to erver asynchronously.
+            Detonate specified mine. Send action to server asynchronously.
             </summary>
             <param name="destination">Where to fill answer data.</param>
             <param name="mineId">witch mine robot wants to detonate.</param>
@@ -152,6 +184,12 @@
             Repair tool witch robot has.
             </summary>
         </member>
+        <member name="M:ClientLibrary.robot.Repairman.#ctor(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:ClientLibrary.robot.Repairman.#ctor(System.String,System.String)">
+            <inheritdoc />
+        </member>
         <member name="M:ClientLibrary.robot.Repairman.Repair">
             <summary>
             Repair robots in max range.
@@ -165,14 +203,14 @@
             <param name="maxDistance">How far can be robots witch will be repaired.</param>
             <returns></returns>
         </member>
-        <member name="M:ClientLibrary.robot.Repairman.RepairAsync(BaseLibrary.command.repairman.RepairAnswerCommand)">
+        <member name="M:ClientLibrary.robot.Repairman.RepairAsync(BaseLibrary.communication.command.repairman.RepairAnswerCommand)">
             <summary>
             Repair robots in max range. And send it to server asynchronously.
             </summary>
             <param name="destination">Where to fill answer data.</param>
             <returns></returns>
         </member>
-        <member name="M:ClientLibrary.robot.Repairman.RepairAsync(BaseLibrary.command.repairman.RepairAnswerCommand,System.Int32)">
+        <member name="M:ClientLibrary.robot.Repairman.RepairAsync(BaseLibrary.communication.command.repairman.RepairAnswerCommand,System.Int32)">
             <summary>
             Repair robots closer then <code>maxDistance</code>. And send it to server asynchronously.
             </summary>
@@ -197,6 +235,56 @@
         <member name="F:ClientLibrary.robot.ClientRobot.TEAM_NAME">
             <summary>
             Team name which is globally unique.
+            </summary>
+        </member>
+        <member name="F:ClientLibrary.robot.ClientRobot.MOTORS_BY_ID">
+            <summary>
+            Motors available to buy by its id.
+            </summary>
+        </member>
+        <member name="P:ClientLibrary.robot.ClientRobot.MOTORS">
+            <summary>
+            Motors available to buy.
+            </summary>
+        </member>
+        <member name="F:ClientLibrary.robot.ClientRobot.ARMORS_BY_ID">
+            <summary>
+            Armors available to buy by its id.
+            </summary>
+        </member>
+        <member name="P:ClientLibrary.robot.ClientRobot.ARMORS">
+            <summary>
+            Armors available to buy.
+            </summary>
+        </member>
+        <member name="F:ClientLibrary.robot.ClientRobot.GUNS_BY_ID">
+            <summary>
+            Guns available to buy by its id.
+            </summary>
+        </member>
+        <member name="P:ClientLibrary.robot.ClientRobot.GUNS">
+            <summary>
+            Guns available to buy.
+            </summary>
+        </member>
+        <member name="F:ClientLibrary.robot.ClientRobot.REPAIR_TOOLS_BY_ID">
+            <summary>
+            Repair tools available to buy by its id.
+            </summary>
+        </member>
+        <member name="P:ClientLibrary.robot.ClientRobot.REPAIR_TOOLS">
+            <summary>
+            Repair tools available to buy.
+            </summary>
+        </member>
+        <member name="F:ClientLibrary.robot.ClientRobot.MINE_GUNS_BY_ID">
+            <summary>
+            Mine guns available to buy by its id.
+            </summary>
+        </member>
+        <member name="P:ClientLibrary.robot.ClientRobot.MINE_GUNS">
+            <summary>
+            Mine guns available to buy.
             </summary>
         </member>
         <member name="M:ClientLibrary.robot.ClientRobot.Connect(System.String[])">
@@ -249,12 +337,12 @@
             Communication with server.
             </summary>
         </member>
-        <member name="F:ClientLibrary.robot.ClientRobot.name">
+        <member name="P:ClientLibrary.robot.ClientRobot.NAME">
             <summary>
             Robot's name.
             </summary>
         </member>
-        <member name="F:ClientLibrary.robot.ClientRobot.teamName">
+        <member name="P:ClientLibrary.robot.ClientRobot.ROBOT_TEAM_NAME">
             <summary>
             Robot's team name.
             </summary>
@@ -276,7 +364,7 @@
             Create new instance of robot.
             </summary>
             <param name="name"> name of this robot</param>
-            <param name="teamName">name of team</param>
+            <param name="robotTeamName">name of team</param>
         </member>
         <member name="M:ClientLibrary.robot.ClientRobot.Connect(System.String,System.Int32)">
             <summary>
@@ -286,15 +374,7 @@
             <param name="port"></param>
             <returns></returns>
         </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.Init(System.String,System.String)">
-            <summary>
-            Set robot name and team name.
-            </summary>
-            <param name="name"> name of this robot</param>
-            <param name="teamName">name of team (suggest to use <code>Guid.NewGuid().ToString();</code> for getting name</param>
-            <returns></returns>
-        </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.InitAsync(BaseLibrary.command.handshake.InitAnswerCommand,System.String,System.String)">
+        <member name="M:ClientLibrary.robot.ClientRobot.InitAsync(System.String,System.String)">
             <summary>
             Set robot name and team name and send it to server asynchronously.
             </summary>
@@ -306,15 +386,21 @@
             <summary>
             What kind of robot it is.
             </summary>
-            <seealso cref="T:BaseLibrary.command.handshake.RobotType"/>
+            <seealso cref="T:BaseLibrary.communication.command.handshake.RobotType"/>
             <returns></returns>
         </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.LoadEquip">
+        <member name="M:ClientLibrary.robot.ClientRobot.LoadEquip(BaseLibrary.communication.NetworkStream)">
             <summary>
             Get equipment from server.
             </summary>
         </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.ProcessInit(BaseLibrary.command.handshake.InitAnswerCommand)">
+        <member name="M:ClientLibrary.robot.ClientRobot.checkCommand``1(``0)">
+            <summary>
+            Check if command is not ErrorCommand
+            </summary>
+            <throws>NotSupportedException - if command is ErrorCommand and text is message from ErrorCommand</throws>
+        </member>
+        <member name="M:ClientLibrary.robot.ClientRobot.ProcessInit(BaseLibrary.communication.command.handshake.InitAnswerCommand)">
             <summary>
             Set robot id and equipment
             </summary>
@@ -338,10 +424,19 @@
             </summary>
             <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
             <param name="power">percentage from 0 to 100.</param>
-            <seealso cref="!:AngleDrive"/>
+            <seealso cref="P:BaseLibrary.battlefield.Robot.AngleDrive"/>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ClientLibrary.robot.ClientRobot.DriveAsync(BaseLibrary.command.common.DriveAnswerCommand,System.Double,System.Double)" -->
+        <member name="M:ClientLibrary.robot.ClientRobot.DriveAsync(BaseLibrary.communication.command.common.DriveAnswerCommand,System.Double,System.Double)">
+            <summary>
+            Set percentage power of motor and direction. It send this action to server asynchronously. At the end set <code>AngleDrive</code> if rotation success and fill answer data to <code>destination</code>.
+            </summary>
+            <param name="destination">Where to fill answer data.</param>
+            <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.</param>
+            <param name="power">percentage from 0 to 100.</param>
+            <seealso cref="P:BaseLibrary.battlefield.Robot.AngleDrive"/>
+            <returns></returns>
+        </member>
         <member name="M:ClientLibrary.robot.ClientRobot.Scan(System.Double,System.Double)">
             <summary>
             Robot make scan to angle and witch precision. That is mean if scanned robot is in angle to robot in range (angle - precision, angle+precision) it is success.
@@ -349,8 +444,15 @@
             <param name="angle">in degree. 0 is 3 hour. 90 is 6 hour and so on. 12 hour in up.</param>
             <param name="precision">parameter for sector. Min is 0 max is 10</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:ClientLibrary.robot.ClientRobot.ScanAsync(BaseLibrary.command.common.ScanAnswerCommand,System.Double,System.Double)" -->
-        <member name="M:ClientLibrary.robot.ClientRobot.ProcessState(BaseLibrary.command.common.RobotStateCommand)">
+        <member name="M:ClientLibrary.robot.ClientRobot.ScanAsync(BaseLibrary.communication.command.common.ScanAnswerCommand,System.Double,System.Double)">
+            <summary>
+            Robot make scan and send that action to server asynchronously. Answer data fill to <code>destination</code>.
+            </summary>
+            <param name="destination">Where to fill answer data.</param>
+            <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on. 12 hour in up.</param>
+            <param name="precision">parameter for sector. Min is 0 max is 10</param>
+        </member>
+        <member name="M:ClientLibrary.robot.ClientRobot.ProcessState(BaseLibrary.communication.command.common.RobotStateCommand)">
             <summary>
             Set x,y coordinates, hit points and power. Set score and gold and call <code>sendMerchant</code> if is end of lap
             </summary>
@@ -359,7 +461,7 @@
         </member>
         <member name="M:ClientLibrary.robot.ClientRobot.Wait">
             <summary>
-            Robot will do nothing for this turn. He still move.
+            Robot will do nothing for this turn, but still move.
             </summary>
         </member>
         <member name="M:ClientLibrary.robot.ClientRobot.WaitAsync">
@@ -394,13 +496,13 @@
             </summary>
             <seealso cref="M:ClientLibrary.robot.ClientRobot.Merchant(System.Int32,System.Int32,System.Int32,System.Int32)"/>
         </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.ProcessMerchant(BaseLibrary.command.common.MerchantAnswerCommand)">
+        <member name="M:ClientLibrary.robot.ClientRobot.ProcessMerchant(BaseLibrary.communication.command.common.MerchantAnswerCommand)">
             <summary>
             Processing merchant answer. Set motor, armor and class equipment.
             </summary>
             <param name="merchantAnswer"></param>
         </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.sendCommandAsync(BaseLibrary.command.ACommand)">
+        <member name="M:ClientLibrary.robot.ClientRobot.sendCommandAsync(BaseLibrary.communication.command.ACommand)">
             <summary>
             Asynchronously sending command.
             </summary>
@@ -419,10 +521,12 @@
             </summary>
             <returns>Command</returns>
         </member>
-        <member name="M:ClientLibrary.robot.ClientRobot.afterConnect">
+        <member name="M:ClientLibrary.robot.ClientRobot.addRobotTask(System.Threading.Tasks.Task)">
             <summary>
-            Specify what to do at the end of Connection.
+            Add robot task, so ClientRobot class know when all robot have prepared command.
             </summary>
+            <param name="t"></param>
+            <throws>NotSupportedException - when robot is not connected or when robot already select action for this turn.</throws>
         </member>
         <member name="T:ClientLibrary.robot.Tank">
             <summary>
@@ -434,6 +538,12 @@
             Gun witch robot has.
             </summary>
         </member>
+        <member name="M:ClientLibrary.robot.Tank.#ctor(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:ClientLibrary.robot.Tank.#ctor(System.String,System.String)">
+            <inheritdoc />
+        </member>
         <member name="M:ClientLibrary.robot.Tank.Shoot(System.Double,System.Double)">
             <summary>
             Shoot bullet.
@@ -441,7 +551,7 @@
             <param name="angle">in degree. 0 = 3 hour. 90 = 6 hour and so on.</param>
             <param name="range">how far this robot wants to shot</param>
         </member>
-        <member name="M:ClientLibrary.robot.Tank.ShootAsync(BaseLibrary.command.tank.ShootAnswerCommand,System.Double,System.Double)">
+        <member name="M:ClientLibrary.robot.Tank.ShootAsync(BaseLibrary.communication.command.tank.ShootAnswerCommand,System.Double,System.Double)">
             <summary>
             Shoot bullet. And sent it to server asynchronously.
             </summary>

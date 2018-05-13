@@ -391,6 +391,7 @@ namespace BattlefieldLibrary.battlefield {
                         ACommand answerCommand = commandProcessorBeforeInitRobot.Process(command, new NetworkStreamAndBattlefield(sns, this));
                         await sns.SendCommandAsync(answerCommand);
                         if (!(answerCommand is ErrorCommand)) {
+                            await sendRobotStateCommandAsync(LapState.NONE, robotsByStream[sns]);
                             lock (robots) {
 
                                 if (robots.Count == TEAMS * ROBOTS_IN_TEAM) {
@@ -406,47 +407,21 @@ namespace BattlefieldLibrary.battlefield {
                             receivedCommands.Add(robotsByStream[sns], command);
                             lock (robots) {
                                 if (_run && robots.Count == receivedCommands.Count) {
-                                    allSendCommand.SetResult(true);
+                                    allSendCommand.TrySetResult(true);
                                 }
                             }
                         }
                         break;
                 }
                 return;
-            } catch (IOException) {
-                // client was disconnected
-                lock (robots) {
-                    if (robotsByStream.ContainsKey(sns)) {
-                        robots.Remove(robotsByStream[sns]);
-                    }
-                }
-                lock (receivedCommands) {
-                    lock (robots) {
-                        if (_run && robots.Count == receivedCommands.Count) {
-                            allSendCommand.TrySetResult(true);
-                        }
-                    }
-                }
-            } catch (ObjectDisposedException) {
-                // server disconnect client
-                lock (robots) {
-                    if (robotsByStream.ContainsKey(sns)) {
-                        robots.Remove(robotsByStream[sns]);
-                    }
-                }
-                lock (receivedCommands) {
-                    lock (robots) {
-                        if (_run && robots.Count == receivedCommands.Count) {
-                            allSendCommand.TrySetResult(true);
-                        }
-                    }
-                }
-            } catch (ArgumentException e) {
+            } catch (Exception e) when(e is IOException || e is ObjectDisposedException || e is ArgumentException) {
+                // IOException | ObjectDisposedException - client was disconnected
                 lock (robots) {
                     if (robotsByStream.ContainsKey(sns)) {
                         BattlefieldRobot robot = robotsByStream[sns];
                         robots.Remove(robotsByStream[sns]);
                         Console.WriteLine("Disconnected robot " + robot.NAME + " because " + e.Message);
+                        sns.Close();
                     }
                 }
                 lock (receivedCommands) {
@@ -525,7 +500,6 @@ namespace BattlefieldLibrary.battlefield {
             Console.WriteLine("Battle start");
 		    newBattle();
 		    lap = 1;
-            sendRobotStateCommand(LapState.NONE, robots);
 		}
 
 		protected List<BattlefieldRobot> getAliveRobots() {
@@ -668,40 +642,46 @@ namespace BattlefieldLibrary.battlefield {
         }
 
         protected void shooting() {
-            if (heapBullet.TryGetValue(turn, out List<Bullet> bulletList)) {
-                foreach (Bullet bullet in bulletList) {
-                    foreach (BattlefieldRobot r in robots) {
-                        if (r.HitPoints > 0) {
-                            double distance = EuclideanSpaceUtils.Distance(r.Position, bullet.GetToPosition());
-                            Zone zone = Zone.GetZoneByDistance(bullet.TANK.Gun.ZONES, distance);
-                            dealDamage(r, zone.EFFECT);
-                            
-                            if (!bullet.TANK.Equals(r)) {
-                                bullet.TANK.Score += zone.EFFECT;
+            lock (heapBullet) {
+                if (heapBullet.TryGetValue(turn, out List<Bullet> bulletList)) {
+                    foreach (Bullet bullet in bulletList) {
+                        foreach (BattlefieldRobot r in robots) {
+                            if (r.HitPoints > 0) {
+                                double distance = EuclideanSpaceUtils.Distance(r.Position, bullet.GetToPosition());
+                                Zone zone = Zone.GetZoneByDistance(bullet.TANK.Gun.ZONES, distance);
+                                dealDamage(r, zone.EFFECT);
+
+                                if (!bullet.TANK.Equals(r)) {
+                                    bullet.TANK.Score += zone.EFFECT;
+                                }
+                                r.HitPoints = Math.Max(0, r.HitPoints);
                             }
-                            r.HitPoints = Math.Max(0, r.HitPoints);
                         }
                     }
                 }
             }
 
-            if (gunLoaded.TryGetValue(turn, out List<Tank> tanksFinishLoading)) {
-                foreach (var tank in tanksFinishLoading) {
-                    tank.GunsToLoad--;
+            lock (gunLoaded) {
+                if (gunLoaded.TryGetValue(turn, out List<Tank> tanksFinishLoading)) {
+                    foreach (var tank in tanksFinishLoading) {
+                        tank.GunsToLoad--;
+                    }
                 }
             }
         }
 
         protected void detonatingMines() {
-            foreach (Mine mine in detonatedMines) {
-                mine.MineLayer.MinesNow--;
-                foreach (BattlefieldRobot r in robots) {
-                    if (r.HitPoints > 0) {
-                        double distance = EuclideanSpaceUtils.Distance(r.Position, mine.GetPosition());
-                        Zone zone = Zone.GetZoneByDistance(mine.MineLayer.MineGun.ZONES, distance);
-                        dealDamage(r, zone.EFFECT);
-                        if (!mine.MineLayer.Equals(r)) {
-                            mine.MineLayer.Score += zone.EFFECT;
+            lock (detonatedMines) {
+                foreach (Mine mine in detonatedMines) {
+                    mine.MineLayer.MinesNow--;
+                    foreach (BattlefieldRobot r in robots) {
+                        if (r.HitPoints > 0) {
+                            double distance = EuclideanSpaceUtils.Distance(r.Position, mine.GetPosition());
+                            Zone zone = Zone.GetZoneByDistance(mine.MineLayer.MineGun.ZONES, distance);
+                            dealDamage(r, zone.EFFECT);
+                            if (!mine.MineLayer.Equals(r)) {
+                                mine.MineLayer.Score += zone.EFFECT;
+                            }
                         }
                     }
                 }
@@ -737,20 +717,30 @@ namespace BattlefieldLibrary.battlefield {
 
             List<Task> robotStatesTaskList = new List<Task>();
             foreach (BattlefieldRobot r in robotsSendCommand) {
-                EndLapCommand endLapCommand = null;
-
-                if (lapState != LapState.NONE) {
-                    endLapCommand = new EndLapCommand(lapState, r.Gold, r.Score);
-                }
-                RobotStateCommand command = addToRobotStateCommand(new RobotStateCommand((ProtocolDouble) r.X, (ProtocolDouble) r.Y, r.HitPoints, (ProtocolDouble) r.Power, turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), r);
-                addObstacleInSight(command, r);
-                robotStatesTaskList.Add(r.NETWORK_STREAM.SendCommandAsync(command));
+                robotStatesTaskList.Add(sendRobotStateCommandAsync(lapState, r));
                 r.LastRequestAt = NOW;
             }
 
 	        Task.WaitAll(robotStatesTaskList.ToArray());
 
 	        return NOW;
+	    }
+
+	    private async Task sendRobotStateCommandAsync(LapState lapState, BattlefieldRobot robotSendCommand) {
+	        List<BattlefieldRobot> aliveRobots = getAliveRobots();
+	        int[] aliveRobotsIds = new int[aliveRobots.Count];
+	        for (int i = 0; i < aliveRobotsIds.Length; i++) {
+	            aliveRobotsIds[i] = aliveRobots[i].ID;
+	        }
+	        
+	        EndLapCommand endLapCommand = null;
+
+	        if (lapState != LapState.NONE) {
+	            endLapCommand = new EndLapCommand(lapState, robotSendCommand.Gold, robotSendCommand.Score);
+	        }
+	        RobotStateCommand command = addToRobotStateCommand(new RobotStateCommand((ProtocolDouble)robotSendCommand.X, (ProtocolDouble)robotSendCommand.Y, robotSendCommand.HitPoints, (ProtocolDouble)robotSendCommand.Power, turn, MAX_TURN, aliveRobots.Count, aliveRobotsIds, endLapCommand), robotSendCommand);
+	        addObstacleInSight(command, robotSendCommand);
+	        await robotSendCommand.NETWORK_STREAM.SendCommandAsync(command);
 	    }
 
         /// <summary>

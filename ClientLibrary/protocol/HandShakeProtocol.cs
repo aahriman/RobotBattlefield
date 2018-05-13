@@ -13,6 +13,7 @@ namespace ClientLibrary.protocol {
     /// </summary>
     public class HandShakeProtocol : AProtocol {
 
+        /// <inheritdoc />
         public HandShakeProtocol() : base(){
             commandsFactory.RegisterCommand(AckCommand.FACTORY);
             commandsFactory.RegisterCommand(HelloCommand.FACTORY);

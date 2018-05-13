@@ -97,7 +97,7 @@ namespace BattlefieldLibrary.battlefield {
         /// <param name="filename"></param>
         public void Serialize(String filename) {
             // serialize JSON directly to a file
-            using (var file = new JsonTextWriter(File.CreateText("equipment.json"))) {
+            using (var file = new JsonTextWriter(File.CreateText(filename))) {
                 file.Formatting = Formatting.Indented;
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, this);

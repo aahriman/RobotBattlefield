@@ -38,6 +38,10 @@ namespace ClientLibrary.robot {
             /// </summary>
             public Point Position => new Point(X, Y);
 
+            /// <summary>
+            /// Create mine with defined ID.
+            /// </summary>
+            /// <param name="id"></param>
             public Mine(int id) {
                 ID = id;
                 X = default(double);
@@ -71,9 +75,9 @@ namespace ClientLibrary.robot {
         /// Create new mineLayer with name and into team specified by teamName
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="teamName"></param>
-        public MineLayer(String name, String teamName)
-            : base(name, teamName) {}
+        /// <param name="robotTeamName"></param>
+        public MineLayer(String name, String robotTeamName)
+            : base(name, robotTeamName) {}
 
 
         /// <summary>
@@ -89,13 +93,13 @@ namespace ClientLibrary.robot {
         /// Put mine on robot position.
         /// </summary>
         /// <param name="destination">Where to fill answer data.</param>
-        private async Task<PutMineAnswerCommand> PutMineAsync(PutMineAnswerCommand destinaton) {
+        private async Task<PutMineAnswerCommand> PutMineAsync(PutMineAnswerCommand destination) {
             await sendCommandAsync(new PutMineCommand());
 
             Point position = Position;
             PutMineAnswerCommand answerCommand = await receiveCommandAsync<PutMineAnswerCommand>();
 
-            destinaton.FillData(answerCommand);
+            destination.FillData(answerCommand);
             if (answerCommand.SUCCESS) {
                 PutMinesList.Add(new Mine(id: answerCommand.MINE_ID) {
                     Y = position.X,

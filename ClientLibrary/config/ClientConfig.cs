@@ -6,6 +6,9 @@ using BaseLibrary;
 using BaseLibrary.communication.protocol;
 
 namespace ClientLibrary.config {
+    /// <summary>
+    /// Config for client side.
+    /// </summary>
     public static class ClientConfig {
         /// <summary>
         /// Protocol witch is supported by client.
