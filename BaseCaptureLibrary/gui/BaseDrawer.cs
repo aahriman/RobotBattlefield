@@ -24,9 +24,9 @@ namespace BaseCaptureLibrary.gui {
             float x = (float) (@base.X - BASE_SIZE / 2.0);
             float y = (float) (@base.Y - BASE_SIZE / 2.0);
 
-            Pen teamPen = DefaultDrawer.GetTeamPen(@base.ProgressTeamId);
-            float progressSize = BASE_SIZE * @base.Progress / @base.MAX_PROGRESS;
-
+            
+            float progressSize = (BASE_SIZE - 5) * @base.Progress / @base.MAX_PROGRESS;
+            Pen teamPen = DefaultDrawer.GetTeamPen(@base.TeamId);
             lock (g) {
                 lock (innerBasePen) {
                     g.FillEllipse(innerBasePen.Brush, x, y, BASE_SIZE, BASE_SIZE);
@@ -42,9 +42,10 @@ namespace BaseCaptureLibrary.gui {
             if (progressSize > 0) {
                 x = (float) (@base.X - progressSize / 2.0);
                 y = (float) (@base.Y - progressSize / 2.0);
+                Pen progressTeamPen = DefaultDrawer.GetTeamPen(@base.ProgressTeamId);
                 lock (g) {
-                    lock (teamPen) {
-                        g.FillEllipse(teamPen.Brush, x, y, progressSize, progressSize);
+                    lock (progressTeamPen) {
+                        g.FillEllipse(progressTeamPen.Brush, x, y, progressSize, progressSize);
                     }
                 }
                 

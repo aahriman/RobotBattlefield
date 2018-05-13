@@ -61,7 +61,7 @@ namespace BattlefieldLibrary.battlefield {
         /// <summary>
         /// Random seed for random things in area. (When null - random seed will be choose randomly).
         /// </summary>
-        public readonly int? RANDOM_SEED;
+        public readonly int RANDOM_SEED;
 
         /// <summary>
         /// Some more object for battlefield (like flag, bases etc.)
@@ -84,8 +84,9 @@ namespace BattlefieldLibrary.battlefield {
             this.GUI = GUI;
             if (RANDOM_SEED == null) {
                 this.RANDOM_SEED = new Random().Next();
+                Console.WriteLine("Used random seed:" + this.RANDOM_SEED);
             } else {
-                this.RANDOM_SEED = RANDOM_SEED;
+                this.RANDOM_SEED = (int) RANDOM_SEED;
             }
             MORE = more;
         }

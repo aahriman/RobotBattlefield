@@ -69,7 +69,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BaseCaptureBattlefieldLibrary\BaseCaptureLibrary.csproj">
+    <ProjectReference Include="..\BaseCaptureLibrary\BaseCaptureLibrary.csproj">
       <Project>{da246d22-28d1-4703-83f8-18fe342664ac}</Project>
       <Name>BaseCaptureLibrary</Name>
     </ProjectReference>

@@ -25,6 +25,7 @@ namespace BaseLibrary.communication.command.miner {
 
         public DetonateMineCommand(int mineId) {
             MINE_ID = mineId;
+            pending = false;
         }
     }
 }

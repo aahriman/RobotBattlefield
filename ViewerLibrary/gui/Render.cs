@@ -87,21 +87,21 @@ namespace ViewerLibrary.gui
             if (width == 0 || height == 0) return; 
 
             Bitmap drawingBitmap = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(drawingBitmap);
-            g.ScaleTransform(drawingBitmap.Width / 1000f, drawingBitmap.Height / 1000f);
+            using (Graphics g = Graphics.FromImage(drawingBitmap)) {
+                g.ScaleTransform(drawingBitmap.Width / 1000f, drawingBitmap.Height / 1000f);
 
-            HISTORIC_EXPLODED_BULLETS[0] = actualTurn.BULLETS.Where(bullet => bullet.EXPLODED).ToArray();
-            HISTORIC_EXPLODED_MINES[0] = actualTurn.MINES.Where(mine => mine.EXPLODED).ToArray();
-            HISTORIC_REPAIRS[0] = actualTurn.REPAIRS;
-            HISTORIC_SCANS[0] = actualTurn.SCANS;
+                HISTORIC_EXPLODED_BULLETS[0] = actualTurn.BULLETS.Where(bullet => bullet.EXPLODED).ToArray();
+                HISTORIC_EXPLODED_MINES[0] = actualTurn.MINES.Where(mine => mine.EXPLODED).ToArray();
+                HISTORIC_REPAIRS[0] = actualTurn.REPAIRS;
+                HISTORIC_SCANS[0] = actualTurn.SCANS;
 
-            DRAWER.DrawTurn(actualTurn, g);
+                DRAWER.DrawTurn(actualTurn, g);
 
-            drawHistory(HISTORIC_EXPLODED_BULLETS, BULLET_DELEGATE, g);
-            drawHistory(HISTORIC_EXPLODED_MINES, MINE_DELEGATE, g);
-            drawHistory(HISTORIC_REPAIRS, REPAIR_DELEGATE, g);
-            drawHistory(HISTORIC_SCANS, SCAN_DELEGATE, g);
-
+                drawHistory(HISTORIC_EXPLODED_BULLETS, BULLET_DELEGATE, g);
+                drawHistory(HISTORIC_EXPLODED_MINES, MINE_DELEGATE, g);
+                drawHistory(HISTORIC_REPAIRS, REPAIR_DELEGATE, g);
+                drawHistory(HISTORIC_SCANS, SCAN_DELEGATE, g);
+            }
             if (PICTURE_BOX.Visible) {
                 try {
                     PICTURE_BOX.BeginInvoke(new InvokeDelegate(() => {

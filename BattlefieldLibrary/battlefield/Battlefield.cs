@@ -774,7 +774,7 @@ namespace BattlefieldLibrary.battlefield {
 	    protected void singleTurnCycle() {
 	        lock (receivedCommands) {
 	            turn++;
-                Console.WriteLine("Turn: " + turn);
+                Console.Write("\rTurn: " + turn);
                 HashSet<BattlefieldRobot> robotsSendCommand = processCommands();
                 afterProcessCommand();
 	            changeBattlefieldState();

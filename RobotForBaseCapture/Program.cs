@@ -13,9 +13,11 @@ using BaseLibrary.utils.euclidianSpaceStruct;
 using ClientLibrary.robot;
 
 namespace MinerForBaseCapture {
+    /// <summary>
+    /// This algorithm is very bad. It only show how to work with BaseCapture.
+    /// </summary>
     class Program {
 
-        static String TEAM_ID = Guid.NewGuid().ToString();
         private static Base[] bases;
 
         private static ScanAnswerCommand scan1;
@@ -23,12 +25,12 @@ namespace MinerForBaseCapture {
 
         static Base capturedBase = null;
 
-        static MyMineLayer mineLayer = new MyMineLayer("Miner", TEAM_ID);
-        static Repairman repairman = new Repairman("Repairman", TEAM_ID);
+        static MyMineLayer mineLayer = new MyMineLayer("Miner");
+        static Repairman repairman = new Repairman("Repairman");
 
         class MyMineLayer : MineLayer {
 
-            public MyMineLayer(String name, String teamName) : base(name, teamName) { }
+            public MyMineLayer(String name) : base(name) { }
 
             public int previousHitpoints = 0;
 

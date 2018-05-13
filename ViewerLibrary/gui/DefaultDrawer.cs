@@ -22,8 +22,8 @@ namespace ViewerLibrary.gui {
         private static readonly Pen[] teamPen;
 
         protected static readonly Color[] robotBodyColor = {
-            Color.Black, Color.Green, Color.Brown, Color.BlueViolet, Color.Blue,
-            Color.Gray, Color.Chartreuse, Color.Coral, Color.CornflowerBlue, Color.CadetBlue
+            Color.Gray, Color.Black, Color.Green, Color.Brown, Color.Blue,
+             Color.Chartreuse, Color.Coral, Color.CornflowerBlue, Color.CadetBlue
         };
 
         protected static readonly PointF[] spike;
@@ -101,7 +101,7 @@ namespace ViewerLibrary.gui {
         /// <param name="teamId">For what team id wants to get pen.</param>
         /// <returns></returns>
         public static Pen GetTeamPen(int teamId) {
-            if (teamPen.Length < teamId) {
+            if (teamPen.Length > teamId) {
                 return teamPen[teamId];
             } else {
                 Color c = teamColor[teamId % teamPen.Length];
@@ -300,7 +300,7 @@ namespace ViewerLibrary.gui {
             for (int i = 0; i < robots.Length; i++) {
                 Robot robot = robots[i];
                 Pen robotPen = GetRobotPen(robot);
-                string name = $"{robot.NAME}";
+                string name = $"{robot.NAME}:{robot.ID} - T{robot.TEAM_ID}";
                 PointF drawFrom = new PointF(indentText, drawFont.Height * (i + 1));
                 lock (g) {
                     lock (robotPen) {

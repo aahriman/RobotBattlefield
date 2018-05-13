@@ -121,7 +121,7 @@ namespace ClientLibrary.robot {
         }
 
         /// <summary>
-        /// Detonate specified mine. Send action to erver asynchronously.
+        /// Detonate specified mine. Send action to server asynchronously.
         /// </summary>
         /// <param name="destination">Where to fill answer data.</param>
         /// <param name="mineId">witch mine robot wants to detonate.</param>

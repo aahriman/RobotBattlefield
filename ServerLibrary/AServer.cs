@@ -136,11 +136,6 @@ namespace BattlefieldLibrary {
         /// <param name="battlefieldConfig"></param>
         /// <returns></returns>
         public Battlefield GetBattlefield(BattlefieldConfig battlefieldConfig) {
-            if (battlefieldConfig.RANDOM_SEED == null) {
-                int RANDOM_SEED = new Random().Next();
-                battlefieldConfig = new BattlefieldConfig(battlefieldConfig.MAX_TURN, battlefieldConfig.MAX_LAP, battlefieldConfig.TEAMS, battlefieldConfig.ROBOTS_IN_TEAM, battlefieldConfig.RESPAWN_TIMEOUT, battlefieldConfig.RESPAWN_ALLOWED, battlefieldConfig.MATCH_SAVE_FILE, battlefieldConfig.EQUIPMENT_CONFIG_FILE, battlefieldConfig.OBSTACLE_CONFIG_FILE, battlefieldConfig.WAITING_TIME_BETWEEN_TURNS, battlefieldConfig.GUI, RANDOM_SEED, battlefieldConfig.MORE);
-                Console.WriteLine("Using random seed: " + RANDOM_SEED);
-            }
             Battlefield = NewBattlefield(battlefieldConfig);
 
             Socket socketIPv6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);

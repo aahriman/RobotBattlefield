@@ -32,6 +32,13 @@ namespace ViewerLibrary.gui {
         /// <param name="g">graphics context</param>
         /// <param name="turn">before how many turn repair was done</param>
         void DrawRepair(Repair repair, Graphics g, int turn);
+
+        /// <summary>
+        /// Draw scan.
+        /// </summary>
+        /// <param name="scan">scan object</param>
+        /// <param name="g">graphics context</param>
+        /// <param name="turn">before how many turn repair was done</param>
         void DrawScan(Scan scan, Graphics g, int turn);
 
         /// <summary>
