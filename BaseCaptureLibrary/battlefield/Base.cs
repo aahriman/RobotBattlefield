@@ -1,24 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BaseLibrary;
-using BaseLibrary.utils;
-
-namespace BaseCapcureBattlefieldLibrary.battlefield {
+﻿namespace BaseCaptureLibrary.battlefield {
     public class Base {
+        /// <summary>
+        /// X-coordinate of center of base
+        /// </summary>
         public readonly double X;
+
+        /// <summary>
+        /// Y-coordinate of center of base
+        /// </summary>
         public readonly double Y;
 
+        /// <summary>
+        /// How height have to be progress to capture this base.
+        /// </summary>
         public readonly int MAX_PROGRESS;
 
+        /// <summary>
+        /// Type name for de-serialization used.
+        /// </summary>
         public readonly string TYPE_NAME;
 
+        /// <summary>
+        /// How much is this base captured.
+        /// </summary>
         public int Progress { get; set; }
+
+        /// <summary>
+        /// Witch team owns this base.
+        /// </summary>
         public int TeamId { get; set; }
 
+        /// <summary>
+        /// Witch team is capturing the base.
+        /// </summary>
         public int ProgressTeamId { get; set; }
 
         public Base(double x, double y, int MAX_PROGRESS) {

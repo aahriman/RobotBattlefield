@@ -13,10 +13,11 @@ namespace ViewerLibrary.gui {
         private const int MINE_SIZE = 4;
 
         private static readonly Color[] teamColor = {
-            ColorUtils.HsvToColor(Color.Green.GetHue(), 0.8, 0.5, 130),
-            ColorUtils.HsvToColor(Color.Yellow.GetHue(), 0.8, 0.5, 130),
-            ColorUtils.HsvToColor(Color.Magenta.GetHue(), 0.8, 0.5, 130),
-            ColorUtils.HsvToColor(Color.Brown.GetHue(), 0.8, 0.5, 130)
+            ColorUtils.ColorWithAlpha(Color.Black, 200),
+            ColorUtils.ColorWithAlpha(Color.Blue, 200),
+            ColorUtils.ColorWithAlpha(Color.Magenta, 200),
+            ColorUtils.ColorWithAlpha(Color.Green, 200),
+            ColorUtils.ColorWithAlpha(Color.Red, 200),
         };
 
         private static readonly Pen[] teamPen;

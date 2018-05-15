@@ -1,12 +1,7 @@
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using BaseCapcureBattlefieldLibrary.battlefield;
-using BaseLibrary;
+using BaseCaptureLibrary.battlefield;
 using BaseLibrary.battlefield;
 using BaseLibrary.communication.command.common;
 using BaseLibrary.communication.command.handshake;
@@ -16,7 +11,7 @@ using BattlefieldLibrary.battlefield;
 using BattlefieldRobot = BattlefieldLibrary.battlefield.robot.BattlefieldRobot;
 
 
-namespace BaseCapcureBattlefield.battlefield {
+namespace BaseCaptureBattlefield.battlefield {
 	public class BaseCaptureBattlefield : Battlefield {
         public const int BASE_SIZE = 25;
 
@@ -91,14 +86,21 @@ namespace BaseCapcureBattlefield.battlefield {
                     }
                 }
 
+                
+
                 @base.Progress = maxTeamProgress - sumOtherProgress;
                 @base.ProgressTeamId = forTeamId;
+
+                if (@base.Progress <= 0) {
+                    @base.TeamId = 0;
+                }
+
+                @base.Progress = Math.Abs(@base.Progress);
+                @base.Progress = Math.Min(@base.Progress, @base.MAX_PROGRESS);
+
                 if (@base.Progress == @base.MAX_PROGRESS) {
                     @base.TeamId = @base.ProgressTeamId;
                 }
-                @base.Progress = Math.Max(@base.Progress, 0);
-                @base.Progress = Math.Min(@base.Progress, @base.MAX_PROGRESS);
-
             }
         }
 

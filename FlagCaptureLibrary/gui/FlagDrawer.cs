@@ -2,7 +2,7 @@
 using FlagCaptureLibrary.battlefield;
 using ViewerLibrary.gui;
 
-namespace Viewer.gui {
+namespace FlagCaptureLibrary.gui {
     /// <summary>
     /// Draw flag and FlagPlace to arena. Use-full for CaptureTheFlagBattlefield.
     /// </summary>

@@ -1,22 +1,16 @@
-using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
 using System.Text;
 using BaseLibrary;
-using BaseLibrary.battlefield;
 using BaseLibrary.communication.command;
 using BaseLibrary.communication.command.common;
 using BaseLibrary.communication.protocol;
-using BaseLibrary.utils;
-using BaseLibrary.utils.euclidianSpaceStruct;
 
-
-namespace BaseCapcureBattlefieldLibrary.battlefield {
+namespace BaseCaptureLibrary.battlefield {
     [ModDescription()]
 	public class BaseCapture  {
+        /// <summary>
+        /// How far from center of base is possible to capture it.
+        /// </summary>
         public const int BASE_SIZE = 25;
 
         public static readonly int POSITION_IN_ROBOT_STATE_COMMAND;

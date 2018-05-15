@@ -1,10 +1,10 @@
 ﻿using System;
-using BaseCapcureBattlefieldLibrary.battlefield;
+using BaseCaptureLibrary.battlefield;
 using BaseLibrary.config;
 using BattlefieldLibrary.battlefield;
 using ServerLibrary.config;
 
-namespace BaseCapcureBattlefield {
+namespace BaseCaptureBattlefield {
     public class Run {
         /// <summary>
         /// Start server with specific arguments

@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlagCaptureLibrary", "FlagC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiSpot", "MultiSpot\MultiSpot.csproj", "{695DC576-4899-404D-B0A7-916D73868E43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotTemplate", "RobotTemplate\RobotTemplate.csproj", "{D62178B8-A1EF-48FD-A594-5E975991747B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{695DC576-4899-404D-B0A7-916D73868E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{695DC576-4899-404D-B0A7-916D73868E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{695DC576-4899-404D-B0A7-916D73868E43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D62178B8-A1EF-48FD-A594-5E975991747B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D62178B8-A1EF-48FD-A594-5E975991747B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D62178B8-A1EF-48FD-A594-5E975991747B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D62178B8-A1EF-48FD-A594-5E975991747B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

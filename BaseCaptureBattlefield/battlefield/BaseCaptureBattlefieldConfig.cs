@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BaseCapcureBattlefieldLibrary.battlefield;
+using BaseCaptureLibrary.battlefield;
 using BattlefieldLibrary.battlefield;
 
-namespace BaseCapcureBattlefield.battlefield {
+namespace BaseCaptureBattlefield.battlefield {
     public class BaseCaptureBattlefieldConfig : BattlefieldConfig {
         public readonly Base[] BASES;
 

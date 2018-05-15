@@ -2,6 +2,7 @@
 using System.Drawing;
 using BaseLibrary;
 using BaseLibrary.battlefield;
+using BaseLibrary.communication.protocol;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
 using Point = BaseLibrary.utils.euclidianSpaceStruct.Point;

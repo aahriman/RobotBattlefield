@@ -1,6 +1,7 @@
-﻿using BaseLibrary.equipment;
+﻿using BaseLibrary.communication.protocol;
+using BaseLibrary.communication.protocol.protocolV1_0Utils;
+using BaseLibrary.equipment;
 using BaseLibrary.utils;
-using BaseLibrary.utils.protocolV1_0Utils;
 
 namespace BaseLibrary.communication.command.v1._0.equipment {
     public class MineGunV1_0 : MineGun, InnerSerializerV1_0 {

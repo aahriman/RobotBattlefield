@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using BaseLibrary.communication.protocol;
-using BaseLibrary.utils.protocolV1_0Utils;
+using BaseLibrary.communication.protocol.protocolV1_0Utils;
+using BaseLibrary.utils;
 
-namespace BaseLibrary.utils {
+namespace BaseLibrary.communication.protocol {
 	namespace protocolV1_0Utils {
 		/// <summary>
 		/// Should implement method with following definition

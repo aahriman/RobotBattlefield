@@ -1,6 +1,7 @@
-﻿using BaseLibrary.equipment;
+﻿using BaseLibrary.communication.protocol;
+using BaseLibrary.communication.protocol.protocolV1_0Utils;
+using BaseLibrary.equipment;
 using BaseLibrary.utils;
-using BaseLibrary.utils.protocolV1_0Utils;
 
 namespace BaseLibrary.communication.command.v1._0.equipment {
     public class ZoneV1_0 : Zone, InnerSerializerV1_0 {

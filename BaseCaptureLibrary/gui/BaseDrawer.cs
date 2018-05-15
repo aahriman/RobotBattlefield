@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using BaseCapcureBattlefieldLibrary.battlefield;
+using BaseCaptureLibrary.battlefield;
 using ViewerLibrary.gui;
 
 namespace BaseCaptureLibrary.gui {
@@ -8,7 +8,9 @@ namespace BaseCaptureLibrary.gui {
 
         const float BASE_SIZE = 20;
 
-        private readonly Pen innerBasePen = new Pen(Color.LightGray);
+
+        private readonly Pen BLACK_PEN = new Pen(Color.Black);
+        private readonly Pen INNER_BASE_PEN = new Pen(Color.LightGray);
 
         public void DrawMore(object[] more, Graphics g) {
             Base[] bases = more as Base[];
@@ -27,9 +29,12 @@ namespace BaseCaptureLibrary.gui {
             
             float progressSize = (BASE_SIZE - 5) * @base.Progress / @base.MAX_PROGRESS;
             Pen teamPen = DefaultDrawer.GetTeamPen(@base.TeamId);
+            Font drawFont = new Font("Arial", 10);
+            string progressText = $"{@base.Progress}";
+            
             lock (g) {
-                lock (innerBasePen) {
-                    g.FillEllipse(innerBasePen.Brush, x, y, BASE_SIZE, BASE_SIZE);
+                lock (INNER_BASE_PEN) {
+                    g.FillEllipse(INNER_BASE_PEN.Brush, x, y, BASE_SIZE, BASE_SIZE);
                 }
                 lock (teamPen) {
                     float oldWidth = teamPen.Width;
@@ -46,6 +51,10 @@ namespace BaseCaptureLibrary.gui {
                 lock (g) {
                     lock (progressTeamPen) {
                         g.FillEllipse(progressTeamPen.Brush, x, y, progressSize, progressSize);
+                    }
+                    SizeF progressTextSize = g.MeasureString(progressText, drawFont);
+                    lock (BLACK_PEN) {
+                        g.DrawString(progressText, drawFont, BLACK_PEN.Brush, (float) (@base.X - progressTextSize.Width/2), (float) (@base.Y - progressTextSize.Height / 2));
                     }
                 }
                 

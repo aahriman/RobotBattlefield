@@ -2,8 +2,8 @@
 using BaseLibrary.battlefield;
 using BaseLibrary.communication.command.common;
 using BaseLibrary.communication.protocol;
+using BaseLibrary.communication.protocol.protocolV1_0Utils;
 using BaseLibrary.utils;
-using BaseLibrary.utils.protocolV1_0Utils;
 
 namespace BaseLibrary.communication.command.v1._0 {
 	internal class EndLapCommandV1_0 : EndLapCommand, ACommand.Sendable, InnerSerializerV1_0 {

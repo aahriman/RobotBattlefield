@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using BaseCapcureBattlefieldLibrary.battlefield;
+using BaseCaptureLibrary.battlefield;
 using BaseLibrary.communication.command.common;
-using BaseLibrary.communication.command.miner;
-using BaseLibrary.communication.command.repairman;
 using BaseLibrary.utils;
 using BaseLibrary.utils.euclidianSpaceStruct;
 using ClientLibrary.robot;
 
-namespace MinerForBaseCapture {
+namespace RobotForBaseCapture {
     /// <summary>
     /// This algorithm is very bad. It only show how to work with BaseCapture.
     /// </summary>

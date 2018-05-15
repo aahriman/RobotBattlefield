@@ -2,6 +2,7 @@
 using BattlefieldLibrary;
 using BattlefieldLibrary.battlefield;
 using FlagCaptureBattlefield.battlefield;
+using ServerLibrary;
 
 namespace FlagCaptureBattlefield {
     public class Server : AServer{

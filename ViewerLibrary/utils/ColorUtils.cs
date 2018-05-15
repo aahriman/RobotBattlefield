@@ -126,10 +126,13 @@ namespace ViewerLibrary.utils {
 			return Color.FromArgb(alpha, r, g, b);
 		}
 
-		/// <summary>
-		/// Clamp a value to 0-255
-		/// </summary>
-		static int Clamp(int i) {
+        public static Color ColorWithAlpha(Color c, int alpha) {
+            return Color.FromArgb(alpha, c.R, c.G, c.B);
+        }
+        /// <summary>
+        /// Clamp a value to 0-255
+        /// </summary>
+        static int Clamp(int i) {
 			if (i < 0) return 0;
 			if (i > 255) return 255;
 			return i;

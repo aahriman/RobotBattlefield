@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using BaseCapcureBattlefield.battlefield;
-using BaseLibrary;
+﻿using BaseCaptureBattlefield.battlefield;
 using BaseLibrary.communication.command.handshake;
-using BattlefieldLibrary;
 using BattlefieldLibrary.battlefield;
-using ServerLibrary.protocol;
+using ServerLibrary;
 
-namespace BaseCapcureBattlefield {
+namespace BaseCaptureBattlefield {
     public class Server : AServer{
         public Server(int port) : base(port) {
         }
@@ -20,7 +13,7 @@ namespace BaseCapcureBattlefield {
         }
 
         protected override Battlefield NewBattlefield(BattlefieldConfig battlefieldConfig) {
-            return new BaseCaptureBattlefield(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
+            return new battlefield.BaseCaptureBattlefield(BaseCaptureBattlefieldConfig.ConvertFromBattlefieldConfig(battlefieldConfig));
         }
     }
 }
