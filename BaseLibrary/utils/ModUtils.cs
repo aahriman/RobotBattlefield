@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BaseLibrary.utils {
@@ -15,15 +16,15 @@ namespace BaseLibrary.utils {
         /// <seealso cref="ModDescription"/>
         public static void LoadMods() {
             Load(Assembly.GetCallingAssembly());
-            if (Directory.Exists("./")) {
+            try {
                 string[] files = Directory.GetFiles("./", "*.dll");
                 foreach (var s in files) {
                     LoadFrom(s);
                 }
-                files = Directory.GetFiles("./", "*.exe");
-                foreach (var s in files) {
-                    LoadFrom(s);
-                }
+            } catch (Exception) {
+                Console.Error.WriteLine("Error during loading dll. Application will be closed.");
+                Thread.Sleep(5000);
+                Environment.Exit(1);
             }
         }
 
@@ -33,10 +34,11 @@ namespace BaseLibrary.utils {
         /// <param name="file"></param>
         public static void LoadFrom(string file) {
             if (Directory.Exists(file)) {
-                foreach (var innetFile in Directory.GetFiles(file)) {
-                    LoadFrom(innetFile);
+                foreach (var innerFile in Directory.GetFiles(file)) {
+                    LoadFrom(innerFile);
                 }
             } else {
+                Console.WriteLine("Loading:" + file);
                 Assembly assembly = LoadAssembly(file);
                 if (assembly != null) {
                     Load(assembly);

@@ -14,13 +14,27 @@ namespace FlagCaptureLibrary.battlefield {
         public const int FLAG_PLACE_SIZE = 10;
 
         public static readonly int POSITION_IN_ROBOT_STATE_COMMAND;
-        public static readonly int POSITION_IN_INIT_ASNWER_COMMAND;
+        public static readonly int POSITION_IN_INIT_ANSWER_COMMAND;
 
 
-        private static readonly ISubCommandFactory INIT_SUB_COMMAND_FACTORY = new SubCommandFactory();
-        private class SubCommandFactory : ISubCommandFactory {
+        private static readonly ISubCommandFactory INIT_SUB_COMMAND_FACTORY = new InitSubCommandFactory();
+        private class InitSubCommandFactory : ISubCommandFactory {
             private const string COMMAND_BASE_NAME = "FLAG_PLACE";
-            internal SubCommandFactory() { }
+
+            /// <inheritdoc />
+            public override bool Equals(object obj) {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return true;
+            }
+
+            /// <inheritdoc />
+            public override int GetHashCode() {
+                return this.GetType().GetHashCode();
+            }
+
+            internal InitSubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
                 if (ProtocolV1_0Utils.Deserialize(s, out string[] basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
@@ -70,11 +84,28 @@ namespace FlagCaptureLibrary.battlefield {
             }
         }
 
-        private static readonly ISubCommandFactory STATE_SUB_COMMAND_FACTORY = new StateSubCommandFactory();
-        private class StateSubCommandFactory : ISubCommandFactory {
+        private static readonly ISubCommandFactory STATE_SUB_COMMAND_FACTORY = new StateStateSubCommandFactory();
+        private class StateStateSubCommandFactory : ISubCommandFactory {
             private const string COMMAND_BASE_NAME = "FLAG";
-            internal StateSubCommandFactory() { }
+
+            /// <inheritdoc />
+            public override bool Equals(object obj) {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return true;
+            }
+
+            /// <inheritdoc />
+            public override int GetHashCode() {
+                return this.GetType().GetHashCode();
+            }
+
+            internal StateStateSubCommandFactory() { }
             public bool Deserialize(string s, object[] commandsMore) {
+                if (commandsMore.Length <= POSITION_IN_ROBOT_STATE_COMMAND) {
+                    throw new NotSupportedException("Flags have no space for deserialize. Maybe load was corrupted.");
+                }
                 if (ProtocolV1_0Utils.Deserialize(s, out string[] basesString, ProtocolV1_0Utils.DEFAULT.NEXT.NEXT)) {
 
                     List<Flag> flags = new List<Flag>();
@@ -123,8 +154,10 @@ namespace FlagCaptureLibrary.battlefield {
         }
 
         static FlagCapture() {
-            POSITION_IN_INIT_ASNWER_COMMAND = InitAnswerCommand.RegisterSubCommandFactory(INIT_SUB_COMMAND_FACTORY);
+            POSITION_IN_INIT_ANSWER_COMMAND = InitAnswerCommand.RegisterSubCommandFactory(INIT_SUB_COMMAND_FACTORY);
+            Console.WriteLine($"POSITION_IN_INIT_ANSWER_COMMAND:{POSITION_IN_INIT_ANSWER_COMMAND}");
             POSITION_IN_ROBOT_STATE_COMMAND = RobotStateCommand.RegisterSubCommandFactory(STATE_SUB_COMMAND_FACTORY);
+            Console.WriteLine($"POSITION_IN_ROBOT_STATE_COMMAND:{POSITION_IN_ROBOT_STATE_COMMAND}");
         }
 
         /// <summary>
@@ -143,7 +176,7 @@ namespace FlagCaptureLibrary.battlefield {
         /// <param name="state"></param>
         /// <returns></returns>
         public static FlagPlace[] GetFlagPlaces(InitAnswerCommand state) {
-            return (FlagPlace[])state.MORE[POSITION_IN_INIT_ASNWER_COMMAND];
+            return (FlagPlace[])state.MORE[POSITION_IN_INIT_ANSWER_COMMAND];
         }
 
     }

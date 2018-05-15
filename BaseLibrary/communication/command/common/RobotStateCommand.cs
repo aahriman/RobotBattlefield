@@ -7,9 +7,15 @@ namespace BaseLibrary.communication.command.common {
         protected static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
         public static int RegisterSubCommandFactory(ISubCommandFactory subCommandFactory) {
-            int position = SUB_COMMAND_FACTORIES.Count;
-            SUB_COMMAND_FACTORIES.Add(subCommandFactory);
-            return position;
+            lock (SUB_COMMAND_FACTORIES) {
+                int position = SUB_COMMAND_FACTORIES.Count;
+                if (SUB_COMMAND_FACTORIES.Contains(subCommandFactory)) {
+                    position = SUB_COMMAND_FACTORIES.FindIndex(element => element.Equals(subCommandFactory));
+                } else {
+                    SUB_COMMAND_FACTORIES.Add(subCommandFactory);
+                }
+                return position;
+            }
         }
 
         private double _x;
@@ -127,17 +133,18 @@ namespace BaseLibrary.communication.command.common {
             private set => _endLapCommand = value;
         }
 
-        public RobotStateCommand(double x, double y, int hitPoints, double power, int turn, int maxTurn, int countOfLefeRobots, int[] arrayIdsOfLifeRobots, EndLapCommand endLapCommand) {
+        public RobotStateCommand(double x, double y, int hitPoints, double power, int turn, int maxTurn, int countOfLifeRobots, int[] arrayIdsOfLifeRobots, EndLapCommand endLapCommand) {
             X = x;
             Y = y;
             HIT_POINTS = hitPoints;
             POWER = power;
             TURN = turn;
             MAX_TURN = maxTurn;
-            COUNT_OF_LIFE_ROBOTS = countOfLefeRobots;
+            COUNT_OF_LIFE_ROBOTS = countOfLifeRobots;
             ARRAY_IDS_OF_LIFE_ROBOTS = arrayIdsOfLifeRobots;
             END_LAP_COMMAND = endLapCommand;
             MORE = new object[SUB_COMMAND_FACTORIES.Count];
+            Console.WriteLine($"SUB_COMMAND_FACTORIES.Count:{SUB_COMMAND_FACTORIES.Count}");
             pending = false;
         }
     }

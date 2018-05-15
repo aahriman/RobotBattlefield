@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BaseLibrary.communication.command.handshake {
     public class InitAnswerCommand : AHandShakeCommand {
@@ -6,9 +7,15 @@ namespace BaseLibrary.communication.command.handshake {
         protected static readonly List<ISubCommandFactory> SUB_COMMAND_FACTORIES = new List<ISubCommandFactory>();
 
         public static int RegisterSubCommandFactory(ISubCommandFactory subCommandFactory) {
-            int position = SUB_COMMAND_FACTORIES.Count;
-            SUB_COMMAND_FACTORIES.Add(subCommandFactory);
-            return position;
+            lock (SUB_COMMAND_FACTORIES) {
+                int position = SUB_COMMAND_FACTORIES.Count;
+                if (SUB_COMMAND_FACTORIES.Contains(subCommandFactory)) {
+                    position = SUB_COMMAND_FACTORIES.FindIndex(element => element.Equals(subCommandFactory));
+                } else {
+                    SUB_COMMAND_FACTORIES.Add(subCommandFactory);
+                }
+                return position;
+            }
         }
 
         public int MAX_TURN {get; private set;}

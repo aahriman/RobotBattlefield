@@ -53,7 +53,7 @@ namespace FlagCaptureBattlefield.battlefield {
 
 	    /// <inheritdoc />
 	    protected override InitAnswerCommand addToInitAnswerCommand(InitAnswerCommand initAnswerCommand) {
-	        initAnswerCommand.MORE[FlagCapture.POSITION_IN_INIT_ASNWER_COMMAND] = flagPlacesById.Values.ToArray();
+	        initAnswerCommand.MORE[FlagCapture.POSITION_IN_INIT_ANSWER_COMMAND] = flagPlacesById.Values.ToArray();
             return initAnswerCommand;
 	    }
 
