@@ -2,6 +2,7 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -143,7 +144,7 @@ namespace ServerLibrary {
             myBindSocket(socketIPv4, IPAddress.Any, port);
             myBindSocket(socketIPv6, IPAddress.IPv6Any, port);
 
-            Console.WriteLine("Arena runs on " + String.Join(", ", (IEnumerable<IPAddress>)Dns.GetHostAddresses(Dns.GetHostName())) + " with port " + port);
+            Console.WriteLine("Arena runs on ip " + String.Join(" or ", (IEnumerable<IPAddress>)Dns.GetHostAddresses(Dns.GetHostName()).Where(a => a.AddressFamily == AddressFamily.InterNetwork || a.IsIPv6LinkLocal)) + " and port " + port);
 
             return Battlefield;
         }

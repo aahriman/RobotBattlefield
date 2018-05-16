@@ -155,9 +155,7 @@ namespace FlagCaptureLibrary.battlefield {
 
         static FlagCapture() {
             POSITION_IN_INIT_ANSWER_COMMAND = InitAnswerCommand.RegisterSubCommandFactory(INIT_SUB_COMMAND_FACTORY);
-            Console.WriteLine($"POSITION_IN_INIT_ANSWER_COMMAND:{POSITION_IN_INIT_ANSWER_COMMAND}");
             POSITION_IN_ROBOT_STATE_COMMAND = RobotStateCommand.RegisterSubCommandFactory(STATE_SUB_COMMAND_FACTORY);
-            Console.WriteLine($"POSITION_IN_ROBOT_STATE_COMMAND:{POSITION_IN_ROBOT_STATE_COMMAND}");
         }
 
         /// <summary>

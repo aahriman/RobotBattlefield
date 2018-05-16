@@ -126,7 +126,7 @@ namespace ClientLibrary.robot {
         /// <param name="args">
         ///   <list type="bullet">
         ///     <item>
-        ///       <description><code>args[0]</code> is IP adress of server.</description>
+        ///       <description><code>args[0]</code> is IP address of server.</description>
         ///     </item>
         ///     <item>
         ///       <description><code>args[1]</code> is port.</description>
@@ -160,7 +160,9 @@ namespace ClientLibrary.robot {
         private static GameTypeCommand GetGameTypeAndLoadEquip() {
             ConnectionUtil connection = new ConnectionUtil();
 
-            GameTypeCommand gameTypeCommand = connection.ConnectAsync(ip, port).Result;
+            Task<GameTypeCommand> task = connection.ConnectAsync(ip, port);
+
+            GameTypeCommand gameTypeCommand = task.Result;
             LoadEquip(connection.COMMUNICATION);
             return gameTypeCommand;
         }
@@ -573,7 +575,7 @@ namespace ClientLibrary.robot {
             Console.Error.WriteLine(e.ExceptionObject);
             Console.Error.Flush();
             if (e.ExceptionObject is Exception ex) {
-                Console.WriteLine("Some error occurs:'" + ex.Message + "'. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
+                Console.WriteLine("ERROR:'" + ex.Message + "'. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
             } else {
                 Console.WriteLine("Some error occurs. Application store more information in " + ERROR_FILE_NAME + " and will be closed.");
             }

@@ -46,7 +46,12 @@ namespace ClientLibrary {
         /// <see cref="IPAddress.Parse"/>
         /// <returns></returns>
         public async Task<GameTypeCommand> ConnectAsync(string url, int port) {
-            IPAddress ipAddress = IPAddress.Parse(url);
+            IPAddress ipAddress = null;
+            try {
+                ipAddress = IPAddress.Parse(url);
+            } catch (FormatException e) {
+                throw new FormatException(e.Message);
+            }
             if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6) {
                 socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             } else {

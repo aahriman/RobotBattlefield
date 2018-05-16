@@ -38,7 +38,6 @@ namespace BaseLibrary.utils {
                     LoadFrom(innerFile);
                 }
             } else {
-                Console.WriteLine("Loading:" + file);
                 Assembly assembly = LoadAssembly(file);
                 if (assembly != null) {
                     Load(assembly);

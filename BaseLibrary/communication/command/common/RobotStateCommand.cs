@@ -144,7 +144,6 @@ namespace BaseLibrary.communication.command.common {
             ARRAY_IDS_OF_LIFE_ROBOTS = arrayIdsOfLifeRobots;
             END_LAP_COMMAND = endLapCommand;
             MORE = new object[SUB_COMMAND_FACTORIES.Count];
-            Console.WriteLine($"SUB_COMMAND_FACTORIES.Count:{SUB_COMMAND_FACTORIES.Count}");
             pending = false;
         }
     }

@@ -82,7 +82,6 @@ namespace BaseLibrary.communication.command {
         }
 
         protected void DeserializeMore(string[] serializedMore, object[] more, IEnumerable<ISubCommandFactory> subCommandFactories) {
-            Console.WriteLine($"{GetType().Name} Deserialize - more.Length:{more.Length}");
             foreach (var moreString in serializedMore) {
                 foreach (var subCommandFactory in subCommandFactories) {
                     if (subCommandFactory.Deserialize(moreString, more)) {
