@@ -12,38 +12,32 @@ namespace FlagCaptureLibrary.gui {
 
 
         public void DrawMore(object[] more, Graphics g) {
-            ViewerFlag[] flags = more as ViewerFlag[];
-            if (flags != null) {
-                drawFlags(flags, g);
-            }
 
-            FlagPlace[] flagPlaces= more as FlagPlace[];
-            if (flagPlaces != null) {
-                drawFlagPlaces(flagPlaces, g);
+            foreach (var o in more) {
+                drawFlags(o as ViewerFlag, g);
+                drawFlagPlace(o as FlagPlace, g);
             }
         }
 
-        public void drawFlags(ViewerFlag[] flags, Graphics g) {
-            foreach (var flag in flags) {
-                Pen teamPen = DefaultDrawer.GetTeamPen(flag.TEAM_ID);
-                lock (g) {
-                    lock (teamPen) {
-                        g.FillRectangle(teamPen.Brush, (float)(flag.X - FLAG_SIZE / 2.0), (float)(flag.Y - FLAG_SIZE / 2.0), FLAG_SIZE, FLAG_SIZE);
-                    }
-                }
-            }
-        }
-        
-        public void drawFlagPlaces(FlagPlace[] flagPlaces, Graphics g) {
-            foreach (var flagPlace in flagPlaces) {
-                Pen teamPen = DefaultDrawer.GetTeamPen(flagPlace.TEAM_ID);
-                lock (g) {
-                    lock (teamPen) {
-                        g.FillEllipse(teamPen.Brush, (float)(flagPlace.X - FLAG_PLACE_SIZE / 2.0), (float)(flagPlace.Y - FLAG_PLACE_SIZE / 2.0), FLAG_PLACE_SIZE, FLAG_PLACE_SIZE);
-                    }
+        private void drawFlags(ViewerFlag flag, Graphics g) {
+            if (flag == null) return;
+            Pen teamPen = DefaultDrawer.GetTeamPen(flag.TEAM_ID);
+            lock (g) {
+                lock (teamPen) {
+                    g.FillRectangle(teamPen.Brush, (float) (flag.X - FLAG_SIZE / 2.0), (float) (flag.Y - FLAG_SIZE / 2.0), FLAG_SIZE, FLAG_SIZE);
                 }
             }
         }
 
+        private void drawFlagPlace(FlagPlace flagPlace, Graphics g) {
+            if (flagPlace == null) return;
+
+            Pen teamPen = DefaultDrawer.GetTeamPen(flagPlace.TEAM_ID);
+            lock (g) {
+                lock (teamPen) {
+                    g.FillEllipse(teamPen.Brush, (float) (flagPlace.X - FLAG_PLACE_SIZE / 2.0), (float) (flagPlace.Y - FLAG_PLACE_SIZE / 2.0), FLAG_PLACE_SIZE, FLAG_PLACE_SIZE);
+                }
+            }
+        }
     }
 }
