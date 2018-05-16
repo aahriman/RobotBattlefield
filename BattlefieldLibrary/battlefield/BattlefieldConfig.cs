@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BaseLibrary.utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ViewerLibrary;
 using ViewerLibrary.serializer;
 
 namespace BattlefieldLibrary.battlefield {
@@ -66,7 +69,7 @@ namespace BattlefieldLibrary.battlefield {
         /// <summary>
         /// Some more object for battlefield (like flag, bases etc.)
         /// </summary>
-        public readonly object[] MORE;
+        public object[] MORE { get; private set; }
 
         public BattlefieldConfig(int MAX_TURN, int MAX_LAP, int TEAMS, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
                                  bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string obstacleConfigFile, int WAITING_TIME_BETWEEN_TURNS, bool GUI, int? RANDOM_SEED,
@@ -108,10 +111,15 @@ namespace BattlefieldLibrary.battlefield {
         /// Deserialize config from JSON stored in the file specified by <code>filename</code>.
         /// </summary>
         /// <param name="filename"></param>
-        public static T  DeserializeFromFile<T>(String filename) where T : BattlefieldConfig {
+        public static BattlefieldConfig DeserializeFromFile(String filename) {
             using (StreamReader file = File.OpenText(filename)) {
-                JsonSerializer serializer = new JsonSerializer();
-                return (T) serializer.Deserialize(file, typeof(T));
+                String s = file.ReadToEnd();
+
+                BattlefieldConfig ret = JsonConvert.DeserializeObject<BattlefieldConfig>(s);
+                JObject jObject = JObject.Parse(s);
+                JArray moreArray = (JArray)jObject["MORE"];
+                ret.MORE = ModUtils.DeserializeMoreObjects(moreArray);
+                return ret;
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BaseLibrary.utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -20,18 +21,11 @@ namespace ViewerLibrary.serializer {
             row++;
             try {
                 Turn t = JsonConvert.DeserializeObject<Turn>(s);
-                JObject deserializedObject = JObject.Parse(s);
-                JArray moreArray = (JArray) deserializedObject["MORE"];
-                for (int i = 0; i < moreArray.Count; i++) {
-                    JArray singleMoreArray = (JArray) moreArray[i];
-                    if (singleMoreArray.Count > 0) {
-                        t.MORE[i] = (object[]) JsonConvert.DeserializeObject(singleMoreArray.ToString(),
-                                                                             GetType(
-                                                                                     singleMoreArray[0]["TYPE_NAME"]
-                                                                                         .ToString()).MakeArrayType());
-                    }
-
-
+                JObject jObject = JObject.Parse(s);
+                JArray moreArray = (JArray) jObject["MORE"];
+                object[][] deserializeMore = (object[][])ModUtils.DeserializeMoreObjects(moreArray);
+                for (int i = 0; i < deserializeMore.Length; i++) {
+                    t.MORE[i] = deserializeMore[i];
                 }
                 return t;
 

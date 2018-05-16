@@ -20,7 +20,7 @@ namespace BaseCaptureBattlefield {
             Server server = new Server(port);
             BattlefieldConfig battlefieldConfig;
             if (args.Length >= 2) {
-                battlefieldConfig = BattlefieldConfig.DeserializeFromFile<BattlefieldConfig>(args[1]);
+                battlefieldConfig = BattlefieldConfig.DeserializeFromFile(args[1]);
             } else {
                 battlefieldConfig = new BattlefieldConfig(MAX_TURN: ServerConfig.MAX_TURN, MAX_LAP: 1, TEAMS: 2, ROBOTS_IN_TEAM: 2, RESPAWN_TIMEOUT: 20, RESPAWN_ALLOWED: true, MATCH_SAVE_FILE: "arena_match" + port + ".txt", EQUIPMENT_CONFIG_FILE: null, obstacleConfigFile: null, WAITING_TIME_BETWEEN_TURNS: -1, GUI: true, RANDOM_SEED: null, more: new [] {new Base(500, 100, 100), new Base(500, 900, 100) });
             }

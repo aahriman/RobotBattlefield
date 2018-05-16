@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Threading;
@@ -86,7 +87,7 @@ namespace ViewerLibrary.gui
             int height = PICTURE_BOX.Height;
             if (width == 0 || height == 0) return; 
 
-            Bitmap drawingBitmap = new Bitmap(width, height);
+            Bitmap drawingBitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             using (Graphics g = Graphics.FromImage(drawingBitmap)) {
                 g.ScaleTransform(drawingBitmap.Width / 1000f, drawingBitmap.Height / 1000f);
 

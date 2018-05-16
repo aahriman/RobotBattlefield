@@ -1,12 +1,11 @@
 ﻿using System.Drawing;
 using BaseCaptureLibrary.battlefield;
 using ViewerLibrary.gui;
+using ViewerLibrary.utils;
 
 namespace BaseCaptureLibrary.gui {
     public class BaseDrawer : IDrawerMore {
-
-
-        const float BASE_SIZE = 20;
+        const float BASE_SIZE = 25;
 
 
         private readonly Pen BLACK_PEN = new Pen(Color.Black);
@@ -50,7 +49,8 @@ namespace BaseCaptureLibrary.gui {
                 Pen progressTeamPen = DefaultDrawer.GetTeamPen(@base.ProgressTeamId);
                 lock (g) {
                     lock (progressTeamPen) {
-                        g.FillEllipse(progressTeamPen.Brush, x, y, progressSize, progressSize);
+                        Brush b = new SolidBrush(ColorUtils.ColorWithAlpha(progressTeamPen.Color, 100));
+                        g.FillEllipse(b, x, y, progressSize, progressSize);
                     }
                     SizeF progressTextSize = g.MeasureString(progressText, drawFont);
                     lock (BLACK_PEN) {

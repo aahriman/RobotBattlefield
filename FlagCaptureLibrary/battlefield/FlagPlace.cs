@@ -26,11 +26,18 @@ namespace FlagCaptureLibrary.battlefield {
         /// </summary>
         public double Y { get; internal set; }
 
+        /// <summary>
+        /// Type name for de-serialization used.
+        /// </summary>
+        public readonly string TYPE_NAME;
+
         public FlagPlace(double X, double Y, int TEAM_ID) {
             ID = FlagPlace.id++;
             this.X = X;
             this.Y = Y;
             this.TEAM_ID = TEAM_ID;
+
+            TYPE_NAME = GetType().ToString();
         }
 
         public Point GetPosition() {

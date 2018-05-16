@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BaseLibrary.utils {
     public static class ModUtils {
@@ -15,12 +17,13 @@ namespace BaseLibrary.utils {
         /// </summary>
         /// <seealso cref="ModDescription"/>
         public static void LoadMods() {
+            
             Load(Assembly.GetCallingAssembly());
+            Load(Assembly.GetExecutingAssembly());
+            Load(Assembly.GetEntryAssembly());
             try {
-                string[] files = Directory.GetFiles("./", "*.dll");
-                foreach (var s in files) {
-                    LoadFrom(s);
-                }
+                Load(GetAllAssemblyInDir(AppDomain.CurrentDomain.BaseDirectory));
+                Load(GetAllAssemblyInDir("."));
             } catch (Exception) {
                 Console.Error.WriteLine("Error during loading dll. Application will be closed.");
                 Thread.Sleep(5000);
@@ -69,7 +72,13 @@ namespace BaseLibrary.utils {
             }
         }
 
-        public static Assembly[] LoadAllAssemblyInDir(string dir) {
+        public static void Load(Assembly[] assemblies) {
+            foreach (var assembly in assemblies) {
+                Load(assembly);
+            }
+        }
+
+        public static Assembly[] GetAllAssemblyInDir(string dir) {
             if (Directory.Exists(dir)) {
                 List<Assembly> assemblies = new List<Assembly>();
                 string[] files = Directory.GetFiles(dir, "*.dll");
@@ -79,6 +88,35 @@ namespace BaseLibrary.utils {
                 return assemblies.ToArray();
             }
             return new Assembly[0];
+        }
+
+        /// <summary>
+        /// Deserialize object in jArray. Every element have to be jArray or have attribute "TYPE_NAME" with <code>GetType().Name</code>
+        /// </summary>
+        /// <param name="jArray"></param>
+        /// <returns></returns>
+        public static Object[] DeserializeMoreObjects(JArray jArray) {
+            Object[] ret = new object[jArray.Count];
+            for (int i = 0; i < jArray.Count; i++) {
+                if (jArray[i].Type == JTokenType.Array) {
+                    ret[i] = DeserializeMoreObjects((JArray) jArray[i]);
+                } else {
+                    ret[i] = JsonConvert.DeserializeObject(jArray[i].ToString(), GetType(jArray[i]["TYPE_NAME"].ToString()));
+                }
+            }
+            return ret;
+        }
+
+        public static Type GetType(string typeName) {
+            Type type = Type.GetType(typeName);
+            if (type != null)
+                return type;
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
+                type = asm.GetType(typeName);
+                if (type != null)
+                    return type;
+            }
+            return null;
         }
     }
 }

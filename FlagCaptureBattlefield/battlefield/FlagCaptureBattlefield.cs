@@ -31,7 +31,7 @@ namespace FlagCaptureBattlefield.battlefield {
 
 	    public FlagCaptureBattlefield(FlagCaptureBattlefieldConfig battlefieldConfig) : base(battlefieldConfig) {
            
-	        foreach (var flagPlace in battlefieldConfig.FlagsPlaces) {
+	        foreach (var flagPlace in battlefieldConfig.FLAGS_PLACES) {
 	            if (!flagPlacesByTeamId.TryGetValue(flagPlace.TEAM_ID, out List<FlagPlace> flagPlaces)) {
 	                flagPlaces = new List<FlagPlace>();
                     flagPlacesByTeamId.Add(flagPlace.TEAM_ID, flagPlaces);

@@ -115,6 +115,9 @@ namespace RobotForBaseCapture {
             }
         }
 
+        public static void Run() {
+            
+        }
 
         public static void Main(string[] args) {
             ClientRobot.Connect(args);

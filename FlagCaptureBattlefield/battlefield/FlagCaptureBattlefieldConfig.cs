@@ -28,7 +28,7 @@ namespace FlagCaptureBattlefield.battlefield {
         /// <summary>
         /// Places where flags are stored.
         /// </summary>
-        public readonly FlagPlace[] FlagsPlaces;
+        public readonly FlagPlace[] FLAGS_PLACES;
 
         public FlagCaptureBattlefieldConfig(int MAX_TURN, int MAX_LAP, int TEAMS, int ROBOTS_IN_TEAM, int RESPAWN_TIMEOUT,
             bool RESPAWN_ALLOWED, string MATCH_SAVE_FILE, string EQUIPMENT_CONFIG_FILE, string obstacleConfigFile, int WAITING_TIME_BETWEEN_TURNS, bool GUI, int? RANDOM_SEED,
@@ -36,7 +36,7 @@ namespace FlagCaptureBattlefield.battlefield {
             : base(MAX_TURN, MAX_LAP, TEAMS, ROBOTS_IN_TEAM, RESPAWN_TIMEOUT,
                 RESPAWN_ALLOWED, MATCH_SAVE_FILE, EQUIPMENT_CONFIG_FILE, obstacleConfigFile, WAITING_TIME_BETWEEN_TURNS, GUI, RANDOM_SEED, flagPlaces)
         {
-            FlagsPlaces = flagPlaces;
+            FLAGS_PLACES = flagPlaces;
         }
     }
 }

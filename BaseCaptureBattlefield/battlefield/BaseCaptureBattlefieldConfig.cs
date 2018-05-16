@@ -13,7 +13,7 @@ namespace BaseCaptureBattlefield.battlefield {
             if (bases.Length > 0) {
                 return new BaseCaptureBattlefieldConfig(bc.MAX_TURN, bc.MAX_LAP, bc.TEAMS, bc.ROBOTS_IN_TEAM, bc.RESPAWN_TIMEOUT, bc.RESPAWN_ALLOWED, bc.MATCH_SAVE_FILE, bc.EQUIPMENT_CONFIG_FILE, bc.OBSTACLE_CONFIG_FILE,bc.WAITING_TIME_BETWEEN_TURNS, bc.GUI, bc.RANDOM_SEED, bases);
             } else {
-                throw new ArgumentException(nameof(bc) + "have to have some bases in more.");
+                throw new ArgumentException("Config have to have some bases in more.");
             }
         }
 

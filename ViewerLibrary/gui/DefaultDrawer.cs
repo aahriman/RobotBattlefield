@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Security.Cryptography;
 using ViewerLibrary.utils;
 using BaseLibrary.utils;
@@ -113,9 +114,10 @@ namespace ViewerLibrary.gui {
         public DefaultDrawer() {
         }
 
+
         /// <inheritdoc />
         public void DrawTurn(Turn turn, Graphics g) {
-            drawRobotsStats(turn.ROBOTS, g);
+            drawRobotsStats(turn.ROBOTS, g);           
 
             foreach (var robot in turn.ROBOTS) {
                 DrawRobot(robot, g);
@@ -137,6 +139,7 @@ namespace ViewerLibrary.gui {
                 foreach (var singleMore in turn.MORE) {
                     drawer.DrawMore(singleMore, g);
                 }
+
             }
         }
 
@@ -264,6 +267,9 @@ namespace ViewerLibrary.gui {
                 lock (pen) {
                     pen.Width = 5;
                     g.DrawLines(pen, DrawerUtils.Translate(robotPosition, bottom));
+                }
+                lock (Brushes.Red) {
+                    g.FillEllipse(Brushes.Red, robotPosition.X-1, robotPosition.Y-1, 2,2);
                 }
             }
             
