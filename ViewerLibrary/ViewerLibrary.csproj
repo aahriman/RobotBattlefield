@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ViewerLibrary</RootNamespace>
-    <AssemblyName>RobotViewerLibrary</AssemblyName>
+    <AssemblyName>ViewerLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
