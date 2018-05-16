@@ -39,10 +39,15 @@ namespace BaseLibrary.communication.command.v1._0.equipment {
             return false;
         }
 
-        public static MineGunV1_0[] Convert(MineGun[] repairTools) {
-            MineGunV1_0[] output = new MineGunV1_0[repairTools.Length];
-            for (int i = 0; i < repairTools.Length; i++) {
-                output[i] = new MineGunV1_0(repairTools[i]);
+        /// <summary>
+        /// Convert MineGun to MineGunV1_0
+        /// </summary>
+        /// <param name="mineGun"></param>
+        /// <returns></returns>
+        public static MineGunV1_0[] Convert(MineGun[] mineGun) {
+            MineGunV1_0[] output = new MineGunV1_0[mineGun.Length];
+            for (int i = 0; i < mineGun.Length; i++) {
+                output[i] = new MineGunV1_0(mineGun[i]);
             }
             return output;
         }

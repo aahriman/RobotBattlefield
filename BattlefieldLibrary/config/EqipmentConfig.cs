@@ -27,9 +27,9 @@ namespace BattlefieldLibrary.config {
 
         public static void SetDefaultEquipment() {
             MOTORS = new Motor[] {
-                new Motor(MAX_SPEED: 4, ROTATE_IN: 50,ACCELERATION: 10, DECELERATION: 5, MAX_INITIAL_POWER: 30, COST: 0, ID: 1),
-                new Motor(5, 55, 12, 6, 40, 50, 2),
-                new Motor(6, 60, 13, 5, 50, 100, 3)
+                new Motor(COST: 0, ID: 1, MAX_SPEED: 4, ROTATE_IN: 50,ACCELERATION: 10, DECELERATION: 5, MAX_INITIAL_POWER: 30),
+                new Motor(50, 2, 5, 55, 12, 6, 40),
+                new Motor(100, 3, 6, 60, 13, 5, 50)
             };
 
             GUNS = new Gun[] {

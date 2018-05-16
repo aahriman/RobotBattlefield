@@ -33,7 +33,7 @@ namespace BaseLibrary.communication.command.v1._0.repairman {
         }
 
 
-        public RepairCommandV1_0(int maxDistance) : base(maxDistance){
+        public RepairCommandV1_0(double maxDistance) : base(maxDistance){
         }
 
         public string Serialize() {

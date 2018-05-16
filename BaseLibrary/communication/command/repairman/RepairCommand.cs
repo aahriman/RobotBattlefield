@@ -12,11 +12,11 @@ namespace BaseLibrary.communication.command.repairman {
             return position;
         }
 
-        private int _maxDistance;
+        private double _maxDistance;
         /// <summary>
         /// Distance how far repair.
         /// </summary>
-        public int MAX_DISTANCE {
+        public double MAX_DISTANCE {
             get {
                 if (pending)
                     throw new NotSupportedException("Cannot access to property of pending request.");
@@ -28,7 +28,7 @@ namespace BaseLibrary.communication.command.repairman {
         public RepairCommand() : this(10000) {
         }
 
-        public RepairCommand(int maxDistance) {
+        public RepairCommand(double maxDistance) {
             this.MAX_DISTANCE = maxDistance;
             pending = false;
         }

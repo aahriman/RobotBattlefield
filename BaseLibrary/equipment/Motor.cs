@@ -32,7 +32,7 @@
 	    /// <inheritdoc />
 		public int ID { get; private set; }
 
-		public Motor(double MAX_SPEED, double ROTATE_IN, double ACCELERATION, double DECELERATION, double MAX_INITIAL_POWER, int COST, int ID) {
+		public Motor(int ID, int COST, double MAX_SPEED, double ROTATE_IN, double ACCELERATION, double DECELERATION, double MAX_INITIAL_POWER) {
 			this.MAX_SPEED = MAX_SPEED;
             this.ROTATE_IN = ROTATE_IN;
             this.ACCELERATION = ACCELERATION;
