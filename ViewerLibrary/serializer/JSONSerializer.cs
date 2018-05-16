@@ -23,9 +23,10 @@ namespace ViewerLibrary.serializer {
                 Turn t = JsonConvert.DeserializeObject<Turn>(s);
                 JObject jObject = JObject.Parse(s);
                 JArray moreArray = (JArray) jObject["MORE"];
-                object[][] deserializeMore = (object[][])ModUtils.DeserializeMoreObjects(moreArray);
+
+                object[] deserializeMore = ModUtils.DeserializeMoreObjects(moreArray);
                 for (int i = 0; i < deserializeMore.Length; i++) {
-                    t.MORE[i] = deserializeMore[i];
+                    t.MORE[i] = (object[]) deserializeMore[i];
                 }
                 return t;
 
