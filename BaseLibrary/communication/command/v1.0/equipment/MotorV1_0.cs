@@ -23,8 +23,8 @@ namespace BaseLibrary.communication.command.v1._0.equipment {
 				if (rest.Length == 7) {
 					ProtocolDouble[] paramsDouble;
 					int[] paramsInt;
-					if (Parser.TryParse(new int[] { 0, 1, 2, 3, 4 }, rest, out paramsDouble) &&
-						Parser.TryParse(new int[] { 5, 6 }, rest, out paramsInt)) {
+					if (Parser.TryParse(new int[] { 2, 3, 4, 5, 6 }, rest, out paramsDouble) &&
+						Parser.TryParse(new int[] { 0, 1 }, rest, out paramsInt)) {
 						deserialized = new MotorV1_0(paramsInt[0], paramsInt[1], paramsDouble[0], paramsDouble[1], paramsDouble[2], paramsDouble[3], paramsDouble[4]);
 						return true;
 					}
