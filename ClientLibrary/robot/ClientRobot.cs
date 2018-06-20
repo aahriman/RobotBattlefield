@@ -399,7 +399,7 @@ namespace ClientLibrary.robot {
         /// <param name="power">percentage from 0 to 100.</param>
         /// <seealso cref="Robot.AngleDrive"/>
         /// <returns></returns>
-        public async Task DriveAsync(DriveAnswerCommand destination, double angle, double power) {
+        private async Task DriveAsync(DriveAnswerCommand destination, double angle, double power) {
             await sendCommandAsync(new DriveCommand(power, angle));
             var answerCommand =  await receiveCommandAsync<DriveAnswerCommand>();
             if (answerCommand.SUCCESS) {
@@ -469,6 +469,7 @@ namespace ClientLibrary.robot {
         /// <returns></returns>
         private async Task WaitAsync() {
             await sendCommandAsync(new WaitCommand());
+            ProcessState((RobotStateCommand)checkCommand(await sns.ReceiveCommandAsync()));
         }
 
         /// <summary>
@@ -480,9 +481,7 @@ namespace ClientLibrary.robot {
         /// <param name="repairHitPoints"></param>
         /// <returns></returns>
         protected void Merchant(int motorId, int armorId, int classEquipmentId, int repairHitPoints) {
-            sendCommandAsync(new MerchantCommand(motorId, armorId, classEquipmentId, repairHitPoints)).Wait();
-            MerchantAnswerCommand answer = receiveCommandAsync<MerchantAnswerCommand>().Result;
-            ProcessMerchant(answer);
+            addRobotTask(MerchantAsync(motorId, armorId, classEquipmentId, repairHitPoints));
         }
 
         /// <summary>

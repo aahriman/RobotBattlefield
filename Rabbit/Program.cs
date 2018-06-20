@@ -21,7 +21,11 @@ namespace Rabbit {
 
                 while (Math.Abs(toX - tank.X) > 50 && Math.Abs(toY - tank.Y) > 50) {
                     double angle = Utils.AngleDegree(tank.X, tank.Y, toX, toY);
-                    tank.Drive(angle, tank.Motor.ROTATE_IN);
+                    if (Math.Abs(tank.AngleDrive - angle) > 3) {
+                        tank.Drive(angle, tank.Motor.ROTATE_IN);
+                    } else {
+                        tank.Wait();
+                    }
                 }
             }
         }
