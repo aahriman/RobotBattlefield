@@ -27,6 +27,9 @@ namespace ClientLibrary {
         /// </summary>
         public NetworkStream COMMUNICATION { get; private set; }
         
+        /// <summary>
+        /// Create object witch store <code>NetworkStream</code>
+        /// </summary>
         public ConnectionUtil() { }
 
         /// <summary>
