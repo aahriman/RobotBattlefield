@@ -422,6 +422,8 @@ namespace BattlefieldLibrary.battlefield {
                         robots.Remove(robotsByStream[sns]);
                         Console.WriteLine("Disconnected robot " + robot.NAME + " because " + e.Message);
                         sns.Close();
+                    } else if (e is ArgumentException) {
+                        Console.WriteLine(e.Message);
                     }
                 }
                 lock (receivedCommands) {
@@ -431,6 +433,7 @@ namespace BattlefieldLibrary.battlefield {
                         }
                     }
                 }
+                
             }
 		}
 
