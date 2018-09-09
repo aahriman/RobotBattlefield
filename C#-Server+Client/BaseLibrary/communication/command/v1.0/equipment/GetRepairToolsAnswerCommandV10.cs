@@ -4,7 +4,7 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.communication.command.v1._0.equipment {
     class GetRepairToolsAnswerCommandV10 : GetRepairToolsAnswerCommand, ACommand.Sendable{
-        private const string NAME = "REPAIR_TOOL_ANSWER";
+        private const string NAME = "REPAIR_TOOLS_ANSWER";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             internal CommandFactory() : base() { }

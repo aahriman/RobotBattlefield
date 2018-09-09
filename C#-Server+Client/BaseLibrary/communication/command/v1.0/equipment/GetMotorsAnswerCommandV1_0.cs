@@ -4,7 +4,7 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.communication.command.v1._0.equipment{
     public class GetMotorsAnswerCommandV1_0 : GetMotorsAnswerCommand, ACommand.Sendable {
-		private const string NAME = "MOTOR_ANSWER";
+		private const string NAME = "MOTORS_ANSWER";
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
             public override bool IsDeserializeable(string s) {
