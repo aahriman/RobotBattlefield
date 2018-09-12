@@ -11,10 +11,8 @@ namespace BaseLibrary.communication.command.v1._0.miner {
             internal CommandFactory() : base() { }
 
             public override bool IsDeserializeable(string s) {
-                string[] rest;
-                if (ProtocolV1_0Utils.GetParams(s, NAME, out rest) && rest.Length == 2) {
-                    int mineId;
-                    if ((rest[0].Equals("0") || rest[0].Equals("1")) && int.TryParse(rest[1], out mineId)) {
+                if (ProtocolV1_0Utils.GetParams(s, NAME, out string[] rest) && rest.Length == 2) {
+                    if ((rest[0].Equals("0") || rest[0].Equals("1")) && int.TryParse(rest[1], out int mineId)) {
                         cache.Cached(s, new PutMineAnswerCommandV1_0(rest[0].Equals("1"), mineId));
                         return true;
                     }
@@ -23,8 +21,7 @@ namespace BaseLibrary.communication.command.v1._0.miner {
             }
 
             public override bool IsTransferable(ACommand c) {
-                PutMineAnswerCommand command = c as PutMineAnswerCommand;
-                if (command != null) {
+                if (c is PutMineAnswerCommand command) {
                     cache.Cached(command, new PutMineAnswerCommandV1_0(command.SUCCESS, command.MINE_ID));
                     return true;
                 }
