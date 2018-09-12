@@ -40,7 +40,7 @@ namespace ServerLibrary.protocol {
                         return protocol;
                     } else printIfErrorElseSendMessage(shoudBeACK, "Handshake error. Expected HelloCommand but receive:" + shoudBeACK.GetType().Name, serverSocket);
                 }
-                await serverSocket.SendCommandAsync(new ErrorCommand(string.Format("Unsupported protocols '{0}'. Handshake failed.", hello.SUPPORTED_PROTOCOLS)));
+                await serverSocket.WriteLineAsync(new ErrorCommand(string.Format("Unsupported protocols '{0}'. Handshake failed.", hello.SUPPORTED_PROTOCOLS)).Serialize());
             } else printIfErrorElseSendMessage(shoudBeHELLO, "Handshake error. Expected HelloCommand but receive:" + shoudBeHELLO.GetType().Name, serverSocket);
             
             return null;
@@ -51,7 +51,7 @@ namespace ServerLibrary.protocol {
                 Console.Out.WriteLine("ERROR: " + ((ErrorCommand)command).MESSAGE);
             } else {
                 ErrorCommand error = new ErrorCommand(message);
-                socket.SendCommand(error);
+                socket.WriteLineAsync(error.Serialize()).Wait();
                 Console.Out.WriteLine(message);
             }
         }
