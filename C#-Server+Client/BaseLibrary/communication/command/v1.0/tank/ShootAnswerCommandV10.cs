@@ -4,7 +4,7 @@ using BaseLibrary.utils;
 
 namespace BaseLibrary.communication.command.v1._0.tank {
     public class ShootAnswerCommandV10 : ShootAnswerCommand, ACommand.Sendable {
-	    private const string NAME = "SHOT_ANSWER";
+	    private const string NAME = "SHOOT_ANSWER";
 
         public static readonly IFactory<ACommand.Sendable, ACommand> FACTORY = new CommandFactory();
         private sealed class CommandFactory : ACommandFactory {
@@ -21,11 +21,10 @@ namespace BaseLibrary.communication.command.v1._0.tank {
 			}
 
             public override bool IsTransferable(ACommand c) {
-				ShootAnswerCommand command = c as ShootAnswerCommand;
-	            if (command != null) {
-					cache.Cached(c, new ShootAnswerCommandV10(command.SUCCESS));
-		            return true;
-	            }
+                if (c is ShootAnswerCommand command) {
+                    cache.Cached(c, new ShootAnswerCommandV10(command.SUCCESS));
+                    return true;
+                }
                 return false;
             }
         }
