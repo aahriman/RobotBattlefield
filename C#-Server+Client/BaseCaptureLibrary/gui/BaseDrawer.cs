@@ -12,6 +12,7 @@ namespace BaseCaptureLibrary.gui {
         private readonly Pen INNER_BASE_PEN = new Pen(Color.LightGray);
 
         public void DrawMore(object[] more, Graphics g) {
+            if(more == null) return;
             foreach (var o in more) {
                 Base @base = o as Base;
                 drawBase(@base, g);
