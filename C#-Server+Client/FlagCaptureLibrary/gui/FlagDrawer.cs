@@ -12,7 +12,7 @@ namespace FlagCaptureLibrary.gui {
 
 
         public void DrawMore(object[] more, Graphics g) {
-
+            if (more == null) return;
             foreach (var o in more) {
                 drawFlags(o as ViewerFlag, g);
                 drawFlagPlace(o as FlagPlace, g);
