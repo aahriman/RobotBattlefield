@@ -12,11 +12,12 @@ namespace Spot {
 	class Program {
 	
         public static void Main(string[] args) {
-            Console.WriteLine("Spot is ready for action.");
+            Console.WriteLine("Spot start.");
             string name = "Spot";
             Tank spot = new Tank(name, ClientRobot.TEAM_NAME);
 
             ClientRobot.Connect(args);
+            Console.WriteLine("Spot is ready for action.");
 
             int direction = 90;
             while (true) {

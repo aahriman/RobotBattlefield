@@ -39,7 +39,7 @@ namespace BaseLibrary.communication {
         /// <param name="s"></param>
 		public NetworkStream(Socket s) {
 			ns = new System.Net.Sockets.NetworkStream(s, true);
-			sr = new StreamReader(ns, System.Text.Encoding.UTF8);
+            sr = new StreamReader(ns, System.Text.Encoding.UTF8);
 			sw = new StreamWriter(ns, System.Text.Encoding.UTF8) {
 				NewLine = "\n",
 				AutoFlush = true

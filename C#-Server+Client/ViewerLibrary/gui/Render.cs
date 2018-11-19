@@ -73,6 +73,7 @@ namespace ViewerLibrary.gui
 
         public void StepNext() {
             animate = false;
+            dataModel.HasNext();
             actualTurn = dataModel.Next();
             drawTurn();
         }

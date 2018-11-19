@@ -117,6 +117,7 @@ namespace ViewerLibrary.gui {
 
         /// <inheritdoc />
         public void DrawTurn(Turn turn, Graphics g) {
+            drawTurn(turn.TURN, g);
             drawRobotsStats(turn.ROBOTS, g);           
 
             foreach (var robot in turn.ROBOTS) {
@@ -290,6 +291,17 @@ namespace ViewerLibrary.gui {
                     return Compare((Robot) x, (Robot) y);
                 } else {
                     throw new InvalidOperationException("RobotComparer cannot compare other object then robot.");
+                }
+            }
+        }
+
+        private void drawTurn(int turn, Graphics g) {
+            Font drawFont = new Font("Arial", 10);
+            lock (g) {
+                lock (Brushes.Black) {
+                    String turnString = $"Turn : {turn}";
+                    float indentFromEdge = 10;
+                    g.DrawString(turnString, drawFont, Brushes.Black, new PointF(maxArenaSize.X - g.MeasureString(turnString, drawFont).Width - indentFromEdge, 0));
                 }
             }
         }

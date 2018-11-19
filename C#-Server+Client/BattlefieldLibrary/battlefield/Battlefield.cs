@@ -312,6 +312,9 @@ namespace BattlefieldLibrary.battlefield {
 
 	    private static readonly List<DamageDealing> damageDealingMethods = new List<DamageDealing>();
 
+
+        private BattlefieldViewer viewer;
+
         protected Battlefield(BattlefieldConfig battlefieldConfig) {
             ROBOTS_IN_TEAM = battlefieldConfig.ROBOTS_IN_TEAM;
             TEAMS = battlefieldConfig.TEAMS;
@@ -325,13 +328,16 @@ namespace BattlefieldLibrary.battlefield {
 
             if (battlefieldConfig.GUI) {
                 turnDataModel = new SerialTurnDataModel();
-                
-                Thread t = new Thread( () => {
+                //viewer = new BattlefieldViewer(turnDataModel);
+
+                Thread t = new Thread((battlefield) => {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new BattlefieldViewer(turnDataModel));
+
+                    viewer = new BattlefieldViewer(turnDataModel);
+                    Application.Run(viewer);
                 });
-                t.Start();
+                t.Start(this);
             }
 
             if (battlefieldConfig.EQUIPMENT_CONFIG_FILE != null) {
@@ -458,6 +464,7 @@ namespace BattlefieldLibrary.battlefield {
 
 			_run = run;
 			if (_run) {
+			    viewer?.EnableStart();
 				firstBattle();
 				RunThread.Start();
 			    RunEvent.Set();

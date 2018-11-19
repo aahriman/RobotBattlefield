@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.bottomPanel = new System.Windows.Forms.Panel();
+            this.startButton = new System.Windows.Forms.Button();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.delayLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -39,6 +40,7 @@
             // 
             // bottomPanel
             // 
+            this.bottomPanel.Controls.Add(this.startButton);
             this.bottomPanel.Controls.Add(this.numericUpDown1);
             this.bottomPanel.Controls.Add(this.delayLabel);
             this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -46,6 +48,17 @@
             this.bottomPanel.Name = "bottomPanel";
             this.bottomPanel.Size = new System.Drawing.Size(284, 29);
             this.bottomPanel.TabIndex = 0;
+            // 
+            // startButton
+            // 
+            this.startButton.Enabled = false;
+            this.startButton.Location = new System.Drawing.Point(201, 4);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(75, 23);
+            this.startButton.TabIndex = 2;
+            this.startButton.Text = "Start";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // numericUpDown1
             // 
@@ -108,5 +121,6 @@
         private System.Windows.Forms.Label delayLabel;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button startButton;
     }
 }

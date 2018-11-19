@@ -31,16 +31,16 @@ namespace BattlefieldLibrary.battlefield {
         }
 
         private void addGetCommandProcesses() {
-            commandProcessorBeforeInitRobot.RegisterProcess<GetArmorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetArmorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Armors) : (ACommand) new ErrorCommand("Armors can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetMotorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetMotorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Motors) : (ACommand) new ErrorCommand("Motors can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Guns) : (ACommand) new ErrorCommand("Guns can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetRepairToolsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetRepairToolsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.RepairTools) : (ACommand) new ErrorCommand("Repair tools can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
-            commandProcessorBeforeInitRobot.RegisterProcess<GetMineGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == BattlefieldState.GETTING_EQUIPMENT ? new GetMineGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.MineGuns) : (ACommand) new ErrorCommand("Mine gun can be ask only in " + BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetArmorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == Battlefield.BattlefieldState.GETTING_EQUIPMENT ? new GetArmorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Armors) : (ACommand) new ErrorCommand("Armors can be ask only in " + Battlefield.BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetMotorsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == Battlefield.BattlefieldState.GETTING_EQUIPMENT ? new GetMotorsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Motors) : (ACommand) new ErrorCommand("Motors can be ask only in " + Battlefield.BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == Battlefield.BattlefieldState.GETTING_EQUIPMENT ? new GetGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.Guns) : (ACommand) new ErrorCommand("Guns can be ask only in " + Battlefield.BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetRepairToolsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == Battlefield.BattlefieldState.GETTING_EQUIPMENT ? new GetRepairToolsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.RepairTools) : (ACommand) new ErrorCommand("Repair tools can be ask only in " + Battlefield.BattlefieldState.GETTING_EQUIPMENT + "."));
+            commandProcessorBeforeInitRobot.RegisterProcess<GetMineGunsCommand>((command, networkStreamAndBattlefield) => networkStreamAndBattlefield.BATTLEFIELD._battlefieldState == Battlefield.BattlefieldState.GETTING_EQUIPMENT ? new GetMineGunsAnswerCommand(networkStreamAndBattlefield.BATTLEFIELD.MineGuns) : (ACommand) new ErrorCommand("Mine gun can be ask only in " + Battlefield.BattlefieldState.GETTING_EQUIPMENT + "."));
             commandProcessorBeforeInitRobot.RegisterProcess<InitCommand>(initProcess);
         }
 
 
-        private ACommand initProcess(InitCommand command, NetworkStreamAndBattlefield networkStreamAndBattlefield) {
+        private ACommand initProcess(InitCommand command, Battlefield.NetworkStreamAndBattlefield networkStreamAndBattlefield) {
             Battlefield battlefield = networkStreamAndBattlefield.BATTLEFIELD;
 
             IClassEquipment classEquipment = null;
@@ -104,10 +104,11 @@ namespace BattlefieldLibrary.battlefield {
             }
             robot.NAME = command.NAME;
 
-            lock (battlefieldTurn) {
-                battlefieldTurn.AddRobot(new Robot(robot.ID, robot.TEAM_ID, robot.Score, robot.Gold, robot.HitPoints, robot.X, robot.Y,
+            lock (battlefield.battlefieldTurn) {
+                battlefield.battlefieldTurn.AddRobot(new Robot(robot.ID, robot.TEAM_ID, robot.Score, robot.Gold, robot.HitPoints, robot.X, robot.Y,
                     robot.AngleDrive, robot.NAME));
-                turnDataModel?.Add(battlefieldTurn.ConvertToTurn(), false);
+                battlefield.turnDataModel?.Add(battlefieldTurn.ConvertToTurn(), false);
+                battlefield.viewer?.StepNext();
             }
 
             return battlefield.addToInitAnswerCommand(new InitAnswerCommand(battlefield.MAX_TURN, battlefield.lap, battlefield.MAX_LAP,
@@ -160,7 +161,7 @@ namespace BattlefieldLibrary.battlefield {
             commandProcessor.RegisterProcess<WaitCommand>(waitProcess);
         }
 
-        private ACommand driveProcess(DriveCommand command, RobotAndBattlefield robotAndBattlefield) {
+        private ACommand driveProcess(DriveCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
             if (robot.HitPoints > 0) {
                 if (robot.Power <= robot.Motor.ROTATE_IN) {
@@ -174,7 +175,7 @@ namespace BattlefieldLibrary.battlefield {
 
         }
 
-        public ACommand scanProcess(ScanCommand command, RobotAndBattlefield robotAndBattlefield) {
+        public ACommand scanProcess(ScanCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             double minDistance = Battlefield.ARENA_MAX_SIZE * 10;
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
             Battlefield battlefield = robotAndBattlefield.BATTLEFIELD;
@@ -200,7 +201,7 @@ namespace BattlefieldLibrary.battlefield {
 
         }
 
-        public ACommand waitProcess(WaitCommand command, RobotAndBattlefield robotAndBattlefield) {
+        public ACommand waitProcess(WaitCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             return null;
         }
 
@@ -208,7 +209,7 @@ namespace BattlefieldLibrary.battlefield {
             commandProcessor.RegisterProcess<ShootCommand>(shootProcess);
         }
 
-        private ACommand shootProcess(ShootCommand command, RobotAndBattlefield robotAndBattlefield) {
+        private ACommand shootProcess(ShootCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
             Battlefield battlefield = robotAndBattlefield.BATTLEFIELD;
 
@@ -257,7 +258,7 @@ namespace BattlefieldLibrary.battlefield {
             commandProcessor.RegisterProcess<DetonateMineCommand>(detonateMineProcess);
         }
 
-        private ACommand putMineProcess(PutMineCommand command, RobotAndBattlefield robotAndBattlefield) {
+        private ACommand putMineProcess(PutMineCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
 
             MineLayer mineLayer = robot as MineLayer;
@@ -278,7 +279,7 @@ namespace BattlefieldLibrary.battlefield {
 
         }
 
-        private ACommand detonateMineProcess(DetonateMineCommand command, RobotAndBattlefield robotAndBattlefield) {
+        private ACommand detonateMineProcess(DetonateMineCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
             Battlefield battlefield = robotAndBattlefield.BATTLEFIELD;
             MineLayer mineLayer = robot as MineLayer;
@@ -302,7 +303,7 @@ namespace BattlefieldLibrary.battlefield {
             commandProcessor.RegisterProcess<RepairCommand>(repairProcess);
         }
 
-        private ACommand repairProcess(RepairCommand command, RobotAndBattlefield robotAndBattlefield) {
+        private ACommand repairProcess(RepairCommand command, Battlefield.RobotAndBattlefield robotAndBattlefield) {
 
             Battlefield battlefield = robotAndBattlefield.BATTLEFIELD;
             Repairman repairman = robotAndBattlefield.ROBOT as Repairman;
@@ -338,10 +339,10 @@ namespace BattlefieldLibrary.battlefield {
             commandProcessor.RegisterProcess<MerchantCommand>(merchantProcess);
         }
 
-        private ACommand merchantProcess(MerchantCommand visitor, RobotAndBattlefield robotAndBattlefield) {
+        private ACommand merchantProcess(MerchantCommand visitor, Battlefield.RobotAndBattlefield robotAndBattlefield) {
             BattlefieldRobot robot = robotAndBattlefield.ROBOT;
             Battlefield battlefield = robotAndBattlefield.BATTLEFIELD;
-            if (battlefield._battlefieldState == BattlefieldState.MERCHANT) {
+            if (battlefield._battlefieldState == Battlefield.BattlefieldState.MERCHANT) {
                 return battlefield.merchant.Buy(robot, visitor.MOTOR_ID, visitor.ARMOR_ID, visitor.CLASS_EQUIPMENT_ID, visitor.REPAIR_HP);
             } else {
                 return new ErrorCommand("Cannot use MerchantCommand in state " + battlefield._battlefieldState);
