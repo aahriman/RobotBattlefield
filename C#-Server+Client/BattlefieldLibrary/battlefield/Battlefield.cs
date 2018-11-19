@@ -780,7 +780,6 @@ namespace BattlefieldLibrary.battlefield {
 	            changeBattlefieldState();
 	            moving();
 	            damaging();
-	            shooting();
 	            detonatingMines();
 	            afterMovingAndDamaging();
 	            respawn();
